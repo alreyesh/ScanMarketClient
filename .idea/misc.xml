@@ -4,6 +4,10 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/alrey/AndroidStudioProjects/ScanMarketClient/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1" />
+        <entry key="..\:/Users/alrey/AndroidStudioProjects/ScanMarketClient/app/src/main/res/drawable/splash.xml" value="0.2555" />
+        <entry key="..\:/Users/alrey/AndroidStudioProjects/ScanMarketClient/app/src/main/res/layout/activity_login.xml" value="0.1" />
+        <entry key="..\:/Users/alrey/AndroidStudioProjects/ScanMarketClient/app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="..\:/Users/alrey/AndroidStudioProjects/ScanMarketClient/app/src/main/res/menu/menu.xml" value="0.25" />
       </map>
     </option>
   </component>
