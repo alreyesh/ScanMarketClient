@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item android:id="@+id/menu_home" android:icon="@drawable/ic_home" android:title="Home" />
+        <item android:id="@+id/menu_createlist" android:icon="@drawable/ic_list" android:title="lista de Compra" />
+        <item android:id="@+id/menu_shop" android:icon="@drawable/ic_shop" android:title="Historial de Compras Realizadas" />
+    </group>
+    <item android:title="Mi Cuenta">
+        <menu>
+            <item  android:id="@+id/menu_logout" android:icon="@android:drawable/ic_dialog_dialer" android:title="Cerrar Sesión" />
+        </menu>
+    </item>
+</menu>

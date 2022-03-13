@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "28992138434",
+    "project_id": "role-market",
+    "storage_bucket": "role-market.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:28992138434:android:a6257fce8bf6979196df5b",
+        "android_client_info": {
+          "package_name": "alreyesh.android.scanmarketclient"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "28992138434-r597783an7e51fuo9va308h64u0l5hlq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "alreyesh.android.scanmarketclient",
+            "certificate_hash": "3f010b7c5d2f728bfeea9260021835717b16a913"
+          }
+        },
+        {
+          "client_id": "28992138434-det5cnudvuuot8rushpg1arr6qj791kb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBZunZkHHQdzbYMWibzUqj2XtXb8Tkzbx8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "28992138434-det5cnudvuuot8rushpg1arr6qj791kb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
