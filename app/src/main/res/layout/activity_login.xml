@@ -9,14 +9,15 @@
         android:id="@+id/editTextRecuperarEmail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="44dp"
+        android:layout_marginTop="22dp"
         android:ems="10"
         android:hint="Email"
+
         android:inputType="textEmailAddress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+        app:layout_constraintTop_toBottomOf="@+id/btnFacebook" />
 
     <EditText
         android:id="@+id/editTextPassword"
@@ -86,4 +87,33 @@
         app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnGoogle"
+        android:layout_width="203dp"
+        android:layout_height="39dp"
+        android:layout_marginTop="24dp"
+        android:drawableLeft="@drawable/google_size"
+        android:text="Ingresar con Google"
+        android:paddingLeft="10dp"
+        android:background="@drawable/my_button_bg_google"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
+    <Button
+        android:id="@+id/btnFacebook"
+        android:layout_width="203dp"
+        android:layout_height="39dp"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/my_button_bg_facebook"
+        android:drawableLeft="@drawable/facebook_size"
+        android:paddingLeft="10dp"
+        android:text="Ingresar con Facebook"
+        android:textColor="#F4F4F4"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnGoogle" />
 </androidx.constraintlayout.widget.ConstraintLayout>
