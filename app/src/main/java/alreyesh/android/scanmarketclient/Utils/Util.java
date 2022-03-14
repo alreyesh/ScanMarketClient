@@ -3,6 +3,9 @@ package alreyesh.android.scanmarketclient.Utils;
 import android.content.SharedPreferences;
 
 public class Util {
+    public  static String getUserAccount(SharedPreferences preferences){
+        return preferences.getString("account","");
+    }
     public static String getUserMailPrefs(SharedPreferences preferences){
         return preferences.getString("email","");
     }

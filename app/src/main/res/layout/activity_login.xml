@@ -9,15 +9,15 @@
         android:id="@+id/editTextRecuperarEmail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="22dp"
+        android:layout_marginTop="44dp"
         android:ems="10"
-        android:hint="Email"
 
+        android:hint="Email"
         android:inputType="textEmailAddress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnFacebook" />
+        app:layout_constraintTop_toBottomOf="@+id/btnGoogle" />
 
     <EditText
         android:id="@+id/editTextPassword"
@@ -101,8 +101,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
+<!--
+    <com.facebook.login.widget.LoginButton
 
-    <Button
         android:id="@+id/btnFacebook"
         android:layout_width="203dp"
         android:layout_height="39dp"
@@ -116,4 +117,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnGoogle" />
+        -->
 </androidx.constraintlayout.widget.ConstraintLayout>
