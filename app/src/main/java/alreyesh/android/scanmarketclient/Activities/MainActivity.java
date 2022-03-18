@@ -32,7 +32,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.squareup.picasso.Picasso;
 
+import alreyesh.android.scanmarketclient.Dialog.AddListPurchaseDialog;
 import alreyesh.android.scanmarketclient.Fragments.HomeFragment;
+import alreyesh.android.scanmarketclient.Fragments.ListPurchaseFragment;
 import alreyesh.android.scanmarketclient.R;
 import alreyesh.android.scanmarketclient.Utils.Util;
 
@@ -44,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView imgUsername;
     private TextView txtUsername;
     private  GoogleSignInAccount signInAccount;
-
+    private String mInput;
     private TextView txtEmail;
     //google
     private GoogleSignInClient mGoogleSignInClient;
@@ -74,18 +76,19 @@ public class MainActivity extends AppCompatActivity {
                 String emailF = user.getEmail();
                 //Google Account
                  signInAccount = GoogleSignIn.getLastSignedInAccount(MainActivity.this);
-
-                Uri gimg =  signInAccount.getPhotoUrl();
-               // Picasso.get().invalidate(gimg);
-                String emailG = signInAccount.getEmail();
-                String name = signInAccount.getDisplayName();
+                Uri gimg;
+                String emailG;
+                String name;
                 Uri img = user.getPhotoUrl();
                 String usern = user.getEmail();
                 //txtUsername.setText(usern);
                 String account = Util.getUserAccount(prefs);
-                if( account == "google" ){
+                if( account == "google" && signInAccount !=null){
                   //  Toast.makeText(MainActivity.this, "Soy "+ account,Toast.LENGTH_SHORT).show();
-
+                    gimg=  signInAccount.getPhotoUrl();
+                    // Picasso.get().invalidate(gimg);
+                    emailG = signInAccount.getEmail();
+                    name = signInAccount.getDisplayName();
                     txtUsername.setText(name);
                    imgUsername.setImageURI(null);
                     Picasso.get()
@@ -132,6 +135,10 @@ public class MainActivity extends AppCompatActivity {
                         fragment = new HomeFragment();
                         fragmentTransaction = true;
                         break;
+                    case R.id.menu_list_purchase:
+                        fragment = new ListPurchaseFragment();
+                        fragmentTransaction = true;
+                        break;
                     case R.id.menu_logout:
                         Util.removeSharedPreferences(prefs);
                         logOut();
@@ -153,7 +160,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu, menu);
+
+       // getMenuInflater().inflate(R.menu.menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -169,6 +177,10 @@ public class MainActivity extends AppCompatActivity {
             case R.id.menu_forget_logout:
                 Util.removeSharedPreferences(prefs);
                 logOut();
+                return true;
+            case R.id.add_list_purchase:
+                AddListPurchaseDialog addListPurchaseDialog = new AddListPurchaseDialog();
+                addListPurchaseDialog.show(getSupportFragmentManager(),"addListPurchase");
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -227,5 +239,7 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(item.getTitle());
 
     }
+
+
 
 }
