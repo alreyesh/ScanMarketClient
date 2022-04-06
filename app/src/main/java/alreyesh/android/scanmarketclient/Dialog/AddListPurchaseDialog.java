@@ -86,20 +86,22 @@ public class AddListPurchaseDialog extends DialogFragment {
                     Toast.makeText(getActivity(),email, Toast.LENGTH_SHORT).show();
                     FirebaseUser user = mAuth.getCurrentUser();
                     String userEmail = user.getEmail();
-                    if(color == 0 ){
-                       color= R.color.md_green_100;
+                    if(name==null|| name.isEmpty()) {Toast.makeText(getActivity(),"Ingrese nombre de lista de compra",Toast.LENGTH_SHORT).show();}
+                    else if(limit == null || limit.isEmpty()){Toast.makeText(getActivity(),"Ingrese limite de compra",Toast.LENGTH_SHORT).show();}
+                    else{
+                        if(color == 0 ){ color= R.color.md_green_100;}
+                        Purchase purchase = new Purchase(name,parseLimit,color,userEmail);
+                        if(!isCreation) purchase.setId(purchaseId);
+                        realm.beginTransaction();
+                        realm.copyToRealmOrUpdate(purchase);
+                        realm.commitTransaction();
+                        dismiss();
                     }
-                    Purchase purchase = new Purchase(name,parseLimit,color,userEmail);
-                    if(!isCreation) purchase.setId(purchaseId);
-                    realm.beginTransaction();
-                    realm.copyToRealmOrUpdate(purchase);
-                    realm.commitTransaction();
-
                 }else{
                     Toast.makeText(getActivity(), "The data is not valid, please check the fields again", Toast.LENGTH_SHORT).show();
                 }
 
-                dismiss();
+
             }
         });
         btnColor.setOnClickListener(new View.OnClickListener() {

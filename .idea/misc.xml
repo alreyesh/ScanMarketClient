@@ -12,12 +12,14 @@
         <entry key="..\:/Users/alrey/AndroidStudioProjects/ScanMarketClient/app/src/main/res/drawable/my_button_bg_facebook.xml" value="0.121" />
         <entry key="..\:/Users/alrey/AndroidStudioProjects/ScanMarketClient/app/src/main/res/drawable/pop_up_dialog.xml" value="0.1" />
         <entry key="..\:/Users/alrey/AndroidStudioProjects/ScanMarketClient/app/src/main/res/drawable/splash.xml" value="0.2555" />
+        <entry key="..\:/Users/alrey/AndroidStudioProjects/ScanMarketClient/app/src/main/res/layout/activity_account_info.xml" value="0.129981884057971" />
         <entry key="..\:/Users/alrey/AndroidStudioProjects/ScanMarketClient/app/src/main/res/layout/activity_login.xml" value="0.536" />
         <entry key="..\:/Users/alrey/AndroidStudioProjects/ScanMarketClient/app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="..\:/Users/alrey/AndroidStudioProjects/ScanMarketClient/app/src/main/res/layout/activity_register.xml" value="0.4" />
         <entry key="..\:/Users/alrey/AndroidStudioProjects/ScanMarketClient/app/src/main/res/layout/activity_reset.xml" value="0.2368659420289855" />
         <entry key="..\:/Users/alrey/AndroidStudioProjects/ScanMarketClient/app/src/main/res/layout/add_list_purchase_dialog_layout.xml" value="0.22282608695652173" />
         <entry key="..\:/Users/alrey/AndroidStudioProjects/ScanMarketClient/app/src/main/res/layout/create_list_purchase_dialog_layout.xml" value="0.1" />
+        <entry key="..\:/Users/alrey/AndroidStudioProjects/ScanMarketClient/app/src/main/res/layout/fragment_account_info.xml" value="0.4" />
         <entry key="..\:/Users/alrey/AndroidStudioProjects/ScanMarketClient/app/src/main/res/layout/fragment_home.xml" value="0.4" />
         <entry key="..\:/Users/alrey/AndroidStudioProjects/ScanMarketClient/app/src/main/res/layout/fragment_list_purchase.xml" value="0.17074275362318841" />
         <entry key="..\:/Users/alrey/AndroidStudioProjects/ScanMarketClient/app/src/main/res/layout/fragment_list_shop.xml" value="0.17028985507246377" />

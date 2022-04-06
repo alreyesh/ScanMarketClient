@@ -44,6 +44,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+import java.sql.Connection;
+
 import alreyesh.android.scanmarketclient.R;
 import alreyesh.android.scanmarketclient.Utils.Util;
 
@@ -68,6 +70,7 @@ public class LoginActivity extends AppCompatActivity {
     private CallbackManager mCallbackManager;
     private Button btnFacebook;
 
+    //DatabaseCloud
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

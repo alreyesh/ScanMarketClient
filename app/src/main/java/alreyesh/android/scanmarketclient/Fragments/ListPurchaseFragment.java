@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,6 +25,7 @@ import alreyesh.android.scanmarketclient.R;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
+import io.realm.Sort;
 
 public class ListPurchaseFragment extends Fragment implements RealmChangeListener<RealmResults<Purchase>> {
     private Realm realm;
@@ -56,23 +58,20 @@ public class ListPurchaseFragment extends Fragment implements RealmChangeListene
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Realm.init(getActivity());
+
         realm = Realm.getDefaultInstance();
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
         String userEmail = user.getEmail();
         Toast.makeText(getActivity(),userEmail,Toast.LENGTH_SHORT).show();
-        purchases = realm.where(Purchase.class).equalTo("emailID",userEmail).findAll();
-        if(purchases !=null){
-            Toast.makeText(getActivity(),"hay purchases",Toast.LENGTH_SHORT).show();
-        }else{
-            Toast.makeText(getActivity(),"NO hay purchases",Toast.LENGTH_SHORT).show();
-        }
+        purchases = realm.where(Purchase.class).equalTo("emailID",userEmail).findAll().sort("id", Sort.DESCENDING);
+
         purchases.addChangeListener(this);
 
         View view = inflater.inflate(R.layout.fragment_list_purchase, container, false);
        recycler=(RecyclerView) view.findViewById(R.id.recyclerView);
        recycler.setHasFixedSize(true);
+       recycler.setItemAnimator(new DefaultItemAnimator());
        mLayoutManager = new LinearLayoutManager(getActivity());
        recycler.setLayoutManager(mLayoutManager);
         adapter = new PurchaseAdapter(purchases, R.layout.recycler_view_list_purchase_item,

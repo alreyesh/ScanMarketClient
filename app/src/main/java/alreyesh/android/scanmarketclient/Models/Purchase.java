@@ -1,13 +1,6 @@
 package alreyesh.android.scanmarketclient.Models;
 
-import android.content.SharedPreferences;
-
-import com.google.firebase.auth.FirebaseUser;
-
-import org.jetbrains.annotations.NotNull;
-
-import alreyesh.android.scanmarketclient.APP.MyRealm;
-import alreyesh.android.scanmarketclient.Utils.Util;
+import alreyesh.android.scanmarketclient.APP.MyApp;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.Required;
@@ -30,7 +23,7 @@ public class Purchase  extends RealmObject {
 
     public Purchase(String name, float limit, int color,String emailID) {
 
-        this.id = MyRealm.PurchaseID.incrementAndGet();
+        this.id = MyApp.PurchaseID.incrementAndGet();
         this.name = name;
         this.limit = limit;
         this.color = color;

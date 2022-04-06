@@ -64,7 +64,7 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.ViewHo
             btnSelect.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    btnListener.onButtonClick(purchase,getBindingAdapterPosition());
                 }
             });
 

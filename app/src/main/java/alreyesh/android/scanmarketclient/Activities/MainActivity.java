@@ -33,8 +33,10 @@ import com.google.firebase.auth.FirebaseUser;
 import com.squareup.picasso.Picasso;
 
 import alreyesh.android.scanmarketclient.Dialog.AddListPurchaseDialog;
+import alreyesh.android.scanmarketclient.Fragments.AccountInfoFragment;
 import alreyesh.android.scanmarketclient.Fragments.HomeFragment;
 import alreyesh.android.scanmarketclient.Fragments.ListPurchaseFragment;
+import alreyesh.android.scanmarketclient.Fragments.PurchaseHistoryFragment;
 import alreyesh.android.scanmarketclient.R;
 import alreyesh.android.scanmarketclient.Utils.Util;
 
@@ -63,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         setFragmentByDefault();
         prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
         mAuth = FirebaseAuth.getInstance();
-
+        String account = Util.getUserAccount(prefs);
         //Navegacion
         drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
@@ -72,17 +74,21 @@ public class MainActivity extends AppCompatActivity {
                 txtUsername = (TextView)drawerView.findViewById(R.id.username);
                 imgUsername=(ImageView)drawerView.findViewById(R.id.usernameImg);
                 //Firebase Account
-                FirebaseUser user = mAuth.getCurrentUser();
-                String emailF = user.getEmail();
+
+
+
+
                 //Google Account
                  signInAccount = GoogleSignIn.getLastSignedInAccount(MainActivity.this);
                 Uri gimg;
                 String emailG;
                 String name;
-                Uri img = user.getPhotoUrl();
-                String usern = user.getEmail();
+
+
                 //txtUsername.setText(usern);
-                String account = Util.getUserAccount(prefs);
+
+                Toast.makeText(MainActivity.this,account,Toast.LENGTH_SHORT).show();
+
                 if( account == "google" && signInAccount !=null){
                   //  Toast.makeText(MainActivity.this, "Soy "+ account,Toast.LENGTH_SHORT).show();
                     gimg=  signInAccount.getPhotoUrl();
@@ -101,8 +107,13 @@ public class MainActivity extends AppCompatActivity {
                 }else{
                     //Toast.makeText(MainActivity.this, "Soy "+ account,Toast.LENGTH_SHORT).show();
                     Drawable myImage = getResources().getDrawable(R.drawable.rolemarket);
-                    imgUsername.setImageDrawable(myImage);
-                    txtUsername.setText(usern);
+                    FirebaseUser user = mAuth.getCurrentUser();
+                    if(user !=null){
+                        String usern = user.getEmail();
+                        imgUsername.setImageDrawable(myImage);
+                        txtUsername.setText(usern);
+                    }
+
                 }
 
             }
@@ -139,6 +150,14 @@ public class MainActivity extends AppCompatActivity {
                         fragment = new ListPurchaseFragment();
                         fragmentTransaction = true;
                         break;
+                    case R.id.menu_prueba:
+                        fragment = new AccountInfoFragment();
+                        fragmentTransaction=true;
+                        break;
+                    case R.id.menu_shop:
+                        fragment = new PurchaseHistoryFragment();
+                        fragmentTransaction = true;
+                        break;
                     case R.id.menu_logout:
                         Util.removeSharedPreferences(prefs);
                         logOut();
@@ -147,6 +166,7 @@ public class MainActivity extends AppCompatActivity {
                 if(fragmentTransaction){
                     changeFragment(fragment,item);
                     drawerLayout.closeDrawers();
+
                 }
                 return true;
             }

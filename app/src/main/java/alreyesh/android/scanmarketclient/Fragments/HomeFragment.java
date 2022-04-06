@@ -13,16 +13,11 @@ import alreyesh.android.scanmarketclient.R;
 
 public class HomeFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 
 
     public HomeFragment() {
         // Required empty public constructor
     }
-
-
-    // TODO: Rename and change types and number of parameters
 
 
     @Override
