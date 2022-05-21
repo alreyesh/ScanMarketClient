@@ -16,7 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".camera"
+            android:name=".Camara.CamaraActivity"
             android:exported="false" />
         <activity
             android:name=".Activities.AccountInfoActivity"

@@ -34,6 +34,8 @@
         <entry key="app/src/main/res/drawable-mdpi/shape_rectangle.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/shape_rectangle.xml" value="0.109" />
         <entry key="app/src/main/res/layout/activity_camera.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_login.xml" value="0.1693840579710145" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.1693840579710145" />
       </map>
     </option>
   </component>
