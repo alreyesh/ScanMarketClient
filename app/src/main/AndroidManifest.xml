@@ -2,7 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="alreyesh.android.scanmarketclient">
-
+    <!-- Declare features -->
+    <uses-feature android:name="android.hardware.camera" /> <!-- Declare permissions -->
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -13,6 +15,9 @@
         android:roundIcon="@mipmap/ic_logo_scan_market"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity
+            android:name=".camera"
+            android:exported="false" />
         <activity
             android:name=".Activities.AccountInfoActivity"
             android:exported="false" />

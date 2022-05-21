@@ -30,6 +30,10 @@
         <entry key="..\:/Users/alrey/AndroidStudioProjects/ScanMarketClient/app/src/main/res/menu/menu.xml" value="0.25" />
         <entry key="..\:/Users/alrey/AndroidStudioProjects/ScanMarketClient/app/src/main/res/menu/menulistpurchase.xml" value="0.10729166666666666" />
         <entry key="..\:/Users/alrey/AndroidStudioProjects/ScanMarketClient/app/src/main/res/menu/menunav.xml" value="0.10989583333333333" />
+        <entry key="app/src/main/res/drawable-mdpi/ic_launcher_background.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable-mdpi/shape_rectangle.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/shape_rectangle.xml" value="0.109" />
+        <entry key="app/src/main/res/layout/activity_camera.xml" value="0.1" />
       </map>
     </option>
   </component>
