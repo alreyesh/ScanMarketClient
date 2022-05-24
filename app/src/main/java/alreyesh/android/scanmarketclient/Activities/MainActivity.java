@@ -48,8 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView imgUsername;
     private TextView txtUsername;
     private  GoogleSignInAccount signInAccount;
-    private String mInput;
-    private TextView txtEmail;
+
     //google
     private GoogleSignInClient mGoogleSignInClient;
 
