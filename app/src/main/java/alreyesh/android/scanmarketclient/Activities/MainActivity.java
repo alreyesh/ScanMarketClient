@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
 
                 //txtUsername.setText(usern);
 
-                Toast.makeText(MainActivity.this,account,Toast.LENGTH_SHORT).show();
+               // Toast.makeText(MainActivity.this,account,Toast.LENGTH_SHORT).show();
 
                 if( account == "google" && signInAccount !=null){
                   //  Toast.makeText(MainActivity.this, "Soy "+ account,Toast.LENGTH_SHORT).show();
