@@ -35,6 +35,7 @@ import com.squareup.picasso.Picasso;
 import alreyesh.android.scanmarketclient.Dialog.AddListPurchaseDialog;
 import alreyesh.android.scanmarketclient.Fragments.AccountInfoFragment;
 import alreyesh.android.scanmarketclient.Fragments.HomeFragment;
+import alreyesh.android.scanmarketclient.Fragments.ListProductFragment;
 import alreyesh.android.scanmarketclient.Fragments.ListPurchaseFragment;
 import alreyesh.android.scanmarketclient.Fragments.PurchaseHistoryFragment;
 import alreyesh.android.scanmarketclient.R;
@@ -149,6 +150,10 @@ public class MainActivity extends AppCompatActivity {
                         fragment = new ListPurchaseFragment();
                         fragmentTransaction = true;
                         break;
+                    case R.id.menu_products:
+                        fragment = new ListProductFragment();
+                        fragmentTransaction = true;
+                        break;
                     case R.id.menu_prueba:
                         fragment = new AccountInfoFragment();
                         fragmentTransaction=true;
@@ -201,6 +206,7 @@ public class MainActivity extends AppCompatActivity {
                 AddListPurchaseDialog addListPurchaseDialog = new AddListPurchaseDialog();
                 addListPurchaseDialog.show(getSupportFragmentManager(),"addListPurchase");
                 return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }

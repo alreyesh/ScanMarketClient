@@ -2,9 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:checkableBehavior="single">
         <item android:id="@+id/menu_home" android:icon="@drawable/ic_home" android:title="Home" />
+        <item android:id="@+id/menu_products" android:icon="@drawable/ic_list" android:title="Productos del Market" />
         <item android:id="@+id/menu_list_purchase" android:icon="@drawable/ic_list" android:title="lista de Compra" />
         <item android:id="@+id/menu_shop" android:icon="@drawable/ic_shop" android:title="Historial de Compras Realizadas" />
         <item android:id="@+id/menu_prueba" android:icon="@drawable/ic_home" android:title="Prueba"/>
+
     </group>
     <item android:title="Mi Cuenta">
         <menu>
