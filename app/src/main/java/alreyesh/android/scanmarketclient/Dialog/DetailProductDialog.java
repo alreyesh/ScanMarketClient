@@ -5,6 +5,8 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.InputType;
+import android.text.method.DigitsKeyListener;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -79,6 +81,9 @@ public class DetailProductDialog  extends DialogFragment{
         editDescProduct.setText(products.getDescripcion());
         editPriceProduct.setText("S/. "+products.getPrecio());
         editCountProduct.setHint("1");
+        editCountProduct.setInputType(InputType.TYPE_CLASS_NUMBER );
+        editCountProduct.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+        editCountProduct.setSingleLine(true);
         Picasso.get().load(products.getImagen()).fit().into(imgProductView);
         btnRegistrar.setOnClickListener(new View.OnClickListener() {
             @Override

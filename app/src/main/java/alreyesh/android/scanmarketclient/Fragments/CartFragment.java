@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.InputType;
+import android.text.method.DigitsKeyListener;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -152,6 +154,9 @@ View v =  inflater.inflate(R.layout.fragment_cart, container, false);
         final Button btnRegister =(Button)viewInflated.findViewById(R.id.btnRegistrarEdit) ;
         final Button btnCancelar =(Button)viewInflated.findViewById(R.id.btnCancelarEdit) ;
         cantidad.setHint(cart.getCountProduct());
+        cantidad.setInputType(InputType.TYPE_CLASS_NUMBER );
+        cantidad.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+        cantidad.setSingleLine(true);
         Picasso.get().load(cart.getImagenProduct()).fit().into(imgView);
         AlertDialog dialog = builder.create();
         btnRegister.setOnClickListener(new View.OnClickListener() {
@@ -160,12 +165,17 @@ View v =  inflater.inflate(R.layout.fragment_cart, container, false);
                 String countText = cantidad.getText().toString().trim();
                 Toast.makeText(getActivity(), countText, Toast.LENGTH_SHORT).show();
               if(countText !=null|| !countText.isEmpty()|| countText != "") {
-                    int counInt = Integer.parseInt(countText);
-                    float proprice = Float.parseFloat(cart.getProductPrice());
-                    float propricefloat = counInt * proprice;
-                    String result = String.valueOf(propricefloat);
-                    editCart(result,countText,cart);
-                    Toast.makeText(getActivity(), "Se Actualizo", Toast.LENGTH_SHORT).show();
+
+                                    int counInt = Integer.valueOf(countText);
+
+                                  // Toast.makeText(getActivity(), counInt+"", Toast.LENGTH_SHORT).show();
+
+                                  float proprice = Float.parseFloat(cart.getProductPrice());
+                                  Toast.makeText(getActivity(), proprice+"", Toast.LENGTH_SHORT).show();
+                                    float propricefloat = counInt * proprice;
+                                    String result = String.valueOf(propricefloat);
+                                  //  editCart(result,countText,cart);
+                                    //Toast.makeText(getActivity(), "Se Actualizo", Toast.LENGTH_SHORT).show();
 
                 }
                 dialog.dismiss();

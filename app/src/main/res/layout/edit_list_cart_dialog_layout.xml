@@ -75,8 +75,10 @@
                     android:layout_margin="20dp"
                     android:layout_weight="1"
                     android:hint=" Cantidad"
+                    android:maxLength="5"
+                    android:singleLine="true"
+                    android:digits="1234567890 "
                     android:inputType="number"
-
                     android:text="1"
                     android:textAlignment="center" />
 

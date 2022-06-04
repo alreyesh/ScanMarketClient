@@ -118,7 +118,9 @@
                     android:layout_weight="1"
                     android:hint="1"
                     android:inputType="number"
-
+                    android:maxLength="5"
+                    android:singleLine="true"
+                    android:digits="1234567890 "
                     android:textAlignment="center" />
 
             </LinearLayout>
