@@ -8,8 +8,5 @@
         app:showAsAction="always"
         app:actionViewClass="android.widget.SearchView"
         />
-    <item
-        android:id="@+id/action_settings"
-        android:title="Settings"
-        />
+
 </menu>

@@ -9,11 +9,25 @@ public class Util {
     public static String getUserMailPrefs(SharedPreferences preferences){
         return preferences.getString("email","");
     }
-
+    public static String getProduct(SharedPreferences preferences){
+        return preferences.getString("productos","");
+    }
 
     public static String getUserPassPrefs(SharedPreferences preferences){
         return preferences.getString("pass","");
     }
+
+    public static Integer getPurchaseId(SharedPreferences preferences){
+        return preferences.getInt("idp" ,0);
+    }
+    public static String getPurchaseName(SharedPreferences preferences){
+        return preferences.getString("np","");
+    }
+    public static Integer getPurchaseColor(SharedPreferences preferences){
+        return preferences.getInt("cp",0);
+    }
+
+
     public static void removeSharedPreferences(SharedPreferences preferences){
         SharedPreferences.Editor editor = preferences.edit();
         editor.remove("email");

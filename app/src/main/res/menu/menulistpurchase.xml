@@ -6,4 +6,8 @@
         android:icon="@android:drawable/ic_menu_add"
         app:showAsAction="ifRoom"
         />
+    <item
+        android:id="@+id/action_delete_all"
+        android:title="Eliminar Todo"
+        />
 </menu>

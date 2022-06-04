@@ -1,13 +1,13 @@
 package alreyesh.android.scanmarketclient.Model;
 
 public class Product {
-    String id;
-    String codigo;
-    String nombre;
-    String descripcion;
-    String categoria;
-    String imagen;
-    String precio;
+    private String id;
+    private String codigo;
+    private String nombre;
+    private String descripcion;
+    private String categoria;
+    private String imagen;
+    private String precio;
 
     public Product(){}
 

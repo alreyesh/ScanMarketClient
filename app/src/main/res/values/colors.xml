@@ -18,8 +18,8 @@
     <!-- colors  -->
 
     <array name="demo_colors">
-        <item>@color/md_black_1000</item>
-        <item>@color/md_red_500</item>
+
+        <item>@color/md_pink_200</item>
         <item>@color/md_pink_100</item>
         <item>@color/md_purple_500</item>
         <item>@color/md_deep_purple_500</item>
@@ -27,6 +27,7 @@
         <item>@color/md_blue_500</item>
         <item>@color/md_light_blue_500</item>
         <item>@color/md_cyan_500</item>
+        <item>@color/md_cyan_A400</item>
         <item>@color/md_teal_500</item>
         <item>@color/md_green_500</item>
         <item>@color/md_light_green_500</item>
@@ -35,9 +36,8 @@
         <item>@color/md_amber_500</item>
         <item>@color/md_orange_500</item>
         <item>@color/md_deep_orange_500</item>
-        <item>@color/md_brown_500</item>
-        <item>@color/md_grey_500</item>
-        <item>@color/md_blue_grey_500</item>
+        <item>@color/md_red_500</item>
+        <item>@color/md_red_900</item>
     </array>
 
     <color name="md_red_50">#FFEBEE</color>

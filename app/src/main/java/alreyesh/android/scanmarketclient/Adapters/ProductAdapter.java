@@ -2,6 +2,7 @@ package alreyesh.android.scanmarketclient.Adapters;
 
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,27 +15,41 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.viewpager.widget.PagerAdapter;
 
+import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import alreyesh.android.scanmarketclient.Dialog.DetailProductDialog;
+import alreyesh.android.scanmarketclient.Fragments.ListProductFragment;
 import alreyesh.android.scanmarketclient.Model.Product;
 import alreyesh.android.scanmarketclient.R;
 
-public class ProductAdapter extends ArrayAdapter<Product> {
-    Context context;
+public class ProductAdapter extends ArrayAdapter<Product> implements Serializable {
+    private Context context;
+    private int layout;
+    private ArrayList<Product> products;
+    private SharedPreferences prefs;
     public ProductAdapter(@NonNull Context context, ArrayList<Product> products) {
         super(context, 0,products);
         this.context = context;
+
+        this.products = products;
     }
 
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         View listitemView =convertView;
+        prefs =getContext().getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        Gson gson = new Gson();
         if(listitemView == null){
             listitemView = LayoutInflater.from(getContext()).inflate(R.layout.list_product,parent,false);
         }
@@ -48,10 +63,15 @@ public class ProductAdapter extends ArrayAdapter<Product> {
        listitemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String json = gson.toJson(products);
+                editor.putString("productos",json);
+                editor.commit();
+                FragmentManager manager = ((AppCompatActivity)context).getSupportFragmentManager();
+                DetailProductDialog detailProductDialog  = new DetailProductDialog();
 
-         Toast.makeText(getContext(), "Item clicked is : " + products.getId(), Toast.LENGTH_SHORT).show();
+                detailProductDialog.show(manager, "Detalle del Producto");
 
-            }
+             }
         });
 
 

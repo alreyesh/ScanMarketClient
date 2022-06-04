@@ -1,6 +1,8 @@
 package alreyesh.android.scanmarketclient.Fragments;
 
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -44,6 +46,7 @@ public class ListProductFragment extends Fragment {
     private FirebaseFirestore db;
     private GridView gView;
     private ProgressDialog pd;
+    private SharedPreferences prefs;
     public ListProductFragment() {
         // Required empty public constructor
         setHasOptionsMenu(true);
@@ -57,7 +60,7 @@ public class ListProductFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         pd= new ProgressDialog(getContext());
-
+        prefs =getActivity().getSharedPreferences("Preferences", Context.MODE_PRIVATE);
     }
 
     @Override
@@ -66,19 +69,13 @@ public class ListProductFragment extends Fragment {
        View view = inflater.inflate(R.layout.fragment_list_product, container, false);
 
         db = FirebaseFirestore.getInstance();
-        gView = view.findViewById(R.id.am_gv_gridview);
+        gView =(GridView) view.findViewById(R.id.am_gv_gridview);
         productsList = new ArrayList<>();
-        gView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                DetailProductDialog detailProductDialog  = new DetailProductDialog();
-                detailProductDialog.show(getActivity().getSupportFragmentManager() , "Detalle del Producto");
-            }
-        });
+
 
         loadDatainGridView();
 
-
+        registerForContextMenu(gView);
         return view;
     }
 
@@ -108,6 +105,7 @@ public class ListProductFragment extends Fragment {
                     gView.setAdapter(adapter);
                     adapter.notifyDataSetChanged();
                     pd.dismiss();
+
                 }else {
                     // if the snapshot is empty we are displaying a toast message.
                     productsList.clear();
@@ -151,6 +149,7 @@ public class ListProductFragment extends Fragment {
                     ProductAdapter adapter = new ProductAdapter(getActivity(),productsList);
                     gView.setAdapter(adapter);
                     adapter.notifyDataSetChanged();
+
 
                 }else {
                     // if the snapshot is empty we are displaying a toast message.
@@ -200,9 +199,10 @@ public class ListProductFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if(item.getItemId() == R.id.action_settings){
+      /*  if(item.getItemId() == R.id.action_settings){
             Toast.makeText(getContext(),"Settings", Toast.LENGTH_SHORT).show();
-        }
+        }*/
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -232,6 +232,7 @@ public class ListProductFragment extends Fragment {
                     gView.setAdapter(adapter);
                     adapter.notifyDataSetChanged();
                     pd.dismiss();
+
                 }else {
                     // if the snapshot is empty we are displaying a toast message.
                     productsList.clear();

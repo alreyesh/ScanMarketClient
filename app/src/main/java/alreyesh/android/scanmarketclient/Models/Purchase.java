@@ -1,6 +1,8 @@
 package alreyesh.android.scanmarketclient.Models;
 
+
 import alreyesh.android.scanmarketclient.APP.MyApp;
+import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.Required;
@@ -14,20 +16,23 @@ public class Purchase  extends RealmObject {
     private float limit;
 
     private int color;
+
     @Required
     private String emailID;
+    private int icon;
+    private RealmList<Cart> carts;
 
-    public Purchase(){
+public Purchase(){
 
-    }
+}
 
-    public Purchase(String name, float limit, int color,String emailID) {
-
+    public Purchase(String name, float limit, int color, String emailID,int icon) {
         this.id = MyApp.PurchaseID.incrementAndGet();
         this.name = name;
         this.limit = limit;
         this.color = color;
         this.emailID = emailID;
+        this.icon = icon;
     }
 
     public int getId() {
@@ -68,5 +73,18 @@ public class Purchase  extends RealmObject {
 
     public void setEmailID(String emailID) {
         this.emailID = emailID;
+    }
+
+    public int getIcon() {
+        return icon;
+    }
+
+    public void setIcon(int icon) {
+        this.icon = icon;
+    }
+
+
+    public RealmList<Cart> getCarts() {
+        return carts;
     }
 }

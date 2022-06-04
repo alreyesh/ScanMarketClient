@@ -1,22 +1,32 @@
 package alreyesh.android.scanmarketclient.Fragments;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import java.util.List;
 
 import alreyesh.android.scanmarketclient.Adapters.PurchaseAdapter;
 import alreyesh.android.scanmarketclient.Dialog.AddListPurchaseDialog;
@@ -34,7 +44,7 @@ public class ListPurchaseFragment extends Fragment implements RealmChangeListene
     private PurchaseAdapter adapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private FirebaseAuth mAuth;
-
+    private SharedPreferences prefs;
 
     public ListPurchaseFragment() {
         // Required empty public constructor
@@ -56,6 +66,21 @@ public class ListPurchaseFragment extends Fragment implements RealmChangeListene
     }
 
     @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_delete_all:
+                realm.beginTransaction();
+                realm.deleteAll();
+                realm.commitTransaction();
+
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
@@ -65,19 +90,35 @@ public class ListPurchaseFragment extends Fragment implements RealmChangeListene
         String userEmail = user.getEmail();
         Toast.makeText(getActivity(),userEmail,Toast.LENGTH_SHORT).show();
         purchases = realm.where(Purchase.class).equalTo("emailID",userEmail).findAll().sort("id", Sort.DESCENDING);
-
-        purchases.addChangeListener(this);
+        prefs =getActivity().getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+       purchases.addChangeListener(this);
 
         View view = inflater.inflate(R.layout.fragment_list_purchase, container, false);
        recycler=(RecyclerView) view.findViewById(R.id.recyclerView);
        recycler.setHasFixedSize(true);
        recycler.setItemAnimator(new DefaultItemAnimator());
        mLayoutManager = new LinearLayoutManager(getActivity());
-       recycler.setLayoutManager(mLayoutManager);
+        recycler.setLayoutManager(mLayoutManager);
         adapter = new PurchaseAdapter(purchases, R.layout.recycler_view_list_purchase_item,
                 new PurchaseAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(Purchase purchase, int position) {
+                            CartFragment cartFragment = new CartFragment();
+                        /*    FragmentManager fragmentManager = getFragmentManager();
+                            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                            fragmentTransaction.replace(R.id.fragment_list_purchase,purchaseHistoryFragment);
+                            fragmentTransaction.commit();*/
+                        SharedPreferences.Editor editor = prefs.edit();
+                        editor.putInt("idp",purchase.getId());
+                        editor.putString("np",purchase.getName());
+                        editor.putInt("cp",purchase.getColor());
+                            editor.commit();
+
+
+                       getActivity().getSupportFragmentManager()
+                                .beginTransaction().replace(R.id.content_frame,cartFragment)
+                                .commit();
+
 
                     }
                 }, new PurchaseAdapter.OnButtonClickListener() {
@@ -85,9 +126,29 @@ public class ListPurchaseFragment extends Fragment implements RealmChangeListene
             public void onButtonClick(Purchase purchase, int position) {
 
             }
-        });
+        }
+
+
+        );
+
+
+
+
+
         recycler.setAdapter(adapter);
-        purchases.addChangeListener(this);
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.LEFT|ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                deletePurchases(viewHolder.getLayoutPosition());
+            }
+        }).attachToRecyclerView(recycler);
+
+     purchases.addChangeListener(this);
 
         return view;
     }
@@ -96,5 +157,11 @@ public class ListPurchaseFragment extends Fragment implements RealmChangeListene
     public void onChange(RealmResults<Purchase> purchases) {
         adapter.notifyDataSetChanged();
     }
+    private void deletePurchases(int position) {
+        realm.beginTransaction();
+        purchases.get(position).deleteFromRealm();
+        realm.commitTransaction();
+    }
+
 
 }

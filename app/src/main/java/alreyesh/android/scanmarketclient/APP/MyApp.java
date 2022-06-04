@@ -3,8 +3,12 @@ package alreyesh.android.scanmarketclient.APP;
 import android.app.Application;
 import android.os.SystemClock;
 
+
+import com.maltaisn.iconpack.defaultpack.IconPackDefault;
+
 import java.util.concurrent.atomic.AtomicInteger;
 
+import alreyesh.android.scanmarketclient.Models.Cart;
 import alreyesh.android.scanmarketclient.Models.Purchase;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -14,15 +18,19 @@ import io.realm.RealmResults;
 
 public class MyApp extends Application {
     public static AtomicInteger PurchaseID = new AtomicInteger();
+    public static AtomicInteger CartID = new AtomicInteger();
+
     @Override
     public void onCreate() {
         setUpRealmConfig();
         Realm realm = Realm.getDefaultInstance();
         PurchaseID= getIdByTable(realm, Purchase.class);
+        CartID= getIdByTable(realm, Cart.class);
         realm.close();
         SystemClock.sleep(3000);
         super.onCreate();
     }
+    //Realm
     private void setUpRealmConfig(){
         Realm.init(this);
         RealmConfiguration config = new
@@ -35,4 +43,8 @@ public class MyApp extends Application {
         RealmResults<T> results = realm.where(anyClass).findAll();
         return(results.size()>0)? new AtomicInteger(results.max("id").intValue()): new AtomicInteger();
     }
+
+
+
+
 }
