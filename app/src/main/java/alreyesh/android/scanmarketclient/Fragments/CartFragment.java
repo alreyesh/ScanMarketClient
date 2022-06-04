@@ -158,18 +158,17 @@ View v =  inflater.inflate(R.layout.fragment_cart, container, false);
             @Override
             public void onClick(View v) {
                 String countText = cantidad.getText().toString().trim();
-
+                Toast.makeText(getActivity(), countText, Toast.LENGTH_SHORT).show();
               if(countText !=null|| !countText.isEmpty()|| countText != "") {
                     int counInt = Integer.parseInt(countText);
-                  Toast.makeText(getActivity(), counInt+"", Toast.LENGTH_SHORT).show();
-               /*       float proprice = Float.parseFloat(cart.getProductPrice());
+                    float proprice = Float.parseFloat(cart.getProductPrice());
                     float propricefloat = counInt * proprice;
                     String result = String.valueOf(propricefloat);
                     editCart(result,countText,cart);
                     Toast.makeText(getActivity(), "Se Actualizo", Toast.LENGTH_SHORT).show();
 
                 }
-                dialog.dismiss();*/
+                dialog.dismiss();
             }
         });
         btnCancelar.setOnClickListener(new View.OnClickListener() {
