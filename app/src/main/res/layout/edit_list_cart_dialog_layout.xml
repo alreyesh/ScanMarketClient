@@ -104,8 +104,11 @@
                 android:text="Cancelar" />
         </LinearLayout>
     </LinearLayout>
-
-
+    <com.ygoular.numpadview.NumPadView
+        android:id="@+id/num_pad_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
 
 
 </LinearLayout>

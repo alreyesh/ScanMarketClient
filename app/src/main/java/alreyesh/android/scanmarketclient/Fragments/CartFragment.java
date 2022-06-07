@@ -18,15 +18,22 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.text.InputType;
 import android.text.method.DigitsKeyListener;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 
+import com.rowland.cartcounter.view.CartCounterActionView;
 import com.squareup.picasso.Picasso;
+
+import java.util.Scanner;
 
 import alreyesh.android.scanmarketclient.Adapters.CartAdapter;
 import alreyesh.android.scanmarketclient.Adapters.PurchaseAdapter;
@@ -50,11 +57,61 @@ public class CartFragment extends Fragment  implements RealmChangeListener<Realm
     private Realm realm;
     private Purchase purchase;
     private int purchaseId;
+
+    private   CartCounterActionView actionviewCart;
+    private MenuItem menuId;
+    private int cantCart;
+
     public CartFragment() {
         // Required empty public constructor
         setHasOptionsMenu(true);
     }
 
+    @Override
+    public void onPrepareOptionsMenu(@NonNull Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        if (Util.getPurchaseId(prefs) != null){
+            purchaseId = Util.getPurchaseId(prefs);
+            purchase = realm.where(Purchase.class).equalTo("id", purchaseId).findFirst();
+            if(purchase !=null){
+                cantCart = purchase.getCarts().size();
+                actionviewCart = (CartCounterActionView)menuId.getActionView();
+                Toast.makeText(getActivity(),"Cart: "+cantCart, Toast.LENGTH_SHORT).show();
+                actionviewCart.setItemData(menu,menuId);
+                if(cantCart>0)
+                    actionviewCart.setCount(cantCart );
+                else     actionviewCart.setCount(0);
+            }
+
+        }
+
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.menulistpurchase,menu);
+
+        if (Util.getPurchaseId(prefs) != null){
+            purchaseId = Util.getPurchaseId(prefs);
+            purchase = realm.where(Purchase.class).equalTo("id", purchaseId).findFirst();
+            if(purchase !=null){
+                cantCart = purchase.getCarts().size();
+                menuId=  menu.findItem(R.id.action_addcart);
+                actionviewCart = (CartCounterActionView)menuId.getActionView();
+                Toast.makeText(getActivity(),"Cart: "+cantCart, Toast.LENGTH_SHORT).show();
+                actionviewCart.setItemData(menu,menuId);
+                if(cantCart>0)
+                    actionviewCart.setCount(cantCart );
+                else     actionviewCart.setCount(0);
+            }
+
+
+
+        }
+
+        super.onCreateOptionsMenu(menu, inflater);
+
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -65,6 +122,7 @@ public class CartFragment extends Fragment  implements RealmChangeListener<Realm
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        closekeyboard();
 View v =  inflater.inflate(R.layout.fragment_cart, container, false);
         prefs =getContext().getSharedPreferences("Preferences", Context.MODE_PRIVATE);
 
@@ -143,11 +201,21 @@ View v =  inflater.inflate(R.layout.fragment_cart, container, false);
         adapter.notifyDataSetChanged();
 
     }
+    private void closekeyboard(){
+        View view = this.getActivity().getCurrentFocus();
+        InputMethodManager imm = (InputMethodManager)getActivity(). getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
 
+
+
+    }
 
     private void showAlertForEditing(Cart cart){
+
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         View viewInflated = LayoutInflater.from(getContext()).inflate(R.layout.detail_product_layout,null);
+
         builder.setView(viewInflated);
         final ImageView imgView = (ImageView) viewInflated.findViewById(R.id.imgProductView);
         final EditText cantidad = (EditText) viewInflated.findViewById(R.id.editCantidad);
@@ -166,19 +234,23 @@ View v =  inflater.inflate(R.layout.fragment_cart, container, false);
                 Toast.makeText(getActivity(), countText, Toast.LENGTH_SHORT).show();
               if(countText !=null|| !countText.isEmpty()|| countText != "") {
 
-                                    int counInt = Integer.valueOf(countText);
+                  boolean isstringint = isStringInteger(countText, 10);
+                  if(isstringint== true){
+                      int counInt = Integer.valueOf(countText);
+                      float proprice = Float.parseFloat(cart.getProductPrice());
+                      float propricefloat = counInt * proprice;
+                      String result = String.valueOf(propricefloat);
+                      editCart(result,countText,cart);
 
-                                  // Toast.makeText(getActivity(), counInt+"", Toast.LENGTH_SHORT).show();
+                      Toast.makeText(getActivity(), "Se Actualizo", Toast.LENGTH_SHORT).show();
+                      dialog.dismiss();
+                  }else{
+                      Toast.makeText(getActivity(), "Ingresar un numero entero", Toast.LENGTH_SHORT).show();
 
-                                  float proprice = Float.parseFloat(cart.getProductPrice());
-                                  Toast.makeText(getActivity(), proprice+"", Toast.LENGTH_SHORT).show();
-                                    float propricefloat = counInt * proprice;
-                                    String result = String.valueOf(propricefloat);
-                                  //  editCart(result,countText,cart);
-                                    //Toast.makeText(getActivity(), "Se Actualizo", Toast.LENGTH_SHORT).show();
+                  }
 
                 }
-                dialog.dismiss();
+
             }
         });
         btnCancelar.setOnClickListener(new View.OnClickListener() {
@@ -189,6 +261,12 @@ View v =  inflater.inflate(R.layout.fragment_cart, container, false);
         });
 
         dialog.show();
-
     }
+    public static boolean isStringInteger(String stringToCheck, int radix) {
+        Scanner sc = new Scanner(stringToCheck.trim());
+        if(!sc.hasNextInt(radix)) return false;
+        sc.nextInt(radix);
+        return !sc.hasNext();
+    }
+
 }

@@ -7,6 +7,12 @@
         app:showAsAction="ifRoom"
         />
     <item
+        android:id="@+id/action_addcart"
+        android:icon="@drawable/ic_shopping_cart"
+        android:title="Add Cart"
+        app:actionLayout="@layout/menu_cartcount"
+        app:showAsAction="always"></item>
+    <item
         android:id="@+id/action_delete_all"
         android:title="Eliminar Todo"
         />

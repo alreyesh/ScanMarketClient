@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/alrey/.gradle/caches/transforms-3/c02a22428023766e588d5fd57a72badf/transformed/jetified-CartCounter-1.0.0-beta-2/res/layout/menu_cartcount.xml" value="0.1640625" />
         <entry key="..\:/Users/alrey/AndroidStudioProjects/ScanMarketClient/app/src/main/res/drawable-mdpi/btn_dialog.xml" value="0.1625" />
         <entry key="..\:/Users/alrey/AndroidStudioProjects/ScanMarketClient/app/src/main/res/drawable-xhdpi/ic_home_black_24dp.xml" value="0.2555" />
         <entry key="..\:/Users/alrey/AndroidStudioProjects/ScanMarketClient/app/src/main/res/drawable/facebook_size.xml" value="0.2385" />
@@ -37,7 +38,7 @@
         <entry key="..\:/Users/alrey/AndroidStudioProjects/ScanMarketClient/app/src/main/res/layout/toolbar.xml" value="0.10989583333333333" />
         <entry key="..\:/Users/alrey/AndroidStudioProjects/ScanMarketClient/app/src/main/res/menu/menu.xml" value="0.25" />
         <entry key="..\:/Users/alrey/AndroidStudioProjects/ScanMarketClient/app/src/main/res/menu/menu_search.xml" value="0.4" />
-        <entry key="..\:/Users/alrey/AndroidStudioProjects/ScanMarketClient/app/src/main/res/menu/menulistpurchase.xml" value="0.10729166666666666" />
+        <entry key="..\:/Users/alrey/AndroidStudioProjects/ScanMarketClient/app/src/main/res/menu/menulistpurchase.xml" value="0.264" />
         <entry key="..\:/Users/alrey/AndroidStudioProjects/ScanMarketClient/app/src/main/res/menu/menunav.xml" value="0.10989583333333333" />
         <entry key="app/src/main/res/drawable-mdpi/ic_launcher_background.xml" value="0.1" />
         <entry key="app/src/main/res/drawable-mdpi/shape_rectangle.xml" value="0.1" />

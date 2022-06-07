@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId "alreyesh.android.scanmarketclient"
-        minSdk 21
+        minSdk 23
         targetSdk 30
         versionCode 1
         versionName "1.0"
@@ -103,9 +103,12 @@ dependencies {
     implementation 'com.maltaisn:icondialog:2.0.2'
     implementation "com.maltaisn:iconpack-default:1.1.0"
     implementation 'com.squareup.picasso:picasso:2.8'
+    implementation 'com.github.yoanngoular:numpadview:1.0.0'
     //ButterKnife
     implementation 'com.jakewharton:butterknife:10.2.3'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.3'
+    //Cart
+    implementation 'com.rowland.cartcounter:CartCounter:1.0.0-beta-2'
     //Chart Graficos estadisticos
     //implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     //implementation 'com.emredavarci:CircleProgressBar:1.0.8'

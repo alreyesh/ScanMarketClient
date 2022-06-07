@@ -3,9 +3,11 @@ package alreyesh.android.scanmarketclient.Fragments;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -39,6 +41,7 @@ import alreyesh.android.scanmarketclient.Dialog.AddListPurchaseDialog;
 import alreyesh.android.scanmarketclient.Dialog.DetailProductDialog;
 import alreyesh.android.scanmarketclient.Model.Product;
 import alreyesh.android.scanmarketclient.R;
+import alreyesh.android.scanmarketclient.Utils.Util;
 
 
 public class ListProductFragment extends Fragment {
@@ -61,6 +64,15 @@ public class ListProductFragment extends Fragment {
         setHasOptionsMenu(true);
         pd= new ProgressDialog(getContext());
         prefs =getActivity().getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+
+
+        Integer colorparse = Util.getPurchaseColor(prefs);
+        if(colorparse !=null){
+            ((AppCompatActivity)getActivity()).getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colorparse));
+        }else{
+            ((AppCompatActivity)getActivity()).getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary,null)));
+        }
+
     }
 
     @Override

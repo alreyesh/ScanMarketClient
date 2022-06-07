@@ -23,8 +23,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.rowland.cartcounter.view.CartCounterActionView;
 
 import java.util.List;
 
@@ -32,6 +34,7 @@ import alreyesh.android.scanmarketclient.Adapters.PurchaseAdapter;
 import alreyesh.android.scanmarketclient.Dialog.AddListPurchaseDialog;
 import alreyesh.android.scanmarketclient.Models.Purchase;
 import alreyesh.android.scanmarketclient.R;
+import alreyesh.android.scanmarketclient.Utils.Util;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
@@ -45,7 +48,11 @@ public class ListPurchaseFragment extends Fragment implements RealmChangeListene
     private RecyclerView.LayoutManager mLayoutManager;
     private FirebaseAuth mAuth;
     private SharedPreferences prefs;
-
+    private   CartCounterActionView actionviewCart;
+    private  MenuItem menuId;
+    private int cantCart;
+    private int purchaseId;
+    private Purchase purchase;
     public ListPurchaseFragment() {
         // Required empty public constructor
         setHasOptionsMenu(true);
@@ -60,8 +67,44 @@ public class ListPurchaseFragment extends Fragment implements RealmChangeListene
     }
 
     @Override
+    public void onPrepareOptionsMenu(@NonNull Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        if (Util.getPurchaseId(prefs) != null){
+            purchaseId = Util.getPurchaseId(prefs);
+        purchase = realm.where(Purchase.class).equalTo("id", purchaseId).findFirst();
+                    if(purchase !=null){
+                    cantCart = purchase.getCarts().size();
+                    actionviewCart = (CartCounterActionView)menuId.getActionView();
+                    Toast.makeText(getActivity(),"Cart: "+cantCart, Toast.LENGTH_SHORT).show();
+                    actionviewCart.setItemData(menu,menuId);
+                    if(cantCart>0)
+                        actionviewCart.setCount(cantCart );
+                    else     actionviewCart.setCount(0);
+                    }
+            }
+
+
+
+    }
+
+    @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.menulistpurchase,menu);
+        if (Util.getPurchaseId(prefs) != null){
+            purchaseId = Util.getPurchaseId(prefs);
+            purchase = realm.where(Purchase.class).equalTo("id", purchaseId).findFirst();
+            if(purchase !=null){
+                cantCart = purchase.getCarts().size();
+                menuId=  menu.findItem(R.id.action_addcart);
+                actionviewCart = (CartCounterActionView)menuId.getActionView();
+                Toast.makeText(getActivity(),"Cart: "+cantCart, Toast.LENGTH_SHORT).show();
+                actionviewCart.setItemData(menu,menuId);
+                if(cantCart>0)
+                    actionviewCart.setCount(cantCart );
+                else     actionviewCart.setCount(0);
+            }
+        }
+
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -113,8 +156,8 @@ public class ListPurchaseFragment extends Fragment implements RealmChangeListene
                         editor.putString("np",purchase.getName());
                         editor.putInt("cp",purchase.getColor());
                             editor.commit();
-
-
+                        cantCart  =purchase.getCarts().size();
+                      getActivity().invalidateOptionsMenu();
                        getActivity().getSupportFragmentManager()
                                 .beginTransaction().replace(R.id.content_frame,cartFragment)
                                 .commit();
