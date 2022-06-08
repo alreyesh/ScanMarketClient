@@ -27,12 +27,15 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
 import com.rowland.cartcounter.view.CartCounterActionView;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import alreyesh.android.scanmarketclient.Adapters.CartAdapter;
@@ -61,7 +64,7 @@ public class CartFragment extends Fragment  implements RealmChangeListener<Realm
     private   CartCounterActionView actionviewCart;
     private MenuItem menuId;
     private int cantCart;
-
+    private   float totalCart;
     public CartFragment() {
         // Required empty public constructor
         setHasOptionsMenu(true);
@@ -70,7 +73,7 @@ public class CartFragment extends Fragment  implements RealmChangeListener<Realm
     @Override
     public void onPrepareOptionsMenu(@NonNull Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        if (Util.getPurchaseId(prefs) != null){
+  /*      if (Util.getPurchaseId(prefs) != null){
             purchaseId = Util.getPurchaseId(prefs);
             purchase = realm.where(Purchase.class).equalTo("id", purchaseId).findFirst();
             if(purchase !=null){
@@ -84,12 +87,24 @@ public class CartFragment extends Fragment  implements RealmChangeListener<Realm
             }
 
         }
+*/
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(item.getItemId() == R.id.action_delete_all){
+            deleteCarts();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater.inflate(R.menu.menulistpurchase,menu);
+        menu.findItem(R.id.add_list_purchase).setVisible(false);
+        menu.findItem(R.id.action_search).setVisible(false);
+        menu.findItem(R.id.action_delete_all).setVisible(true);
+
+   /*     inflater.inflate(R.menu.menulistpurchase,menu);
 
         if (Util.getPurchaseId(prefs) != null){
             purchaseId = Util.getPurchaseId(prefs);
@@ -108,7 +123,7 @@ public class CartFragment extends Fragment  implements RealmChangeListener<Realm
 
 
         }
-
+*/
         super.onCreateOptionsMenu(menu, inflater);
 
     }
@@ -122,7 +137,7 @@ public class CartFragment extends Fragment  implements RealmChangeListener<Realm
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        closekeyboard();
+
 View v =  inflater.inflate(R.layout.fragment_cart, container, false);
         prefs =getContext().getSharedPreferences("Preferences", Context.MODE_PRIVATE);
 
@@ -132,10 +147,34 @@ View v =  inflater.inflate(R.layout.fragment_cart, container, false);
         Toast.makeText(getActivity(), titulo, Toast.LENGTH_SHORT).show();
 
         realm = Realm.getDefaultInstance();
-        if(Util.getPurchaseId(prefs) != null)
+        if(Util.getPurchaseId(prefs) != null){
             purchaseId =  Util.getPurchaseId(prefs);
-        purchase = realm.where(Purchase.class).equalTo("id",purchaseId).findFirst();
-        carts = purchase.getCarts();
+            purchase = realm.where(Purchase.class).equalTo("id",purchaseId).findFirst();
+
+            if(purchase != null){
+                carts = purchase.getCarts();
+
+                List<Cart> list = new ArrayList<Cart>();
+                list.addAll(carts);
+                for(int i =0; i<list.size();i++){
+
+                    String subtotal =  list.get(i).getSubPrice();
+                    float parsesubtotal = Float.parseFloat(subtotal);
+                    totalCart+= parsesubtotal;
+                }
+
+                getActivity().invalidateOptionsMenu();
+                Toast.makeText(getActivity(),"Total: "+totalCart, Toast.LENGTH_SHORT).show();
+
+
+
+            }
+
+        }
+
+
+
+
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(titulo);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colorparse));
         recycler=(RecyclerView) v.findViewById(R.id.recyclerViewCart);
@@ -184,12 +223,15 @@ View v =  inflater.inflate(R.layout.fragment_cart, container, false);
         realm.beginTransaction();
         carts.get(position).deleteFromRealm();
         realm.commitTransaction();
+        getActivity().invalidateOptionsMenu();
     }
     private void deleteCarts(){
         realm.beginTransaction();
         // elimina todas las notas de esa board
         purchase.getCarts().deleteAllFromRealm();
         realm.commitTransaction();
+        getActivity().invalidateOptionsMenu();
+        adapter.notifyDataSetChanged();
     }
 
     private void editCart(String subprice,String count,Cart  cart){
@@ -199,16 +241,9 @@ View v =  inflater.inflate(R.layout.fragment_cart, container, false);
         realm.copyToRealmOrUpdate(cart);
         realm.commitTransaction();
         adapter.notifyDataSetChanged();
-
+        getActivity().invalidateOptionsMenu();
     }
-    private void closekeyboard(){
-        View view = this.getActivity().getCurrentFocus();
-        InputMethodManager imm = (InputMethodManager)getActivity(). getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
 
-
-
-    }
 
     private void showAlertForEditing(Cart cart){
 
@@ -221,7 +256,13 @@ View v =  inflater.inflate(R.layout.fragment_cart, container, false);
         final EditText cantidad = (EditText) viewInflated.findViewById(R.id.editCantidad);
         final Button btnRegister =(Button)viewInflated.findViewById(R.id.btnRegistrarEdit) ;
         final Button btnCancelar =(Button)viewInflated.findViewById(R.id.btnCancelarEdit) ;
+        final TextView txtCodidgod = (TextView) viewInflated.findViewById(R.id.textViewCod);
+        final TextView txtNombre = (TextView) viewInflated.findViewById(R.id.textViewName);
+        final TextView txtPrecioprod = (TextView) viewInflated.findViewById(R.id.textViewPrice);
         cantidad.setHint(cart.getCountProduct());
+        txtNombre.setText(cart.getProductName());
+        txtCodidgod.setText("sku: "+cart.getProductID());
+        txtPrecioprod.setText("S/. "+cart.getProductPrice()+" c/u");
         cantidad.setInputType(InputType.TYPE_CLASS_NUMBER );
         cantidad.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
         cantidad.setSingleLine(true);
@@ -237,13 +278,19 @@ View v =  inflater.inflate(R.layout.fragment_cart, container, false);
                   boolean isstringint = isStringInteger(countText, 10);
                   if(isstringint== true){
                       int counInt = Integer.valueOf(countText);
-                      float proprice = Float.parseFloat(cart.getProductPrice());
-                      float propricefloat = counInt * proprice;
-                      String result = String.valueOf(propricefloat);
-                      editCart(result,countText,cart);
+                        if(counInt >0){
+                            float proprice = Float.parseFloat(cart.getProductPrice());
+                            float propricefloat = counInt * proprice;
+                            String result = String.valueOf(propricefloat);
+                            editCart(result,countText,cart);
 
-                      Toast.makeText(getActivity(), "Se Actualizo", Toast.LENGTH_SHORT).show();
-                      dialog.dismiss();
+                            Toast.makeText(getActivity(), "Se Actualizo", Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                        }else{
+                            Toast.makeText(getActivity(), "Ingresar valor mayor a 0", Toast.LENGTH_SHORT).show();
+
+                        }
+
                   }else{
                       Toast.makeText(getActivity(), "Ingresar un numero entero", Toast.LENGTH_SHORT).show();
 

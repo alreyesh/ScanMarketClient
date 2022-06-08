@@ -104,7 +104,7 @@ public class DetailProductDialog  extends DialogFragment{
                 RealmList<Cart> carts = purchase.getCarts();
                 Cart verCart = carts.where().equalTo("productName", nombre).findFirst();
                 if (verCart != null) {
-                    editCountProduct.setText(verCart.getCountProduct());
+                    editCountProduct.setHint(verCart.getCountProduct());
                     countDefault = verCart.getCountProduct();
                 }
             }
@@ -238,7 +238,8 @@ public class DetailProductDialog  extends DialogFragment{
 
                             }
                         }
-
+                        //Actualización del menu bar
+                        getActivity().invalidateOptionsMenu();
 
                     } else {
                         Toast.makeText(getActivity(), "Seleccione una lista de Compra", Toast.LENGTH_SHORT).show();

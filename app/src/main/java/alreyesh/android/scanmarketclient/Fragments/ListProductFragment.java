@@ -185,7 +185,10 @@ public class ListProductFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        menu.findItem(R.id.add_list_purchase).setVisible(false);
+        menu.findItem(R.id.action_delete_all).setVisible(false);
 
+        /*
         inflater.inflate(R.menu.menu_search,menu);
         MenuItem item = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
@@ -206,6 +209,8 @@ public class ListProductFragment extends Fragment {
                 return false;
             }
         });
+        */
+
        super.onCreateOptionsMenu(menu, inflater);
     }
 

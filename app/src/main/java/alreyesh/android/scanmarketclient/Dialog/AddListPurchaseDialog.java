@@ -31,6 +31,8 @@ import com.maltaisn.icondialog.Icon;
 import com.maltaisn.icondialog.IconDialog;
 import com.maltaisn.icondialog.IconView;
 
+import java.util.Scanner;
+
 import alreyesh.android.scanmarketclient.Models.Purchase;
 import alreyesh.android.scanmarketclient.R;
 import alreyesh.android.scanmarketclient.Utils.Util;
@@ -99,7 +101,7 @@ public class AddListPurchaseDialog extends DialogFragment implements IconDialog.
                 if(isValidDataForNewPurchase()){
                     String name =  editTextName.getText().toString();
                     String limit = editTextLimit.getText().toString();
-                    float parseLimit = Float.parseFloat(limit);
+
                     String email = Util.getUserMailPrefs(prefs);
                     Toast.makeText(getActivity(),email, Toast.LENGTH_SHORT).show();
                     FirebaseUser user = mAuth.getCurrentUser();
@@ -109,12 +111,35 @@ public class AddListPurchaseDialog extends DialogFragment implements IconDialog.
                     else if(limit == null || limit.isEmpty()){Toast.makeText(getActivity(),"Ingrese limite de compra",Toast.LENGTH_SHORT).show();}
                     else{
                        if(color == 0 ){ color= R.color.md_green_100;}
-                        Purchase purchase = new Purchase(name,parseLimit,color,userEmail,selectedIcon.getId());
-                      if(!isCreation) purchase.setId(purchaseId);
-                        realm.beginTransaction();
-                        realm.copyToRealmOrUpdate(purchase);
-                        realm.commitTransaction();
-                        dismiss();
+                       boolean isLimitFloat = isStringFloat(limit);
+                       if(isLimitFloat == true){
+                           float parseLimit = Float.parseFloat(limit);
+                           if(parseLimit >0.0) {
+                               Purchase purchase;
+                               if(selectedIcon != null){
+                                   purchase = new Purchase(name,parseLimit,color,userEmail,selectedIcon.getId());
+
+                               }else{
+                                   purchase =new Purchase(name,parseLimit,color,userEmail,471);
+
+                               }
+                               if(!isCreation) purchase.setId(purchaseId);
+                               realm.beginTransaction();
+                               realm.copyToRealmOrUpdate(purchase);
+                               realm.commitTransaction();
+                               dismiss();
+                           }else{
+                               Toast.makeText(getActivity(),"Ingresar  un valor de limite  mayor a 0.0",Toast.LENGTH_SHORT).show();
+
+                           }
+
+
+                       }else{
+                           Toast.makeText(getActivity(),"Ingresar  un valor de limite, numero decimal y mayor a 0.0",Toast.LENGTH_SHORT).show();
+                       }
+
+
+
                     }
                 }else{
                     Toast.makeText(getActivity(), "The data is not valid, please check the fields again", Toast.LENGTH_SHORT).show();
@@ -234,4 +259,11 @@ public class AddListPurchaseDialog extends DialogFragment implements IconDialog.
         selectedIcon = icon;
         Toast.makeText(getActivity(), selectedIcon+"", Toast.LENGTH_SHORT).show();
     }
+    public static boolean isStringFloat(String stringToCheck){
+        Scanner sc = new Scanner(stringToCheck.trim());
+        boolean is =  sc.hasNextFloat();
+        if(is == false) return false;
+        return true;
+    }
+
 }

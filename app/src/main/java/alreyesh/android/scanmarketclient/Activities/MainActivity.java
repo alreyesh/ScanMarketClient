@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -33,14 +34,22 @@ import com.google.firebase.auth.FirebaseUser;
 import com.rowland.cartcounter.view.CartCounterActionView;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import alreyesh.android.scanmarketclient.Dialog.AddListPurchaseDialog;
 import alreyesh.android.scanmarketclient.Fragments.AccountInfoFragment;
+import alreyesh.android.scanmarketclient.Fragments.CartFragment;
 import alreyesh.android.scanmarketclient.Fragments.HomeFragment;
 import alreyesh.android.scanmarketclient.Fragments.ListProductFragment;
 import alreyesh.android.scanmarketclient.Fragments.ListPurchaseFragment;
 import alreyesh.android.scanmarketclient.Fragments.PurchaseHistoryFragment;
+import alreyesh.android.scanmarketclient.Models.Cart;
+import alreyesh.android.scanmarketclient.Models.Purchase;
 import alreyesh.android.scanmarketclient.R;
 import alreyesh.android.scanmarketclient.Utils.Util;
+import io.realm.Realm;
+import io.realm.RealmList;
 
 public class MainActivity extends AppCompatActivity {
     private SharedPreferences prefs;
@@ -53,6 +62,14 @@ public class MainActivity extends AppCompatActivity {
 
     //google
     private GoogleSignInClient mGoogleSignInClient;
+//Cart
+private Purchase purchase;
+    private int purchaseId;
+    private RealmList<Cart> carts;
+    private   CartCounterActionView actionviewCart;
+    private MenuItem menuId,totalId;
+    private int cantCart;
+    private Realm realm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setToolbar();
         createRequest();
+        realm = Realm.getDefaultInstance();
         drawerLayout= (DrawerLayout)findViewById(R.id.drawer_layout);
         navigationView=(NavigationView) findViewById(R.id.navview);
         txtUsername = (TextView)drawerLayout.findViewById(R.id.username);
@@ -185,8 +203,52 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+      getMenuInflater().inflate(R.menu.menulistpurchase, menu);
+        menu.findItem(R.id.action_search).setVisible(false);
+        menu.findItem(R.id.action_delete_all).setVisible(false);
+        menu.findItem(R.id.add_list_purchase).setVisible(false);
+        menu.findItem(R.id.shopping_total).setVisible(false);
+        if (Util.getPurchaseId(prefs) != null){
+            purchaseId = Util.getPurchaseId(prefs);
+            Integer colorparse = Util.getPurchaseColor(prefs);
+            purchase = realm.where(Purchase.class).equalTo("id", purchaseId).findFirst();
+            menuId=  menu.findItem(R.id.action_addcart);
+            totalId = menu.findItem(R.id.shopping_total);
+            actionviewCart = (CartCounterActionView)menuId.getActionView();
+            if(purchase !=null){
+                cantCart = purchase.getCarts().size();
 
-       // getMenuInflater().inflate(R.menu.menu, menu);
+                Toast.makeText(getApplication(),"Cart: "+cantCart, Toast.LENGTH_SHORT).show();
+                actionviewCart.setItemData(menu,menuId);
+                if(cantCart>0) {
+                    menu.findItem(R.id.action_addcart).setVisible(true);
+                    menu.findItem(R.id.shopping_total).setVisible(true);
+                    actionviewCart.setCount(cantCart);
+                    carts = purchase.getCarts();
+                    List<Cart> list = new ArrayList<Cart>();
+                    list.addAll(carts);
+                    float totalCart = 0;
+                    for(int i =0; i<list.size();i++){
+
+                        String subtotal =  list.get(i).getSubPrice();
+                        float parsesubtotal = Float.parseFloat(subtotal);
+                        totalCart+= parsesubtotal;
+                    }
+
+
+                    totalId.setTitle("S/. "+totalCart);
+                     getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colorparse));
+                }
+                else   {
+                    menu.findItem(R.id.action_addcart).setVisible(false);
+                    actionviewCart.setCount(0);
+                }
+            }else{
+                menu.findItem(R.id.action_addcart).setVisible(false);
+                actionviewCart.setCount(0);
+            }
+
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -208,7 +270,12 @@ public class MainActivity extends AppCompatActivity {
                 AddListPurchaseDialog addListPurchaseDialog = new AddListPurchaseDialog();
                 addListPurchaseDialog.show(getSupportFragmentManager(),"addListPurchase");
                 return true;
-
+            case R.id.action_addcart:
+                CartFragment cartFragment = new CartFragment();
+                 getSupportFragmentManager()
+                        .beginTransaction().replace(R.id.content_frame,cartFragment)
+                        .commit();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

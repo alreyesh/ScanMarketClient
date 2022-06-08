@@ -29,6 +29,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.rowland.cartcounter.view.CartCounterActionView;
 
 import java.util.List;
+import java.util.Scanner;
 
 import alreyesh.android.scanmarketclient.Adapters.PurchaseAdapter;
 import alreyesh.android.scanmarketclient.Dialog.AddListPurchaseDialog;
@@ -69,7 +70,7 @@ public class ListPurchaseFragment extends Fragment implements RealmChangeListene
     @Override
     public void onPrepareOptionsMenu(@NonNull Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        if (Util.getPurchaseId(prefs) != null){
+    /*      if (Util.getPurchaseId(prefs) != null){
             purchaseId = Util.getPurchaseId(prefs);
         purchase = realm.where(Purchase.class).equalTo("id", purchaseId).findFirst();
                     if(purchase !=null){
@@ -84,12 +85,15 @@ public class ListPurchaseFragment extends Fragment implements RealmChangeListene
             }
 
 
-
+*/
     }
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater.inflate(R.menu.menulistpurchase,menu);
+        menu.findItem(R.id.action_search).setVisible(false);
+        menu.findItem(R.id.add_list_purchase).setVisible(true);
+        menu.findItem(R.id.action_delete_all).setVisible(true);
+    /*    inflater.inflate(R.menu.menulistpurchase,menu);
         if (Util.getPurchaseId(prefs) != null){
             purchaseId = Util.getPurchaseId(prefs);
             purchase = realm.where(Purchase.class).equalTo("id", purchaseId).findFirst();
@@ -104,7 +108,7 @@ public class ListPurchaseFragment extends Fragment implements RealmChangeListene
                 else     actionviewCart.setCount(0);
             }
         }
-
+*/
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -115,7 +119,8 @@ public class ListPurchaseFragment extends Fragment implements RealmChangeListene
                 realm.beginTransaction();
                 realm.deleteAll();
                 realm.commitTransaction();
-
+                //Actualizar Menu
+                getActivity().invalidateOptionsMenu();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -204,7 +209,7 @@ public class ListPurchaseFragment extends Fragment implements RealmChangeListene
         realm.beginTransaction();
         purchases.get(position).deleteFromRealm();
         realm.commitTransaction();
+        getActivity().invalidateOptionsMenu();
     }
-
 
 }

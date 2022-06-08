@@ -75,8 +75,8 @@ public class CartAdapter  extends RecyclerView.Adapter<CartAdapter.ViewHolder>{
         }
         public void bind(final Cart cart, final CartAdapter.OnItemClickListener itemListener, final CartAdapter.OnButtonClickListener btnListener ){
             textViewName.setText(cart.getProductName());
-            textViewSubPrice.setText(cart.getSubPrice());
-            textViewCount.setText(cart.getCountProduct());
+            textViewSubPrice.setText("S/. "+cart.getSubPrice());
+            textViewCount.setText(cart.getCountProduct() +" und");
             Picasso.get().load(cart.getImagenProduct()).fit().into(imgProductView);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

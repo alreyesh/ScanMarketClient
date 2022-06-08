@@ -26,6 +26,9 @@ public class Util {
     public static Integer getPurchaseColor(SharedPreferences preferences){
         return preferences.getInt("cp",0);
     }
+    public static String getTotalCart(SharedPreferences preferences){
+        return preferences.getString("total","");
+    }
 
 
     public static void removeSharedPreferences(SharedPreferences preferences){

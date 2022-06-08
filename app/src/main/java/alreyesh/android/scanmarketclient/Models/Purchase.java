@@ -22,6 +22,7 @@ public class Purchase  extends RealmObject {
     private int icon;
     private RealmList<Cart> carts;
 
+
 public Purchase(){
 
 }
@@ -33,6 +34,7 @@ public Purchase(){
         this.color = color;
         this.emailID = emailID;
         this.icon = icon;
+
     }
 
     public int getId() {
@@ -87,4 +89,6 @@ public Purchase(){
     public RealmList<Cart> getCarts() {
         return carts;
     }
+
+
 }
