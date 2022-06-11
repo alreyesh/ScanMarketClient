@@ -44,6 +44,7 @@ import alreyesh.android.scanmarketclient.Fragments.HomeFragment;
 import alreyesh.android.scanmarketclient.Fragments.ListProductFragment;
 import alreyesh.android.scanmarketclient.Fragments.ListPurchaseFragment;
 import alreyesh.android.scanmarketclient.Fragments.PurchaseHistoryFragment;
+import alreyesh.android.scanmarketclient.Fragments.RecommentFragment;
 import alreyesh.android.scanmarketclient.Models.Cart;
 import alreyesh.android.scanmarketclient.Models.Purchase;
 import alreyesh.android.scanmarketclient.R;
@@ -194,8 +195,31 @@ private Purchase purchase;
                 return true;
             }
         });
+        Bundle bundle = getIntent().getExtras();
+        if(bundle != null){
+            String resultado= getIntent().getExtras().getString("cameras");
+            if(resultado== null) {
+                Toast.makeText(this, "nada de nada ", Toast.LENGTH_SHORT).show();
+            }else{
+                String resutado = getIntent().getExtras().getString("cameras");
+                Toast.makeText(this, "en el intent salio:"+resutado, Toast.LENGTH_SHORT).show();
 
-        //google
+
+                    getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new RecommentFragment()).commit();
+
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
 
 
 

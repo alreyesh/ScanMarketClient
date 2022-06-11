@@ -29,6 +29,9 @@ public class Util {
     public static String getTotalCart(SharedPreferences preferences){
         return preferences.getString("total","");
     }
+    public static String getProductFromCamera(SharedPreferences preferences){
+        return preferences.getString("productcamera","");
+    }
 
 
     public static void removeSharedPreferences(SharedPreferences preferences){

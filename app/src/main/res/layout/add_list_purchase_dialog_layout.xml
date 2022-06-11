@@ -24,17 +24,19 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         />
+
     <EditText
         android:id="@+id/editLimitList"
-        android:hint="Establecer limite de Compra"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:inputType="number"
+        android:layout_marginBottom="20dp"
+        android:hint="Establecer limite de Compra"
 
-        />
+        android:inputType="number"
+        android:selectAllOnFocus="false"
+        android:singleLine="true" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

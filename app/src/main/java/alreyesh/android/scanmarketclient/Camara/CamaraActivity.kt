@@ -1,17 +1,25 @@
 package alreyesh.android.scanmarketclient.Camara
 
+import alreyesh.android.scanmarketclient.Activities.MainActivity
+import alreyesh.android.scanmarketclient.Fragments.RecommentFragment
+import alreyesh.android.scanmarketclient.R
+import alreyesh.android.scanmarketclient.databinding.ActivityCameraBinding
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.graphics.RectF
 import android.os.Bundle
+import android.provider.AlarmClock.EXTRA_MESSAGE
 import android.util.Log
 import android.util.Size
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.AspectRatio
 import androidx.camera.core.CameraSelector
@@ -20,8 +28,11 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
-import alreyesh.android.scanmarketclient.databinding.ActivityCameraBinding
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.nnapi.NnApiDelegate
@@ -36,7 +47,6 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import kotlin.math.min
 import kotlin.random.Random
-
 
 
 class CamaraActivity : AppCompatActivity(){
@@ -88,6 +98,9 @@ class CamaraActivity : AppCompatActivity(){
         Size(inputShape[2], inputShape[1]) // Order of axis is: {1, height, width, 3}
     }
 
+    private var result:String = ""
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activityCameraBinding = ActivityCameraBinding.inflate(layoutInflater)
@@ -114,6 +127,59 @@ class CamaraActivity : AppCompatActivity(){
                     bitmapBuffer, 0, 0, bitmapBuffer.width, bitmapBuffer.height, matrix, true)
                 activityCameraBinding.imagePredicted.setImageBitmap(uprightImage)
                 activityCameraBinding.imagePredicted.visibility = View.VISIBLE
+
+                if(result !=null){
+
+                    val db = Firebase.firestore
+                    var firestore: FirebaseFirestore
+                    firestore = FirebaseFirestore.getInstance()
+                    firestore.collection("productos").whereEqualTo("nombre",result)
+                        .get()
+                        .addOnSuccessListener {
+                            if(it.documents.size >0){
+                                Toast.makeText(this, "Producto en la base de datos:  ${it.documents.get(0).data?.get("nombre") }  ", Toast.LENGTH_SHORT).show()
+                                val sharedPreferences: SharedPreferences = this.getSharedPreferences("Preferences",Context.MODE_PRIVATE)
+                                val editor: SharedPreferences.Editor =  sharedPreferences.edit()
+                                editor.putString("productcamera",result)
+                                editor.commit()
+                                val intent = Intent(this, MainActivity::class.java)
+                                val bundle = Bundle()
+                                bundle.putString("cameras","productodecamera")
+
+                                intent.putExtras(bundle)
+
+                                startActivity(intent)
+                                /*
+                                val fragment  = RecommentFragment()
+                                val fragmentManager = supportFragmentManager
+                                fragmentManager
+                                    .beginTransaction().replace(R.id.content_frame, fragment)
+                                    .commit()
+                                    */
+                            }else{
+                                Toast.makeText(this, "No existe en la base de datos", Toast.LENGTH_SHORT).show()
+
+                            }
+                           }
+                        .addOnFailureListener{
+                            it.printStackTrace()
+                            Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show()
+                        }
+
+
+                 /*   if(producto !=null){
+                        Toast.makeText(this,"Existe en la bd:  "+ result, Toast.LENGTH_SHORT).show()
+                    }else{
+                        Toast.makeText(this,"NO Existe en la bd:"+ result, Toast.LENGTH_SHORT).show()
+                    }
+                    */
+                }else{
+
+                }
+
+
+
+
             }
 
             // Re-enable camera controls
@@ -238,7 +304,7 @@ class CamaraActivity : AppCompatActivity(){
             width = min(activityCameraBinding.viewFinder.width, location.right.toInt() - location.left.toInt())
             height = min(activityCameraBinding.viewFinder.height, location.bottom.toInt() - location.top.toInt())
         }
-
+        result=prediction.label
         // Make sure all UI elements are visible
         activityCameraBinding.boxPrediction.visibility = View.VISIBLE
         activityCameraBinding.textPrediction.visibility = View.VISIBLE
