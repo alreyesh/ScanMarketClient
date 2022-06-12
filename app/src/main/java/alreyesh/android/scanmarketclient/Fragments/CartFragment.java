@@ -224,6 +224,7 @@ View v =  inflater.inflate(R.layout.fragment_cart, container, false);
         carts.get(position).deleteFromRealm();
         realm.commitTransaction();
         getActivity().invalidateOptionsMenu();
+        adapter.notifyDataSetChanged();
     }
     private void deleteCarts(){
         realm.beginTransaction();

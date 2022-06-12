@@ -99,7 +99,7 @@ public class ListProductFragment extends Fragment {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots)  {
                 if (!queryDocumentSnapshots.isEmpty()){
-                    productsList.clear();
+                  if(productsList !=null) productsList.clear();
                     List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
                     for (DocumentSnapshot d : list) {
 

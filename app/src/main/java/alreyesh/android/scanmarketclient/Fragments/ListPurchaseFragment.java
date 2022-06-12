@@ -210,6 +210,7 @@ public class ListPurchaseFragment extends Fragment implements RealmChangeListene
         purchases.get(position).deleteFromRealm();
         realm.commitTransaction();
         getActivity().invalidateOptionsMenu();
+        adapter.notifyDataSetChanged();
     }
 
 }

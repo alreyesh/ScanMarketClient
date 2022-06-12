@@ -2,6 +2,7 @@ package alreyesh.android.scanmarketclient.Camara
 
 import alreyesh.android.scanmarketclient.Activities.MainActivity
 import alreyesh.android.scanmarketclient.Fragments.RecommentFragment
+import alreyesh.android.scanmarketclient.Model.Product
 import alreyesh.android.scanmarketclient.R
 import alreyesh.android.scanmarketclient.databinding.ActivityCameraBinding
 import android.Manifest
@@ -137,18 +138,31 @@ class CamaraActivity : AppCompatActivity(){
                         .get()
                         .addOnSuccessListener {
                             if(it.documents.size >0){
+
                                 Toast.makeText(this, "Producto en la base de datos:  ${it.documents.get(0).data?.get("nombre") }  ", Toast.LENGTH_SHORT).show()
                                 val sharedPreferences: SharedPreferences = this.getSharedPreferences("Preferences",Context.MODE_PRIVATE)
                                 val editor: SharedPreferences.Editor =  sharedPreferences.edit()
-                                editor.putString("productcamera",result)
-                                editor.commit()
-                                val intent = Intent(this, MainActivity::class.java)
-                                val bundle = Bundle()
-                                bundle.putString("cameras","productodecamera")
+                                val codigo:String?= it.documents.get(0).get("codigo").toString()
+                                val imagen:String?= it.documents.get(0).get("imagen").toString()
+                                val precio:String?= it.documents.get(0).get("precio").toString()
 
-                                intent.putExtras(bundle)
 
-                                startActivity(intent)
+                                if(codigo !=null){
+                                    editor.putString("productcamera",result)
+                                    editor.putString("codigocamera",codigo)
+                                    editor.putString("imagencamera",imagen)
+                                    editor.putString("preciocamera",precio)
+                                    editor.commit()
+                                    val intent = Intent(this, MainActivity::class.java)
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                                    val bundle = Bundle()
+                                    bundle.putString("cameras","productodecamera")
+
+                                    intent.putExtras(bundle)
+
+                                    startActivity(intent)
+                                }
+
                                 /*
                                 val fragment  = RecommentFragment()
                                 val fragmentManager = supportFragmentManager

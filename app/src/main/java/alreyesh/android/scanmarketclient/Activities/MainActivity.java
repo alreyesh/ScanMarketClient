@@ -37,6 +37,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
+import alreyesh.android.scanmarketclient.Camara.CamaraActivity;
 import alreyesh.android.scanmarketclient.Dialog.AddListPurchaseDialog;
 import alreyesh.android.scanmarketclient.Fragments.AccountInfoFragment;
 import alreyesh.android.scanmarketclient.Fragments.CartFragment;
@@ -299,6 +300,10 @@ private Purchase purchase;
                  getSupportFragmentManager()
                         .beginTransaction().replace(R.id.content_frame,cartFragment)
                         .commit();
+                return true;
+            case R.id.action_camera:
+                Intent intent = new Intent(this, CamaraActivity.class);
+                startActivity(intent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

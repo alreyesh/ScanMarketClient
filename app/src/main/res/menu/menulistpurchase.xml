@@ -19,6 +19,11 @@
         android:title="S/."
         app:showAsAction="always" />
     <item
+        android:id="@+id/action_camera"
+        android:icon="@drawable/ic_camera"
+        android:title="Camera"
+        app:showAsAction="always"></item>
+    <item
         android:id="@+id/action_addcart"
         android:icon="@drawable/ic_shopping_cart"
         android:title="Add Cart"

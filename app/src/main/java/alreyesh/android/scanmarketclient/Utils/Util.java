@@ -32,6 +32,16 @@ public class Util {
     public static String getProductFromCamera(SharedPreferences preferences){
         return preferences.getString("productcamera","");
     }
+    public static String getCodigoFromCamera(SharedPreferences preferences){
+        return preferences.getString("codigocamera","");
+    }
+    public static String getImagenFromCamera(SharedPreferences preferences){
+        return preferences.getString("imagencamera","");
+    }
+    public static String getPrecioFromCamera(SharedPreferences preferences){
+        return preferences.getString("preciocamera","");
+    }
+
 
 
     public static void removeSharedPreferences(SharedPreferences preferences){

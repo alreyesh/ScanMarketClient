@@ -47,7 +47,9 @@
             android:exported="false" />
         <activity
             android:name=".Activities.MainActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"
+            />
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
