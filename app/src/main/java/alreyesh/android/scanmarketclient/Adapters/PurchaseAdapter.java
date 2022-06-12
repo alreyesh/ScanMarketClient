@@ -22,11 +22,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.maltaisn.icondialog.IconView;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import alreyesh.android.scanmarketclient.Activities.LoginActivity;
+import alreyesh.android.scanmarketclient.Models.Cart;
 import alreyesh.android.scanmarketclient.Models.Purchase;
 import alreyesh.android.scanmarketclient.R;
+import io.realm.RealmList;
 import io.realm.RealmResults;
 
 public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.ViewHolder>{
@@ -91,6 +94,20 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.ViewHo
         {
             name.setText( purchase.getName());
             limit.setText("S/. "+purchase.getLimit()+"");
+            List<Cart> list = new ArrayList<Cart>();
+            RealmList<Cart> carts=purchase.getCarts() ;
+            list.addAll(carts);
+            float totalCart=0.0f;
+            for(int i =0; i<list.size();i++){
+
+                String subtotal =  list.get(i).getSubPrice();
+                float parsesubtotal = Float.parseFloat(subtotal);
+                totalCart+= parsesubtotal;
+            }
+
+
+
+            actual.setText("S/. "+totalCart);
              iconView.setIcon(purchase.getIcon());
              if(iconView.isSelected()){
                  iconView.setColorFilter(Color.GREEN);

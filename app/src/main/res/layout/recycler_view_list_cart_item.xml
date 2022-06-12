@@ -26,42 +26,54 @@
             />
     <LinearLayout
 
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <TextView
             android:id="@+id/textViewName"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
             android:gravity="center"
             android:text="Lista de Producto"
             android:textAlignment="center"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:textStyle="bold" />
-        <TextView
-            android:id="@+id/textViewCountP"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:maxLines="3"
-            android:text="Cantidad"
-            android:textAlignment="center"
-            android:textSize="14sp" />
 
-        <TextView
+        <LinearLayout
 
-            android:id="@+id/textViewSubPrice"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:gravity="center"
-            android:text="Cantidad"
-            android:textAlignment="center"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            >
+
+            <TextView
+                android:id="@+id/textViewCountP"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:maxLines="3"
+                android:text="Cantidad"
+                android:textAlignment="center"
+                android:textSize="14sp" />
+
+            <TextView
+
+                android:id="@+id/textViewSubPrice"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Precio total"
+                android:textAlignment="center"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
 
     </LinearLayout>
 

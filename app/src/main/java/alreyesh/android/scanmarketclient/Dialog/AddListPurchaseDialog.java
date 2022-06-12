@@ -78,8 +78,7 @@ public class AddListPurchaseDialog extends DialogFragment implements IconDialog.
         iconView = view.findViewById(R.id.icon_select_button);
         prefs = getActivity().getSharedPreferences("Preferences", Context.MODE_PRIVATE);
         mAuth = FirebaseAuth.getInstance();
-        Toast.makeText(getActivity(), "Se actualizo",
-                Toast.LENGTH_SHORT).show();
+
         realm = Realm.getDefaultInstance();
         // Comprobar si va a ser una acción para editar o para creación
         if(Util.getCreateOrEditPurchase(prefs)==true) {
@@ -104,8 +103,7 @@ public class AddListPurchaseDialog extends DialogFragment implements IconDialog.
                     String limit = editTextLimit.getText().toString();
 
                     String email = Util.getUserMailPrefs(prefs);
-                    Toast.makeText(getActivity(),email, Toast.LENGTH_SHORT).show();
-                    FirebaseUser user = mAuth.getCurrentUser();
+                     FirebaseUser user = mAuth.getCurrentUser();
                     String userEmail = user.getEmail();
 
                     if(name==null|| name.isEmpty()) {Toast.makeText(getActivity(),"Ingrese nombre de lista de compra",Toast.LENGTH_SHORT).show();}

@@ -88,8 +88,7 @@ public class RecommentFragment extends Fragment {
         recyclerViewProducto =(RecyclerView)view.findViewById(R.id.recyclerViewProducto);
         productsList = new ArrayList<>();
         db = FirebaseFirestore.getInstance();
-       // Toast.makeText(getActivity(),"producto:"+producto,Toast.LENGTH_SHORT).show();
-        recyclerViewProducto.setHasFixedSize(true);
+         recyclerViewProducto.setHasFixedSize(true);
         recyclerViewProducto.setItemAnimator(new DefaultItemAnimator());
         mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerViewProducto.setLayoutManager(mLayoutManager);
@@ -251,6 +250,7 @@ public class RecommentFragment extends Fragment {
                         for(DocumentSnapshot d:list){
                             Product products = d.toObject(Product.class);
                             products.setId(d.getReference().getId());
+                            products.setNombre(products.getNombre().toLowerCase());
                             productsList.add(products);
                         }
                         txtProductName.setText(productsList.get(0).getNombre());
@@ -282,6 +282,7 @@ public class RecommentFragment extends Fragment {
                         // that list to our object class.
                         Product products = d.toObject(Product.class);
                         products.setId(d.getReference().getId());
+                        products.setNombre(products.getNombre().toLowerCase());
                         // after getting data from Firebase
                         // we are storing that data in our array list
 

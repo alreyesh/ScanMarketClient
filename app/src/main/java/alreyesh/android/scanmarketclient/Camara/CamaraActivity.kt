@@ -139,7 +139,7 @@ class CamaraActivity : AppCompatActivity(){
                         .addOnSuccessListener {
                             if(it.documents.size >0){
 
-                                Toast.makeText(this, "Producto en la base de datos:  ${it.documents.get(0).data?.get("nombre") }  ", Toast.LENGTH_SHORT).show()
+                                //Toast.makeText(this, "Producto en la base de datos:  ${it.documents.get(0).data?.get("nombre") }  ", Toast.LENGTH_SHORT).show()
                                 val sharedPreferences: SharedPreferences = this.getSharedPreferences("Preferences",Context.MODE_PRIVATE)
                                 val editor: SharedPreferences.Editor =  sharedPreferences.edit()
                                 val codigo:String?= it.documents.get(0).get("codigo").toString()

@@ -111,7 +111,6 @@ View v =  inflater.inflate(R.layout.fragment_cart, container, false);
         String titulo= Util.getPurchaseName(prefs);
         Integer colorparse = Util.getPurchaseColor(prefs);
 
-        Toast.makeText(getActivity(), titulo, Toast.LENGTH_SHORT).show();
 
         realm = Realm.getDefaultInstance();
         if(Util.getPurchaseId(prefs) != null){
