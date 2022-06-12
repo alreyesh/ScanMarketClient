@@ -203,9 +203,7 @@ public class RelatedProductAdapter  extends RecyclerView.Adapter<RelatedProductA
                                 }
 
                             }
-                       /* Intent intent = new Intent(context, CamaraActivity.class);
-                        context.startActivity(intent);
-                        */
+
                         }
                     });
 

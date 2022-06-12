@@ -120,32 +120,7 @@ public class LoginActivity extends AppCompatActivity {
                 signIn();
             }
         });
-        //facebook
-       /* mCallbackManager = CallbackManager.Factory.create();
-        LoginButton btnFacebook = findViewById(R.id.btnFacebook);
-        btnFacebook.setReadPermissions("email","public_profile");
-        btnFacebook.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                Log.d(TAG, "facebook:onSuccess:" + loginResult);
-                handleFacebookAccessToken(loginResult.getAccessToken());
 
-            }
-
-            @Override
-            public void onCancel() {
-                Log.d(TAG, "facebook:onCancel");
-
-            }
-
-            @Override
-            public void onError(FacebookException error) {
-                Log.d(TAG, "facebook:onError", error);
-
-            }
-        });
-
-*/
 
     }
 

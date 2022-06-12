@@ -10,10 +10,13 @@ import androidx.fragment.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -87,6 +90,11 @@ private Purchase purchase;
         prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
         mAuth = FirebaseAuth.getInstance();
         String account = Util.getUserAccount(prefs);
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String email = user.getEmail();
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("email",email);
+        editor.commit();
         //Navegacion
         drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
@@ -106,9 +114,6 @@ private Purchase purchase;
                 String name;
 
 
-                //txtUsername.setText(usern);
-
-               // Toast.makeText(MainActivity.this,account,Toast.LENGTH_SHORT).show();
 
                 if( account == "google" && signInAccount !=null){
                   //  Toast.makeText(MainActivity.this, "Soy "+ account,Toast.LENGTH_SHORT).show();
@@ -126,8 +131,7 @@ private Purchase purchase;
                    // imgUsername.setImageURI(gimg);
 
                 }else{
-                    //Toast.makeText(MainActivity.this, "Soy "+ account,Toast.LENGTH_SHORT).show();
-                    Drawable myImage = getResources().getDrawable(R.drawable.rolemarket);
+                      Drawable myImage = getResources().getDrawable(R.drawable.rolemarket);
                     FirebaseUser user = mAuth.getCurrentUser();
                     if(user !=null){
                         String usern = user.getEmail();
@@ -175,10 +179,7 @@ private Purchase purchase;
                         fragment = new ListProductFragment();
                         fragmentTransaction = true;
                         break;
-                    case R.id.menu_prueba:
-                        fragment = new AccountInfoFragment();
-                        fragmentTransaction=true;
-                        break;
+
                     case R.id.menu_shop:
                         fragment = new PurchaseHistoryFragment();
                         fragmentTransaction = true;
@@ -243,8 +244,7 @@ private Purchase purchase;
             if(purchase !=null){
                 cantCart = purchase.getCarts().size();
 
-                Toast.makeText(getApplication(),"Cart: "+cantCart, Toast.LENGTH_SHORT).show();
-                actionviewCart.setItemData(menu,menuId);
+                   actionviewCart.setItemData(menu,menuId);
                 if(cantCart>0) {
                     menu.findItem(R.id.action_addcart).setVisible(true);
                     menu.findItem(R.id.shopping_total).setVisible(true);
@@ -259,9 +259,18 @@ private Purchase purchase;
                         float parsesubtotal = Float.parseFloat(subtotal);
                         totalCart+= parsesubtotal;
                     }
+                    SpannableString s = new SpannableString("S/. "+totalCart);
 
+                    float limit = Util.getPurchaseLimit(prefs);
+                    if(totalCart>=limit){
+                        s.setSpan(new ForegroundColorSpan(Color.RED), 0, s.length(), 0);
 
-                    totalId.setTitle("S/. "+totalCart);
+                    }else{
+                        s.setSpan(new ForegroundColorSpan(Color.WHITE), 0, s.length(), 0);
+
+                    }
+                    totalId.setTitle(s);
+
                      getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colorparse));
                 }
                 else   {
@@ -292,6 +301,9 @@ private Purchase purchase;
                 logOut();
                 return true;
             case R.id.add_list_purchase:
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putBoolean("cep",false);
+                editor.commit();
                 AddListPurchaseDialog addListPurchaseDialog = new AddListPurchaseDialog();
                 addListPurchaseDialog.show(getSupportFragmentManager(),"addListPurchase");
                 return true;

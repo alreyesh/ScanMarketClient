@@ -73,21 +73,7 @@ public class CartFragment extends Fragment  implements RealmChangeListener<Realm
     @Override
     public void onPrepareOptionsMenu(@NonNull Menu menu) {
         super.onPrepareOptionsMenu(menu);
-  /*      if (Util.getPurchaseId(prefs) != null){
-            purchaseId = Util.getPurchaseId(prefs);
-            purchase = realm.where(Purchase.class).equalTo("id", purchaseId).findFirst();
-            if(purchase !=null){
-                cantCart = purchase.getCarts().size();
-                actionviewCart = (CartCounterActionView)menuId.getActionView();
-                Toast.makeText(getActivity(),"Cart: "+cantCart, Toast.LENGTH_SHORT).show();
-                actionviewCart.setItemData(menu,menuId);
-                if(cantCart>0)
-                    actionviewCart.setCount(cantCart );
-                else     actionviewCart.setCount(0);
-            }
 
-        }
-*/
     }
 
     @Override
@@ -104,26 +90,7 @@ public class CartFragment extends Fragment  implements RealmChangeListener<Realm
         menu.findItem(R.id.action_search).setVisible(false);
         menu.findItem(R.id.action_delete_all).setVisible(true);
 
-   /*     inflater.inflate(R.menu.menulistpurchase,menu);
 
-        if (Util.getPurchaseId(prefs) != null){
-            purchaseId = Util.getPurchaseId(prefs);
-            purchase = realm.where(Purchase.class).equalTo("id", purchaseId).findFirst();
-            if(purchase !=null){
-                cantCart = purchase.getCarts().size();
-                menuId=  menu.findItem(R.id.action_addcart);
-                actionviewCart = (CartCounterActionView)menuId.getActionView();
-                Toast.makeText(getActivity(),"Cart: "+cantCart, Toast.LENGTH_SHORT).show();
-                actionviewCart.setItemData(menu,menuId);
-                if(cantCart>0)
-                    actionviewCart.setCount(cantCart );
-                else     actionviewCart.setCount(0);
-            }
-
-
-
-        }
-*/
         super.onCreateOptionsMenu(menu, inflater);
 
     }
@@ -164,7 +131,6 @@ View v =  inflater.inflate(R.layout.fragment_cart, container, false);
                 }
 
                 getActivity().invalidateOptionsMenu();
-                Toast.makeText(getActivity(),"Total: "+totalCart, Toast.LENGTH_SHORT).show();
 
 
 
@@ -228,8 +194,7 @@ View v =  inflater.inflate(R.layout.fragment_cart, container, false);
     }
     private void deleteCarts(){
         realm.beginTransaction();
-        // elimina todas las notas de esa board
-        purchase.getCarts().deleteAllFromRealm();
+          purchase.getCarts().deleteAllFromRealm();
         realm.commitTransaction();
         getActivity().invalidateOptionsMenu();
         adapter.notifyDataSetChanged();

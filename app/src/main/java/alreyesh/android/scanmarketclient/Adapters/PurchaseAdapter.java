@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -35,13 +36,14 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.ViewHo
     private OnItemClickListener itemListener;
     private OnButtonClickListener btnListener;
     private ItemTouchHelper itemTouchHelper;
+    private OnLongClickListener longListener;
     private SharedPreferences prefs;
-    public PurchaseAdapter(List<Purchase> purchases, int layout, OnItemClickListener itemListener, OnButtonClickListener btnListener) {
+    public PurchaseAdapter(List<Purchase> purchases, int layout, OnItemClickListener itemListener, OnButtonClickListener btnListener,OnLongClickListener longListener) {
         this.purchases = purchases;
         this.layout = layout;
         this.itemListener = itemListener;
         this.btnListener = btnListener;
-
+        this.longListener = longListener;
     }
 
 
@@ -58,7 +60,7 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull PurchaseAdapter.ViewHolder holder, int position) {
-        holder.bind(purchases.get(position),itemListener,btnListener);
+        holder.bind(purchases.get(position),itemListener,btnListener,longListener);
     }
 
     @Override
@@ -85,7 +87,7 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.ViewHo
             count = (TextView) itemView.findViewById(R.id.textViewCount);
             //btnSelect = (Button) itemView.findViewById(R.id.btnSelector);
         }
-        public void bind(final Purchase purchase, final OnItemClickListener itemListener, final OnButtonClickListener btnListener )
+        public void bind(final Purchase purchase, final OnItemClickListener itemListener, final OnButtonClickListener btnListener,final OnLongClickListener longListener)
         {
             name.setText( purchase.getName());
             limit.setText("S/. "+purchase.getLimit()+"");
@@ -97,18 +99,9 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.ViewHo
              String textForCart = (numberOfCart ==1)? numberOfCart +" Producto": numberOfCart +" Productos";
                 count.setText(textForCart);
 
-           // Picasso.get().load(purchase.getIcon()).fit().into(iconView);
-            //linearLayout.setBackgroundColor( purchase.getColor());
-           // cardView.setCardBackgroundColor(purchase.getColor());
+
             cardView.setCardBackgroundColor(purchase.getColor());
-            //cardView.setBackgroundResource(ContextCompat.getColor(context,purchase.getColor()));
-         /*   btnSelect.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    btnListener.onButtonClick(purchase,getBindingAdapterPosition());
-                }
-            });
-*/
+
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -121,6 +114,14 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.ViewHo
 
                 }
             });
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    longListener.onLongClick(purchase,getBindingAdapterPosition());
+                    return false;
+                }
+            });
+
         }
 
 
@@ -137,6 +138,9 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.ViewHo
 
     public interface OnButtonClickListener {
         void onButtonClick(Purchase purchase, int position);
+    }
+    public  interface  OnLongClickListener{
+        void onLongClick(Purchase purchase, int position);
     }
 
 

@@ -26,6 +26,17 @@ public class Util {
     public static Integer getPurchaseColor(SharedPreferences preferences){
         return preferences.getInt("cp",0);
     }
+    public static Float getPurchaseLimit(SharedPreferences preferences){
+        return preferences.getFloat("limitp",0.0f);
+    }
+    public static Integer getSelectPurchase(SharedPreferences preferences){
+        return preferences.getInt("sp",0);
+    }
+    public static Boolean getCreateOrEditPurchase(SharedPreferences preferences){
+        return preferences.getBoolean("cep",false);
+    }
+
+
     public static String getTotalCart(SharedPreferences preferences){
         return preferences.getString("total","");
     }

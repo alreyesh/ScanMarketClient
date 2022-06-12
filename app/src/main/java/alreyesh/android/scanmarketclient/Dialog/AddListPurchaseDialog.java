@@ -51,6 +51,7 @@ public class AddListPurchaseDialog extends DialogFragment implements IconDialog.
 
     private Icon selectedIcon;
     private Purchase purchase;
+    private   Purchase purs;
     private Realm realm;
     private int purchaseId;
     private boolean isCreation;
@@ -81,8 +82,8 @@ public class AddListPurchaseDialog extends DialogFragment implements IconDialog.
                 Toast.LENGTH_SHORT).show();
         realm = Realm.getDefaultInstance();
         // Comprobar si va a ser una acción para editar o para creación
-     if (getActivity().getIntent().getExtras() != null) {
-            purchaseId = getActivity().getIntent().getExtras().getInt("id");
+        if(Util.getCreateOrEditPurchase(prefs)==true) {
+            purchaseId = Util.getSelectPurchase(prefs);
             isCreation = false;
         } else {
             isCreation = true;
@@ -110,22 +111,37 @@ public class AddListPurchaseDialog extends DialogFragment implements IconDialog.
                     if(name==null|| name.isEmpty()) {Toast.makeText(getActivity(),"Ingrese nombre de lista de compra",Toast.LENGTH_SHORT).show();}
                     else if(limit == null || limit.isEmpty()){Toast.makeText(getActivity(),"Ingrese limite de compra",Toast.LENGTH_SHORT).show();}
                     else{
-                       if(color == 0 ){ color= R.color.md_green_100;}
+                       if(color == 0 ){
+                           if(!isCreation){
+                               color = purchase.getColor();
+                           }else
+                           color= R.color.md_green_100;
+
+                       }
                        boolean isLimitFloat = isStringFloat(limit);
                        if(isLimitFloat == true){
                            float parseLimit = Float.parseFloat(limit);
                            if(parseLimit >0.0) {
-                               Purchase purchase;
-                               if(selectedIcon != null){
-                                   purchase = new Purchase(name,parseLimit,color,userEmail,selectedIcon.getId());
 
-                               }else{
-                                   purchase =new Purchase(name,parseLimit,color,userEmail,471);
+                                int icono;
+                               if(selectedIcon != null){ icono = selectedIcon.getId();}
+                               else{
+                                   if(!isCreation){
+                                       icono =purchase.getIcon();
+                                   }else{
+                                       icono = 471;
+
+                                   }
 
                                }
-                               if(!isCreation) purchase.setId(purchaseId);
+
+
+                               purs =new Purchase(name,parseLimit,color,userEmail,icono);
+                               if(!isCreation){
+                                   purs.setId(purchaseId);
+                               }
                                realm.beginTransaction();
-                               realm.copyToRealmOrUpdate(purchase);
+                               realm.copyToRealmOrUpdate(purs);
                                realm.commitTransaction();
                                dismiss();
                            }else{
@@ -191,9 +207,9 @@ public class AddListPurchaseDialog extends DialogFragment implements IconDialog.
 
     private void bindDataToFields(){
         editTextName.setText(purchase.getName());
-        editTextLimit.setText((int) purchase.getLimit());
+        editTextLimit.setText(String.valueOf(purchase.getLimit()));
         btnColor.setBackgroundColor(purchase.getColor());
-
+        iconView.setIcon(purchase.getIcon());
     }
     private void setDialogTitle() {
         String title = "Editar Listado de Compra";

@@ -57,8 +57,7 @@ public class AccountInfoFragment extends Fragment {
 
         ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.INTERNET}, PackageManager.PERMISSION_GRANTED);
         View view =inflater.inflate(R.layout.fragment_account_info, container, false);
-       //ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.Internet}, PackageManager.PERMISSION_GRANTED);
-      StrictMode.ThreadPolicy policity = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+           StrictMode.ThreadPolicy policity = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policity);
 
             txtPrueba = view.findViewById(R.id.txtPrueba);
@@ -74,7 +73,6 @@ public class AccountInfoFragment extends Fragment {
                 e.printStackTrace();
                 txtPrueba.setText("FAILURE");
             }
-        // Inflate the layout for this fragment
 
             btnPrueba.setOnClickListener(new View.OnClickListener() {
                 @Override

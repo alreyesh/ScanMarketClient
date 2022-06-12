@@ -107,6 +107,8 @@ public class ListProductFragment extends Fragment {
                         // that list to our object class.
                         Product products = d.toObject(Product.class);
                         products.setId(d.getReference().getId());
+                        products.setNombre(products.getNombre().toUpperCase());
+
                         // after getting data from Firebase
                         // we are storing that data in our array list
                         productsList.add(products);
@@ -153,6 +155,7 @@ public class ListProductFragment extends Fragment {
                         // that list to our object class.
                         Product products = d.toObject(Product.class);
                         products.setId(d.getReference().getId());
+                        products.setNombre(products.getNombre().toUpperCase());
                         // after getting data from Firebase
                         // we are storing that data in our array list
                         productsList.add(products);
@@ -189,7 +192,6 @@ public class ListProductFragment extends Fragment {
         menu.findItem(R.id.action_delete_all).setVisible(false);
         menu.findItem(R.id.action_search).setVisible(true);
 
-        inflater.inflate(R.menu.menu_search,menu);
         MenuItem item = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -218,9 +220,7 @@ public class ListProductFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-      /*  if(item.getItemId() == R.id.action_settings){
-            Toast.makeText(getContext(),"Settings", Toast.LENGTH_SHORT).show();
-        }*/
+
 
         return super.onOptionsItemSelected(item);
     }
@@ -228,8 +228,7 @@ public class ListProductFragment extends Fragment {
     private void searchData(String s){
         pd.setTitle("Buscando...");
         pd.show();
-     // List busca =  Arrays.asList(s.toLowerCase(),s.toUpperCase(),s.toCa);
-        db.collection("productos").orderBy("nombre").startAt(s).endAt(s + "\uf8ff").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>(){
+          db.collection("productos").orderBy("nombre").startAt(s).endAt(s + "\uf8ff").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>(){
 
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots)  {
@@ -242,6 +241,8 @@ public class ListProductFragment extends Fragment {
                         // that list to our object class.
                         Product products = d.toObject(Product.class);
                         products.setId(d.getReference().getId());
+                        products.setNombre(products.getNombre().toUpperCase());
+
                         // after getting data from Firebase
                         // we are storing that data in our array list
                         productsList.add(products);
@@ -288,6 +289,8 @@ public class ListProductFragment extends Fragment {
                         // that list to our object class.
                         Product products = d.toObject(Product.class);
                         products.setId(d.getReference().getId());
+                        products.setNombre(products.getNombre().toUpperCase());
+
                         // after getting data from Firebase
                         // we are storing that data in our array list
                         productsList.add(products);

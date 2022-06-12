@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <item
         android:id="@+id/action_search"
         android:title="Search"
@@ -8,11 +9,10 @@
         app:showAsAction="always"
         app:actionViewClass="android.widget.SearchView"
         />
-
     <item android:id="@+id/add_list_purchase"
-        android:title="Add"
+        android:title="AddPurchase"
         android:icon="@android:drawable/ic_menu_add"
-        app:showAsAction="ifRoom"
+        app:showAsAction="always"
         />
     <item
         android:id="@+id/shopping_total"
