@@ -360,6 +360,7 @@ private Purchase purchase;
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_sand);
+        getSupportActionBar().setHomeActionContentDescription(R.string.burger_descripcion);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
     }

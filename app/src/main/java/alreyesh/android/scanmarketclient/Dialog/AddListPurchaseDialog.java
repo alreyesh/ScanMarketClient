@@ -72,7 +72,7 @@ public class AddListPurchaseDialog extends DialogFragment implements IconDialog.
         txtTitle = view.findViewById(R.id.textViewListPurchase);
         editTextName = view.findViewById(R.id.editNameList);
         editTextLimit = view.findViewById(R.id.editLimitList);
-        btnRegistrar = view.findViewById(R.id.btnRegistrarEdit);
+        btnRegistrar = view.findViewById(R.id.btnRegistrarEditPurchase);
         btnCancelar = view.findViewById(R.id.btnCancel);
         btnColor = view.findViewById(R.id.color_select_button);
         iconView = view.findViewById(R.id.icon_select_button);
@@ -216,6 +216,7 @@ public class AddListPurchaseDialog extends DialogFragment implements IconDialog.
     }
     public void colorPicker(){
         new MaterialColorPickerDialog.Builder(getActivity())
+
                 .setTitle("Elegir Color")
                 .setColorShape(ColorShape.SQAURE)
                 .setColorSwatch(ColorSwatch._300)
