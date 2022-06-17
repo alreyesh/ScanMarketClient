@@ -274,7 +274,7 @@ public class RecommentFragment extends Fragment {
        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
            if (!queryDocumentSnapshots.isEmpty()){
                List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
-               if(productsList !=null)productsList.clear();
+               productsList.clear();
                int pos =0;
                for (DocumentSnapshot d : list) {
                     if(pos !=0) {

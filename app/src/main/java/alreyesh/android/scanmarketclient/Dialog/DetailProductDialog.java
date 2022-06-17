@@ -83,7 +83,6 @@ public class DetailProductDialog  extends DialogFragment{
         Gson gson = new Gson();
         String pro = Util.getProduct(prefs);
         int idp = Util.getPurchaseId(prefs);
-        Toast.makeText(getContext(),"prueba: "+idp+"", Toast.LENGTH_SHORT).show();
 
         Product  products = gson.fromJson(pro,Product.class);
         //searchData( idpro);
@@ -147,9 +146,7 @@ public class DetailProductDialog  extends DialogFragment{
                                 realm.commitTransaction();
                                 dismiss();
                                 Toast.makeText(getActivity(), "Se añadio a la lista:" + lista, Toast.LENGTH_SHORT).show();
-
-                                Toast.makeText(getActivity(), "Producto Nuevo1" + lista, Toast.LENGTH_SHORT).show();
-                            } else {
+                                } else {
 
                                 realm.beginTransaction();
                                 cartin.setCountProduct(cantidad);

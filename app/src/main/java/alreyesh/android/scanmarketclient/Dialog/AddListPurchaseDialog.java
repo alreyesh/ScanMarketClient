@@ -228,9 +228,7 @@ public class AddListPurchaseDialog extends DialogFragment implements IconDialog.
                         btnColor.setBackgroundColor(i);
 
                             color = i;
-                     //   Toast.makeText(getActivity(), color+"", Toast.LENGTH_SHORT).show();
-                       // Toast.makeText(getActivity(), selectedIcon.getId()+"", Toast.LENGTH_SHORT).show();
-                    }
+                            }
                 })
                 .show();
     }
@@ -272,8 +270,7 @@ public class AddListPurchaseDialog extends DialogFragment implements IconDialog.
         Icon icon = icons[0];
       iconView.setIcon(icon);
         selectedIcon = icon;
-        Toast.makeText(getActivity(), selectedIcon+"", Toast.LENGTH_SHORT).show();
-    }
+     }
     public static boolean isStringFloat(String stringToCheck){
         Scanner sc = new Scanner(stringToCheck.trim());
         boolean is =  sc.hasNextFloat();

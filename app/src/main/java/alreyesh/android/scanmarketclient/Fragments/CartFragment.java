@@ -69,13 +69,11 @@ public class CartFragment extends Fragment  implements RealmChangeListener<Realm
         // Required empty public constructor
         setHasOptionsMenu(true);
     }
-
     @Override
     public void onPrepareOptionsMenu(@NonNull Menu menu) {
         super.onPrepareOptionsMenu(menu);
 
     }
-
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if(item.getItemId() == R.id.action_delete_all){
@@ -83,7 +81,6 @@ public class CartFragment extends Fragment  implements RealmChangeListener<Realm
         }
         return super.onOptionsItemSelected(item);
     }
-
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         menu.findItem(R.id.add_list_purchase).setVisible(false);
@@ -94,13 +91,11 @@ public class CartFragment extends Fragment  implements RealmChangeListener<Realm
         super.onCreateOptionsMenu(menu, inflater);
 
     }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -177,13 +172,10 @@ View v =  inflater.inflate(R.layout.fragment_cart, container, false);
 
         return v;
     }
-
     @Override
     public void onChange(RealmResults<Cart> carts) {
         adapter.notifyDataSetChanged();
     }
-
-
     private void deleteCart(int position) {
         realm.beginTransaction();
         carts.get(position).deleteFromRealm();
@@ -198,7 +190,6 @@ View v =  inflater.inflate(R.layout.fragment_cart, container, false);
         getActivity().invalidateOptionsMenu();
         adapter.notifyDataSetChanged();
     }
-
     private void editCart(String subprice,String count,Cart  cart){
         realm.beginTransaction();
         cart.setSubPrice(subprice);
@@ -208,8 +199,6 @@ View v =  inflater.inflate(R.layout.fragment_cart, container, false);
         adapter.notifyDataSetChanged();
         getActivity().invalidateOptionsMenu();
     }
-
-
     private void showAlertForEditing(Cart cart){
 
 
@@ -237,8 +226,7 @@ View v =  inflater.inflate(R.layout.fragment_cart, container, false);
             @Override
             public void onClick(View v) {
                 String countText = cantidad.getText().toString().trim();
-                Toast.makeText(getActivity(), countText, Toast.LENGTH_SHORT).show();
-              if(countText !=null|| !countText.isEmpty()|| countText != "") {
+                   if(countText !=null|| !countText.isEmpty()|| countText != "") {
 
                   boolean isstringint = isStringInteger(countText, 10);
                   if(isstringint== true){

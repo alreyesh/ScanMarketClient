@@ -201,10 +201,9 @@ private Purchase purchase;
         if(bundle != null){
             String resultado= getIntent().getExtras().getString("cameras");
             if(resultado== null) {
-                Toast.makeText(this, "nada de nada ", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "No se reconocio el producto reconocido ", Toast.LENGTH_SHORT).show();
             }else{
                 String resutado = getIntent().getExtras().getString("cameras");
-                Toast.makeText(this, "en el intent salio:"+resutado, Toast.LENGTH_SHORT).show();
 
 
                     getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new RecommentFragment()).commit();

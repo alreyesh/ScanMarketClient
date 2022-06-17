@@ -54,10 +54,6 @@ public class ListProductFragment extends Fragment {
         // Required empty public constructor
         setHasOptionsMenu(true);
     }
-
-
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -218,12 +214,7 @@ public class ListProductFragment extends Fragment {
        super.onCreateOptionsMenu(menu, inflater);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
-
-        return super.onOptionsItemSelected(item);
-    }
 
     private void searchData(String s){
         pd.setTitle("Buscando...");
