@@ -155,8 +155,7 @@ public class DetailProductDialog  extends DialogFragment{
                                 realm.commitTransaction();
 
 
-                                Toast.makeText(getActivity(), "Producto ya Agregado" + lista, Toast.LENGTH_SHORT).show();
-                                dismiss();
+                                       dismiss();
                             }
 
 
@@ -190,7 +189,7 @@ public class DetailProductDialog  extends DialogFragment{
                                             purchase.getCarts().add(cartin);
                                             realm.commitTransaction();
 
-                                            Toast.makeText(getActivity(), "Producto Nuevo1" + lista, Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(getActivity(), "Producto Actualizado: " + lista, Toast.LENGTH_SHORT).show();
                                             dismiss();
 
                                         } else {
@@ -201,8 +200,7 @@ public class DetailProductDialog  extends DialogFragment{
                                             realm.copyToRealmOrUpdate(cartin);
                                             realm.commitTransaction();
 
-                                            Toast.makeText(getActivity(), "Producto ya Agregado 1" + lista, Toast.LENGTH_SHORT).show();
-                                            dismiss();
+                                              dismiss();
 
                                         }
 
@@ -214,8 +212,7 @@ public class DetailProductDialog  extends DialogFragment{
                                         purchase.getCarts().add(cartin);
                                         realm.commitTransaction();
 
-                                        Toast.makeText(getActivity(), "Producto Nuevo1" + lista, Toast.LENGTH_SHORT).show();
-                                        dismiss();
+                                          dismiss();
 
 
                                     }
@@ -235,6 +232,11 @@ public class DetailProductDialog  extends DialogFragment{
 
                             }
                         }
+                        SharedPreferences.Editor editor = prefs.edit();
+                        editor.putBoolean("startnotify",true);
+                        editor.commit();
+
+
                         //Actualización del menu bar
                         getActivity().invalidateOptionsMenu();
 

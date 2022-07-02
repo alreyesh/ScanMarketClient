@@ -17,6 +17,7 @@
     <item
         android:id="@+id/shopping_total"
         android:title="S/."
+        android:textStyle="bold"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_camera"

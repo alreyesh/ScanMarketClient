@@ -52,7 +52,9 @@ public class Util {
     public static String getPrecioFromCamera(SharedPreferences preferences){
         return preferences.getString("preciocamera","");
     }
-
+    public static Boolean getStartNotification(SharedPreferences preferences){
+        return preferences.getBoolean("startnotify",false);
+    }
 
 
     public static void removeSharedPreferences(SharedPreferences preferences){

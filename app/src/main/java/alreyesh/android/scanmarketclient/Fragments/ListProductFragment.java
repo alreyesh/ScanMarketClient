@@ -60,7 +60,7 @@ public class ListProductFragment extends Fragment {
         setHasOptionsMenu(true);
         pd= new ProgressDialog(getContext());
         prefs =getActivity().getSharedPreferences("Preferences", Context.MODE_PRIVATE);
-
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         Integer colorparse = Util.getPurchaseColor(prefs);
         if(colorparse !=null){

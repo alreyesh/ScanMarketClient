@@ -56,6 +56,7 @@ public class CartFragment extends Fragment  implements RealmChangeListener<Realm
     private RealmList<Cart> carts;
     private RecyclerView recycler;
     private CartAdapter adapter;
+    private TextView txtListadoCompra;
     private RecyclerView.LayoutManager mLayoutManager;
     private Realm realm;
     private Purchase purchase;
@@ -133,9 +134,11 @@ View v =  inflater.inflate(R.layout.fragment_cart, container, false);
         }
 
 
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(titulo);
+        txtListadoCompra= (TextView)v.findViewById(R.id.txtListadoCompra);
+        txtListadoCompra.setText(titulo);
+       // ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(titulo);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colorparse));
         recycler=(RecyclerView) v.findViewById(R.id.recyclerViewCart);
         recycler.setHasFixedSize(true);
@@ -180,6 +183,9 @@ View v =  inflater.inflate(R.layout.fragment_cart, container, false);
         realm.beginTransaction();
         carts.get(position).deleteFromRealm();
         realm.commitTransaction();
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("startnotify",true);
+        editor.commit();
         getActivity().invalidateOptionsMenu();
         adapter.notifyDataSetChanged();
     }
@@ -188,6 +194,9 @@ View v =  inflater.inflate(R.layout.fragment_cart, container, false);
           purchase.getCarts().deleteAllFromRealm();
         realm.commitTransaction();
         getActivity().invalidateOptionsMenu();
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("startnotify",true);
+        editor.commit();
         adapter.notifyDataSetChanged();
     }
     private void editCart(String subprice,String count,Cart  cart){
@@ -197,6 +206,9 @@ View v =  inflater.inflate(R.layout.fragment_cart, container, false);
         realm.copyToRealmOrUpdate(cart);
         realm.commitTransaction();
         adapter.notifyDataSetChanged();
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("startnotify",true);
+        editor.commit();
         getActivity().invalidateOptionsMenu();
     }
     private void showAlertForEditing(Cart cart){

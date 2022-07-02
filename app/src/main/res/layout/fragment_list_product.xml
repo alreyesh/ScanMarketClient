@@ -7,20 +7,37 @@
     android:orientation="vertical"
 
     >
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="20dp"
+
+        android:gravity="center"
+
+        android:text="Mi Market"
+        android:textSize="24sp" />
+
     <GridView
         android:id="@+id/am_gv_gridview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/textView4"
+
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="20dp"
         android:columnWidth="90dp"
 
-        android:numColumns = "auto_fit"
         android:gravity="center"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-
-        />
+        android:numColumns="auto_fit" />
 
 
 </RelativeLayout>

@@ -1,9 +1,7 @@
 package alreyesh.android.scanmarketclient.Camara
 
 import alreyesh.android.scanmarketclient.Activities.MainActivity
-import alreyesh.android.scanmarketclient.Fragments.RecommentFragment
-import alreyesh.android.scanmarketclient.Model.Product
-import alreyesh.android.scanmarketclient.R
+
 import alreyesh.android.scanmarketclient.databinding.ActivityCameraBinding
 import android.Manifest
 import android.annotation.SuppressLint

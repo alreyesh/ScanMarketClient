@@ -4,17 +4,15 @@ package alreyesh.android.scanmarketclient;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static androidx.test.espresso.action.ViewActions.pressImeActionButton;
 import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
 import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withParent;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+
 import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.is;
 
 import android.os.Build;
 import android.view.View;
@@ -34,24 +32,23 @@ import org.hamcrest.core.IsInstanceOf;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 import org.robolectric.annotation.Config;
+
 
 import alreyesh.android.scanmarketclient.Activities.MainActivity;
 
-
 @LargeTest
-
 @RunWith(AndroidJUnit4.class)
 @Config(sdk = Build.VERSION_CODES.P)
-public class AgregarListadoPorDefectoTest {
+public class AgregarListadoTest {
+
 
     @Rule
     public ActivityScenarioRule<MainActivity> mActivityScenarioRule =
             new ActivityScenarioRule<>(MainActivity.class);
 
     @Test
-    public void agregarListadoPorDefectoTest() {
+    public void AgregarListadoPorTest() {
         // Added a sleep statement to match the app's execution delay.
         // The recommended way to handle such scenarios is to use Espresso idling resources:
         // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
@@ -136,7 +133,11 @@ public class AgregarListadoPorDefectoTest {
 
     }
 
-    public static Matcher<View> childAtPosition(
+
+
+
+
+    private static Matcher<View> childAtPosition(
             final Matcher<View> parentMatcher, final int position) {
 
         return new TypeSafeMatcher<View>() {
@@ -154,4 +155,6 @@ public class AgregarListadoPorDefectoTest {
             }
         };
     }
+
+
 }

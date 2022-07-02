@@ -88,10 +88,12 @@ public class AddListPurchaseDialog extends DialogFragment implements IconDialog.
             isCreation = true;
         }
         setDialogTitle();
+        btnRegistrar.setText("Registrar");
         if (!isCreation) {
 
             String email = Util.getUserMailPrefs(prefs);
             purchase = getPurchaseByIdAndUser(purchaseId,email);
+            btnRegistrar.setText("Actualizar");
             bindDataToFields();
         }
 
@@ -137,6 +139,7 @@ public class AddListPurchaseDialog extends DialogFragment implements IconDialog.
                                purs =new Purchase(name,parseLimit,color,userEmail,icono);
                                if(!isCreation){
                                    purs.setId(purchaseId);
+                                   purs.setCarts(purchase.getCarts());
                                }
                                realm.beginTransaction();
                                realm.copyToRealmOrUpdate(purs);
@@ -159,7 +162,7 @@ public class AddListPurchaseDialog extends DialogFragment implements IconDialog.
                     Toast.makeText(getActivity(), "The data is not valid, please check the fields again", Toast.LENGTH_SHORT).show();
                 }
 
-
+                getActivity().invalidateOptionsMenu();
             }
         });
         btnColor.setOnClickListener(new View.OnClickListener() {

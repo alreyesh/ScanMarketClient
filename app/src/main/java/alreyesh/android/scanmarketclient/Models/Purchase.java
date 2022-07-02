@@ -85,6 +85,9 @@ public Purchase(){
         this.icon = icon;
     }
 
+    public void setCarts(RealmList<Cart> carts) {
+        this.carts = carts;
+    }
 
     public RealmList<Cart> getCarts() {
         return carts;

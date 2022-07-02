@@ -1,22 +1,27 @@
 package alreyesh.android.scanmarketclient.Activities;
 
+import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
+import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -51,6 +56,7 @@ import alreyesh.android.scanmarketclient.Fragments.PurchaseHistoryFragment;
 import alreyesh.android.scanmarketclient.Fragments.RecommentFragment;
 import alreyesh.android.scanmarketclient.Models.Cart;
 import alreyesh.android.scanmarketclient.Models.Purchase;
+import alreyesh.android.scanmarketclient.Notifications.NotificationHandler;
 import alreyesh.android.scanmarketclient.R;
 import alreyesh.android.scanmarketclient.Utils.Util;
 import io.realm.Realm;
@@ -73,21 +79,26 @@ private Purchase purchase;
     private RealmList<Cart> carts;
     private   CartCounterActionView actionviewCart;
     private MenuItem menuId,totalId;
+    private Toolbar totalToolId;
     private int cantCart;
     private Realm realm;
-
+//notificacion
+    private boolean isHighImportance = false;
+    private NotificationHandler notificacionHandler;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
         setToolbar();
         createRequest();
+        notificacionHandler = new NotificationHandler(this);
         realm = Realm.getDefaultInstance();
         drawerLayout= (DrawerLayout)findViewById(R.id.drawer_layout);
         navigationView=(NavigationView) findViewById(R.id.navview);
         txtUsername = (TextView)drawerLayout.findViewById(R.id.username);
         setFragmentByDefault();
-        prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+
         mAuth = FirebaseAuth.getInstance();
         String account = Util.getUserAccount(prefs);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -235,10 +246,12 @@ private Purchase purchase;
         menu.findItem(R.id.shopping_total).setVisible(false);
         if (Util.getPurchaseId(prefs) != null){
             purchaseId = Util.getPurchaseId(prefs);
-            Integer colorparse = Util.getPurchaseColor(prefs);
+
+            String namepurchase = Util.getPurchaseName(prefs);
             purchase = realm.where(Purchase.class).equalTo("id", purchaseId).findFirst();
             menuId=  menu.findItem(R.id.action_addcart);
             totalId = menu.findItem(R.id.shopping_total);
+
             actionviewCart = (CartCounterActionView)menuId.getActionView();
             if(purchase !=null){
                 cantCart = purchase.getCarts().size();
@@ -261,17 +274,41 @@ private Purchase purchase;
                     SpannableString s = new SpannableString("S/. "+totalCart);
 
                     float limit = Util.getPurchaseLimit(prefs);
-                    if(totalCart>=limit){
-                        s.setSpan(new ForegroundColorSpan(Color.RED), 0, s.length(), 0);
 
+                    View viewtexttotal = findViewById(R.id.shopping_total);
+                    if(totalCart>=limit){
+                          s.setSpan(new ForegroundColorSpan(Color.RED), 0, s.length(), 0);
+                        Toast.makeText(this, "Se Excedio ", Toast.LENGTH_SHORT).show();
+                        if (viewtexttotal != null && viewtexttotal instanceof TextView) {
+                            ((TextView) viewtexttotal).setTextColor( Color.RED ); // Make text colour blue
+                            ((TextView) viewtexttotal).setTextSize(TypedValue.COMPLEX_UNIT_SP, 16); // Increase font size
+                        }
                     }else{
                         s.setSpan(new ForegroundColorSpan(Color.WHITE), 0, s.length(), 0);
-
+                         if (viewtexttotal != null && viewtexttotal instanceof TextView) {
+                            ((TextView) viewtexttotal).setTextColor( Color.WHITE ); // Make text colour blue
+                            ((TextView) viewtexttotal).setTextSize(TypedValue.COMPLEX_UNIT_SP, 14); // Increase font size
+                        }
                     }
                     totalId.setTitle(s);
 
-                     getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colorparse));
-                }
+
+                        boolean notify = Util.getStartNotification(prefs);
+                        if(notify == true){
+                            float  porcent = totalCart /limit;
+                            if(porcent >=0.90 && porcent <1.00){
+                                isHighImportance = false;
+                                sendNotification(namepurchase,totalCart,limit,isHighImportance);
+                            }else if(porcent>1.00){
+                                isHighImportance = true;
+                                sendNotification(namepurchase,totalCart,limit,isHighImportance);
+                            }
+                            SharedPreferences.Editor editor = prefs.edit();
+                            editor.putBoolean("startnotify",false);
+                            editor.commit();
+                        }
+
+                   }
                 else   {
                     menu.findItem(R.id.action_addcart).setVisible(false);
                     actionviewCart.setCount(0);
@@ -282,6 +319,7 @@ private Purchase purchase;
             }
 
         }
+        drawableColorselected();
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -320,9 +358,7 @@ private Purchase purchase;
                 return super.onOptionsItemSelected(item);
         }
     }
-    private void bindUI(){
 
-    }
     private void createRequest(){
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id2))
@@ -361,7 +397,7 @@ private Purchase purchase;
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_sand);
         getSupportActionBar().setHomeActionContentDescription(R.string.burger_descripcion);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        drawableColorselected();
     }
     private void setFragmentByDefault(){
         changeFragment(new HomeFragment(),navigationView.getMenu().getItem(0));
@@ -374,7 +410,25 @@ private Purchase purchase;
         getSupportActionBar().setTitle(item.getTitle());
 
     }
+    private void sendNotification(String name ,float total ,float limit,boolean isHighImportance){
+        Notification.Builder nb;
+         if(isHighImportance == true){
+             nb   = notificacionHandler.createNotification(name,"Con S/."+total +" excedio el limite de compra de S/."+limit,isHighImportance);
+         }else{
+             nb   = notificacionHandler.createNotification(name,"Con S/."+total +" excedio el limite de compra de S/."+limit,isHighImportance);
+
+         }
+            notificacionHandler.getManager().notify(1,nb.build());
 
 
+    }
 
+    private void drawableColorselected(){
+        Integer colorparse = Util.getPurchaseColor(prefs);
+        if(colorparse !=0){
+              getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colorparse));
+        }else{
+             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary,null)));
+        }
+    }
 }
