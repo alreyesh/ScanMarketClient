@@ -1,16 +1,24 @@
 package alreyesh.android.scanmarketclient.Notifications;
 
+import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
 import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 
+import androidx.appcompat.app.AppCompatActivity;
+
+import alreyesh.android.scanmarketclient.Activities.MainActivity;
+import alreyesh.android.scanmarketclient.Fragments.CartFragment;
 import alreyesh.android.scanmarketclient.R;
 import alreyesh.android.scanmarketclient.Utils.Util;
 
@@ -84,10 +92,15 @@ public class NotificationHandler  extends ContextWrapper {
     private Notification.Builder createNotificationWithChannel(String title,String message, String channelId){
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-                return new Notification.Builder(getApplicationContext(), channelId)
+            Intent notificationIntent = new Intent(getApplicationContext(), MainActivity.class);
+            notificationIntent.putExtra("showCartView", true);
+            notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            PendingIntent pendingNotificationIntent = PendingIntent.getActivity(getApplicationContext(),0,notificationIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+                  return new Notification.Builder(getApplicationContext(), channelId)
                         .setContentTitle(title)
                         .setContentText(message)
                         .setColor(colorpick)
+                          .setContentIntent(pendingNotificationIntent)
                         .setSmallIcon(R.mipmap.ic_logo_scan_market)
                         .setAutoCancel(true);
 
@@ -95,10 +108,15 @@ public class NotificationHandler  extends ContextWrapper {
         return null;
     }
     private Notification.Builder createNotificationWithoutChannel(String title,String message){
+        Intent notificationIntent = new Intent(getApplicationContext(), MainActivity.class);
+        notificationIntent.putExtra("showCartView", true);
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingNotificationIntent = PendingIntent.getActivity(getApplicationContext(),0,notificationIntent,PendingIntent.FLAG_UPDATE_CURRENT);
 
         return new Notification.Builder(getApplicationContext())
                 .setContentTitle(title)
                 .setContentText(message)
+                .setContentIntent(pendingNotificationIntent)
                 .setColor(colorpick)
                 .setSmallIcon(R.mipmap.ic_logo_scan_market)
                 .setAutoCancel(true);

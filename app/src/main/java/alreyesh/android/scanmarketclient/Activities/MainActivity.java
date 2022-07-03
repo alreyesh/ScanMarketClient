@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import android.app.Notification;
 import android.content.Context;
@@ -211,15 +212,24 @@ private Purchase purchase;
         Bundle bundle = getIntent().getExtras();
         if(bundle != null){
             String resultado= getIntent().getExtras().getString("cameras");
-            if(resultado== null) {
-                Toast.makeText(this, "No se reconocio el producto reconocido ", Toast.LENGTH_SHORT).show();
-            }else{
+            if(resultado!= null) {
                 String resutado = getIntent().getExtras().getString("cameras");
 
 
                     getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new RecommentFragment()).commit();
 
             }
+            boolean reloadFragmentFromNotification = getIntent().getExtras().getBoolean("showCartView",false);
+            if (reloadFragmentFromNotification){
+                Fragment fragment = new CartFragment();
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.content_frame,fragment)
+                        .commit();
+            }
+
+
+
         }
 
 
@@ -359,6 +369,9 @@ private Purchase purchase;
         }
     }
 
+
+
+
     private void createRequest(){
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id2))
@@ -422,7 +435,6 @@ private Purchase purchase;
 
 
     }
-
     private void drawableColorselected(){
         Integer colorparse = Util.getPurchaseColor(prefs);
         if(colorparse !=0){

@@ -143,7 +143,9 @@ class CamaraActivity : AppCompatActivity(){
                                 val codigo:String?= it.documents.get(0).get("codigo").toString()
                                 val imagen:String?= it.documents.get(0).get("imagen").toString()
                                 val precio:String?= it.documents.get(0).get("precio").toString()
-
+                                val intent = Intent(this, MainActivity::class.java)
+                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                                val bundle = Bundle()
 
                                 if(codigo !=null){
                                     editor.putString("productcamera",result)
@@ -151,9 +153,7 @@ class CamaraActivity : AppCompatActivity(){
                                     editor.putString("imagencamera",imagen)
                                     editor.putString("preciocamera",precio)
                                     editor.commit()
-                                    val intent = Intent(this, MainActivity::class.java)
-                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                                    val bundle = Bundle()
+
                                     bundle.putString("cameras","productodecamera")
 
                                     intent.putExtras(bundle)
