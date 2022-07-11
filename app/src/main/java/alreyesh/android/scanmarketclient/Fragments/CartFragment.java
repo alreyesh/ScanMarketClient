@@ -1,7 +1,6 @@
 package alreyesh.android.scanmarketclient.Fragments;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -23,7 +22,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -39,7 +37,6 @@ import java.util.List;
 import java.util.Scanner;
 
 import alreyesh.android.scanmarketclient.Adapters.CartAdapter;
-import alreyesh.android.scanmarketclient.Adapters.PurchaseAdapter;
 import alreyesh.android.scanmarketclient.Models.Cart;
 import alreyesh.android.scanmarketclient.Models.Purchase;
 import alreyesh.android.scanmarketclient.R;
@@ -171,7 +168,7 @@ View v =  inflater.inflate(R.layout.fragment_cart, container, false);
             }
         }).attachToRecyclerView(recycler);
 
-
+        getActivity().invalidateOptionsMenu();
 
         return v;
     }
@@ -215,12 +212,12 @@ View v =  inflater.inflate(R.layout.fragment_cart, container, false);
 
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        View viewInflated = LayoutInflater.from(getContext()).inflate(R.layout.detail_product_layout,null);
+        View viewInflated = LayoutInflater.from(getContext()).inflate(R.layout.edit_list_cart_dialog_layout,null);
 
         builder.setView(viewInflated);
         final ImageView imgView = (ImageView) viewInflated.findViewById(R.id.imgProductView);
-        final EditText cantidad = (EditText) viewInflated.findViewById(R.id.editCantidad);
-        final Button btnRegister =(Button)viewInflated.findViewById(R.id.btnRegistrarEdit) ;
+        final EditText cantidad = (EditText) viewInflated.findViewById(R.id.editCantidadCart);
+        final Button btnRegister =(Button)viewInflated.findViewById(R.id.btnRegistrarEditCart) ;
         final Button btnCancelar =(Button)viewInflated.findViewById(R.id.btnCancelarEdit) ;
         final TextView txtCodidgod = (TextView) viewInflated.findViewById(R.id.textViewCod);
         final TextView txtNombre = (TextView) viewInflated.findViewById(R.id.textViewName);

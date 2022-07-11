@@ -53,7 +53,7 @@ public class HomeFragment extends Fragment {
             }
         });
 
-
+        getActivity().invalidateOptionsMenu();
         return view;
     }
 }

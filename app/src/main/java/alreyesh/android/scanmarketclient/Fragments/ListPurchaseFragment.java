@@ -176,7 +176,7 @@ public class ListPurchaseFragment extends Fragment implements RealmChangeListene
         }).attachToRecyclerView(recycler);
 
      purchases.addChangeListener(this);
-
+        getActivity().invalidateOptionsMenu();
         return view;
     }
 

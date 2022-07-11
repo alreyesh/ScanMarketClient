@@ -1,7 +1,6 @@
 package alreyesh.android.scanmarketclient.Adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +13,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
 import com.squareup.picasso.Picasso;
 
@@ -22,7 +20,6 @@ import java.util.List;
 import java.util.Scanner;
 
 import alreyesh.android.scanmarketclient.Activities.MainActivity;
-import alreyesh.android.scanmarketclient.Camara.CamaraActivity;
 import alreyesh.android.scanmarketclient.Model.Product;
 import alreyesh.android.scanmarketclient.Models.Cart;
 import alreyesh.android.scanmarketclient.Models.Purchase;

@@ -16,45 +16,57 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.is;
 
+import android.app.Activity;
 import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 
+import androidx.lifecycle.Lifecycle;
+import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.NoMatchingViewException;
 import androidx.test.espresso.ViewInteraction;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
+import com.google.ar.core.Config;
+
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.hamcrest.core.IsInstanceOf;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import org.robolectric.annotation.Config;
 
 import alreyesh.android.scanmarketclient.Activities.MainActivity;
 
 
 @LargeTest
-
 @RunWith(AndroidJUnit4.class)
-@Config(sdk = Build.VERSION_CODES.P)
 public class AgregarListadoPorDefectoTest {
 
     @Rule
     public ActivityScenarioRule<MainActivity> mActivityScenarioRule =
             new ActivityScenarioRule<>(MainActivity.class);
+/*
+    @Before
+    public void beforetest(){
+       ActivityScenario<MainActivity> escenario = mActivityScenarioRule.getScenario();
+       escenario.moveToState(Lifecycle.State.RESUMED);
+    }
+*/
 
     @Test
     public void agregarListadoPorDefectoTest() {
         // Added a sleep statement to match the app's execution delay.
         // The recommended way to handle such scenarios is to use Espresso idling resources:
         // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+
+
         try {
             Thread.sleep(7000);
         } catch (InterruptedException e) {

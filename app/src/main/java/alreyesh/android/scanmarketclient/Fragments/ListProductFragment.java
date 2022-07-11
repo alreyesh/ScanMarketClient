@@ -35,6 +35,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import alreyesh.android.scanmarketclient.Adapters.ProductAdapter;
 import alreyesh.android.scanmarketclient.Dialog.AddListPurchaseDialog;
@@ -46,6 +47,8 @@ import alreyesh.android.scanmarketclient.Utils.Util;
 
 public class ListProductFragment extends Fragment {
     ArrayList<Product> productsList;
+    ArrayList<Product> productsTestList;
+    ArrayList<Product> productsSearchTest;
     private FirebaseFirestore db;
     private GridView gView;
     private ProgressDialog pd;
@@ -60,13 +63,13 @@ public class ListProductFragment extends Fragment {
         setHasOptionsMenu(true);
         pd= new ProgressDialog(getContext());
         prefs =getActivity().getSharedPreferences("Preferences", Context.MODE_PRIVATE);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
+      ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         Integer colorparse = Util.getPurchaseColor(prefs);
         if(colorparse !=null){
-            ((AppCompatActivity)getActivity()).getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colorparse));
+          ((AppCompatActivity)getActivity()).getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colorparse));
         }else{
-            ((AppCompatActivity)getActivity()).getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary,null)));
+          ((AppCompatActivity)getActivity()).getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary,null)));
         }
 
     }
@@ -79,17 +82,33 @@ public class ListProductFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
         gView =(GridView) view.findViewById(R.id.am_gv_gridview);
         productsList = new ArrayList<>();
-
-
+        productsTestList = new ArrayList<>();
+        //loadTestArraylist();
         loadDatainGridView();
 
         registerForContextMenu(gView);
+        getActivity().invalidateOptionsMenu();
         return view;
     }
 
+    private void   loadTestArraylist(){
+        int prod=200;
+        for(int i=1; i<6; i++){
+            int count = prod+i;
+            productsTestList.add(new Product(String.valueOf(count),"cod"+i,"Producto "+i,"aaa","categoria","https://firebasestorage.googleapis.com/v0/b/role-market.appspot.com/o/FotosProducto%2F436184755?alt=media&token=97c56fb8-24fb-4cf9-b2d2-4c0c4574ef52",String.valueOf(count)));
+
+        }
+
+        ProductAdapter adapter = new ProductAdapter(getActivity(),productsTestList);
+        gView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+
+
+    }
+
     private void loadDatainGridView() {
-        pd.setTitle("Cargando Lista");
-        pd.show();
+     //   pd.setTitle("Cargando Lista");
+      //  pd.show();
         db.collection("productos").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>(){
 
             @Override
@@ -114,12 +133,12 @@ public class ListProductFragment extends Fragment {
                     ProductAdapter adapter = new ProductAdapter(getActivity(),productsList);
                     gView.setAdapter(adapter);
                     adapter.notifyDataSetChanged();
-                    pd.dismiss();
+                 //   pd.dismiss();
 
                 }else {
                     // if the snapshot is empty we are displaying a toast message.
                     productsList.clear();
-                    pd.dismiss();
+                   // pd.dismiss();
                     Toast.makeText(getActivity(), "No se encontrar el Producto", Toast.LENGTH_SHORT).show();
                 }
 
@@ -184,8 +203,8 @@ public class ListProductFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        menu.findItem(R.id.add_list_purchase).setVisible(false);
-        menu.findItem(R.id.action_delete_all).setVisible(false);
+          menu.findItem(R.id.add_list_purchase).setVisible(false);
+         menu.findItem(R.id.action_delete_all).setVisible(false);
         menu.findItem(R.id.action_search).setVisible(true);
 
         MenuItem item = menu.findItem(R.id.action_search);
@@ -193,7 +212,8 @@ public class ListProductFragment extends Fragment {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-              searchData(query);
+                searchData(query);
+               // searchTest(query);
                 return false;
             }
 
@@ -201,9 +221,9 @@ public class ListProductFragment extends Fragment {
             public boolean onQueryTextChange(String newText) {
 
                 if (newText == " "||newText.isEmpty()||newText ==""|| newText == null) {
-                    loadDatainGridView();
+                      loadDatainGridView();
                 }else{
-                    searchspeed(newText);
+                     searchspeed(newText);
                 }
 
                 return false;
@@ -214,7 +234,35 @@ public class ListProductFragment extends Fragment {
        super.onCreateOptionsMenu(menu, inflater);
     }
 
+    private void searchTest(String s){
+        if (s.length() > 0){
 
+            productsSearchTest = new ArrayList<>();
+            for(Product p: productsTestList){
+                String title = p.getNombre().toLowerCase();
+                if(title.contains(s.toLowerCase())){
+                    productsSearchTest.add(p);
+
+                }
+            }
+            ProductAdapter adapter = new ProductAdapter(getActivity(),productsSearchTest);
+            gView.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
+        }else{
+            productsSearchTest = new ArrayList<>();
+            for(Product p: productsTestList){
+
+                    productsSearchTest.add(p);
+
+            }
+            ProductAdapter adapter = new ProductAdapter(getActivity(),productsSearchTest);
+            gView.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
+
+
+        }
+
+    }
 
     private void searchData(String s){
         pd.setTitle("Buscando...");

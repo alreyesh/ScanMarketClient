@@ -293,14 +293,16 @@ private Purchase purchase;
                             ((TextView) viewtexttotal).setTextColor( Color.RED ); // Make text colour blue
                             ((TextView) viewtexttotal).setTextSize(TypedValue.COMPLEX_UNIT_SP, 16); // Increase font size
                         }
+                        totalId.setTitle(s);
                     }else{
                         s.setSpan(new ForegroundColorSpan(Color.WHITE), 0, s.length(), 0);
                          if (viewtexttotal != null && viewtexttotal instanceof TextView) {
                             ((TextView) viewtexttotal).setTextColor( Color.WHITE ); // Make text colour blue
                             ((TextView) viewtexttotal).setTextSize(TypedValue.COMPLEX_UNIT_SP, 14); // Increase font size
                         }
+                        totalId.setTitle(s);
                     }
-                    totalId.setTitle(s);
+
 
 
                         boolean notify = Util.getStartNotification(prefs);

@@ -11,7 +11,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.annotation.Config;
+
 
 
 import java.net.MalformedURLException;
@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 import alreyesh.android.scanmarketclient.Activities.MainActivity;
 
 
-@Config(sdk = Build.VERSION_CODES.P)
+
 public class TestAddPurchase {
 
 
