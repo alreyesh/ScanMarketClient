@@ -1,25 +1,7 @@
 package alreyesh.android.scanmarketclient;
 
-import android.os.Build;
 
-import androidx.test.ext.junit.rules.ActivityScenarioRule;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-
-
-
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.concurrent.TimeUnit;
-
-import alreyesh.android.scanmarketclient.Activities.MainActivity;
-
 
 
 public class TestAddPurchase {

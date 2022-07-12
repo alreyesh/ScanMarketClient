@@ -2,9 +2,11 @@ plugins {
     id 'com.android.application'
     id 'com.google.gms.google-services'
     id 'org.jetbrains.kotlinx.kover' version '0.5.0'
+
 }
 apply plugin: 'kotlin-android'
 apply plugin: 'jacoco'
+
 jacoco {
     toolVersion = '0.8.7'
 }
@@ -62,6 +64,22 @@ android {
         }
     }
 */
+}
+
+
+apply plugin:'org.sonarqube'
+sonarqube{
+    properties{
+        property "sonar.projectName","ScanMarketClient"
+        property "sonar.projectKey","ScanMarketClient"
+        property "sonar.host.url","http://localhost:9000"
+        property "sonar.language","java"
+        property "sonar.sources","src/main/java"
+        property "sonar.java.sources","src/main/java"
+        property "sonar.sourceEncoding","UTF-8"
+        property "sonar.login","admin"
+        property "sonar.password","28071992"
+    }
 }
 
 dependencies {
@@ -236,6 +254,9 @@ dependencies {
 
     debugImplementation "androidx.fragment:fragment-testing:$fragment_version"
 }
+
+
+
 repositories {
     mavenCentral()
 }

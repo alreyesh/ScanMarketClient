@@ -4,7 +4,7 @@
     android:id="@+id/fragment_list_cart"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragments.CartFragment">
+    tools:context=".fragments.CartFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView

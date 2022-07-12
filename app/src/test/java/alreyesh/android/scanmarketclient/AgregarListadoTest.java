@@ -14,7 +14,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import static org.hamcrest.Matchers.allOf;
 
-import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
@@ -32,14 +31,13 @@ import org.hamcrest.core.IsInstanceOf;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.annotation.Config;
 
 
-import alreyesh.android.scanmarketclient.Activities.MainActivity;
+
+import alreyesh.android.scanmarketclient.activities.MainActivity;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-@Config(sdk = Build.VERSION_CODES.P)
 public class AgregarListadoTest {
 
 

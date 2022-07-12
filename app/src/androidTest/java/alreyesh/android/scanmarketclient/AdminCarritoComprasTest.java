@@ -1,10 +1,8 @@
 package alreyesh.android.scanmarketclient;
 
-import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
@@ -27,7 +25,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import alreyesh.android.scanmarketclient.Activities.MainActivity;
+import alreyesh.android.scanmarketclient.activities.MainActivity;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)

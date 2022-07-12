@@ -24,8 +24,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import alreyesh.android.scanmarketclient.Activities.MainActivity;
-import alreyesh.android.scanmarketclient.Utils.Util;
+import alreyesh.android.scanmarketclient.activities.MainActivity;
+import alreyesh.android.scanmarketclient.utils.Util;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
