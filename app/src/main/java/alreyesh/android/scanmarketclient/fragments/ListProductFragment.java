@@ -1,5 +1,6 @@
 package alreyesh.android.scanmarketclient.fragments;
 
+
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -21,11 +22,10 @@ import android.widget.GridView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
+
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,8 +42,12 @@ public class ListProductFragment extends Fragment {
     ArrayList<Product> productsSearchTest;
     private FirebaseFirestore db;
     private GridView gView;
-    private ProgressDialog pd;
-    private SharedPreferences prefs;
+    private static final String PRODUCTOS = "productos";
+    private static final String MESSAGE = "No se encontro el Producto";
+    private static final String ERROR = "Error al cargar los datos";
+    ProgressDialog pd = null;
+
+     SharedPreferences prefs;
     public ListProductFragment() {
         // Required empty public constructor
         setHasOptionsMenu(true);
@@ -74,7 +78,7 @@ public class ListProductFragment extends Fragment {
         gView =(GridView) view.findViewById(R.id.am_gv_gridview);
         productsList = new ArrayList<>();
         productsTestList = new ArrayList<>();
-        //loadTestArraylist();
+
         loadDatainGridView();
 
         registerForContextMenu(gView);
@@ -82,65 +86,45 @@ public class ListProductFragment extends Fragment {
         return view;
     }
 
-    private void   loadTestArraylist(){
-        int prod=200;
-        for(int i=1; i<6; i++){
-            int count = prod+i;
-            productsTestList.add(new Product(String.valueOf(count),"cod"+i,"Producto "+i,"aaa","categoria","https://firebasestorage.googleapis.com/v0/b/role-market.appspot.com/o/FotosProducto%2F436184755?alt=media&token=97c56fb8-24fb-4cf9-b2d2-4c0c4574ef52",String.valueOf(count)));
-
-        }
-
-        ProductAdapter adapter = new ProductAdapter(getActivity(),productsTestList);
-        gView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
-
-
-    }
-
     private void loadDatainGridView() {
+
         pd.setTitle("Cargando Lista");
         pd.show();
-        db.collection("productos").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>(){
+        db.collection(PRODUCTOS).get().addOnSuccessListener(queryDocumentSnapshots -> {
+            if (!queryDocumentSnapshots.isEmpty()){
+              if(productsList !=null)
+                  productsList.clear();
+                List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
+                for (DocumentSnapshot d : list) {
 
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots)  {
-                if (!queryDocumentSnapshots.isEmpty()){
-                  if(productsList !=null) productsList.clear();
-                    List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
-                    for (DocumentSnapshot d : list) {
+                    // after getting this list we are passing
+                    // that list to our object class.
+                    Product products = d.toObject(Product.class);
+                    products.setId(d.getReference().getId());
+                    products.setNombre(products.getNombre().toUpperCase());
 
-                        // after getting this list we are passing
-                        // that list to our object class.
-                        Product products = d.toObject(Product.class);
-                        products.setId(d.getReference().getId());
-                        products.setNombre(products.getNombre().toUpperCase());
+                    // after getting data from Firebase
+                    // we are storing that data in our array list
+                    productsList.add(products);
 
-                        // after getting data from Firebase
-                        // we are storing that data in our array list
-                        productsList.add(products);
-
-                    }
-
-                    ProductAdapter adapter = new ProductAdapter(getActivity(),productsList);
-                    gView.setAdapter(adapter);
-                    adapter.notifyDataSetChanged();
-              pd.dismiss();
-
-                }else {
-                    // if the snapshot is empty we are displaying a toast message.
-                    productsList.clear();
-               pd.dismiss();
-                    Toast.makeText(getActivity(), "No se encontrar el Producto", Toast.LENGTH_SHORT).show();
                 }
 
+                ProductAdapter adapter = new ProductAdapter(getActivity(),productsList);
+                gView.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
+          pd.dismiss();
 
+            }else {
+                // if the snapshot is empty we are displaying a toast message.
+                productsList.clear();
+           pd.dismiss();
+                Toast.makeText(getActivity(), MESSAGE, Toast.LENGTH_SHORT).show();
             }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                pd.dismiss();
-                Toast.makeText(getActivity(), "Fail to load data..", Toast.LENGTH_SHORT).show();
-            }
+
+
+        }).addOnFailureListener(e -> {
+            pd.dismiss();
+            Toast.makeText(getActivity(), ERROR, Toast.LENGTH_SHORT).show();
         });
 
 
@@ -149,43 +133,36 @@ public class ListProductFragment extends Fragment {
 
     private void loadDatainGridViewRep() {
 
-        db.collection("productos").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>(){
+        db.collection(PRODUCTOS).get().addOnSuccessListener(queryDocumentSnapshots -> {
+            if (!queryDocumentSnapshots.isEmpty()){
+                List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
+                for (DocumentSnapshot d : list) {
 
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots)  {
-                if (!queryDocumentSnapshots.isEmpty()){
-                    List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
-                    for (DocumentSnapshot d : list) {
+                    // after getting this list we are passing
+                    // that list to our object class.
+                    Product products = d.toObject(Product.class);
+                    products.setId(d.getReference().getId());
+                    products.setNombre(products.getNombre().toUpperCase());
+                    // after getting data from Firebase
+                    // we are storing that data in our array list
+                    productsList.add(products);
 
-                        // after getting this list we are passing
-                        // that list to our object class.
-                        Product products = d.toObject(Product.class);
-                        products.setId(d.getReference().getId());
-                        products.setNombre(products.getNombre().toUpperCase());
-                        // after getting data from Firebase
-                        // we are storing that data in our array list
-                        productsList.add(products);
-
-                    }
-                    ProductAdapter adapter = new ProductAdapter(getActivity(),productsList);
-                    gView.setAdapter(adapter);
-                    adapter.notifyDataSetChanged();
-
-
-                }else {
-                    // if the snapshot is empty we are displaying a toast message.
-
-                    Toast.makeText(getActivity(), "No se encontrar el Producto", Toast.LENGTH_SHORT).show();
                 }
+                ProductAdapter adapter = new ProductAdapter(getActivity(),productsList);
+                gView.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
 
 
+            }else {
+                // if the snapshot is empty we are displaying a toast message.
+
+                Toast.makeText(getActivity(), MESSAGE, Toast.LENGTH_SHORT).show();
             }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                pd.dismiss();
-                Toast.makeText(getActivity(), "Fail to load data..", Toast.LENGTH_SHORT).show();
-            }
+
+
+        }).addOnFailureListener(e -> {
+            pd.dismiss();
+            Toast.makeText(getActivity(), ERROR, Toast.LENGTH_SHORT).show();
         });
 
 
@@ -204,14 +181,14 @@ public class ListProductFragment extends Fragment {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 searchData(query);
-               // searchTest(query);
+
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
 
-                if (newText == " "||newText.isEmpty()||newText ==""|| newText == null) {
+                if (newText == " "||newText.isEmpty() ) {
                       loadDatainGridView();
                 }else{
                      searchspeed(newText);
@@ -224,7 +201,7 @@ public class ListProductFragment extends Fragment {
 
        super.onCreateOptionsMenu(menu, inflater);
     }
-
+/*
     private void searchTest(String s){
         if (s.length() > 0){
 
@@ -254,99 +231,85 @@ public class ListProductFragment extends Fragment {
         }
 
     }
-
+*/
     private void searchData(String s){
         pd.setTitle("Buscando...");
         pd.show();
-          db.collection("productos").orderBy("nombre").startAt(s).endAt(s + "\uf8ff").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>(){
+          db.collection(PRODUCTOS).orderBy("nombre").startAt(s).endAt(s + "\uf8ff").get().addOnSuccessListener(queryDocumentSnapshots -> {
+              if (!queryDocumentSnapshots.isEmpty()){
+                  productsList.clear();
+                  List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
+                  for (DocumentSnapshot d : list) {
 
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots)  {
-                if (!queryDocumentSnapshots.isEmpty()){
-                    productsList.clear();
-                    List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
-                    for (DocumentSnapshot d : list) {
+                      // after getting this list we are passing
+                      // that list to our object class.
+                      Product products = d.toObject(Product.class);
+                      products.setId(d.getReference().getId());
+                      products.setNombre(products.getNombre().toUpperCase());
 
-                        // after getting this list we are passing
-                        // that list to our object class.
-                        Product products = d.toObject(Product.class);
-                        products.setId(d.getReference().getId());
-                        products.setNombre(products.getNombre().toUpperCase());
+                      // after getting data from Firebase
+                      // we are storing that data in our array list
+                      productsList.add(products);
 
-                        // after getting data from Firebase
-                        // we are storing that data in our array list
-                        productsList.add(products);
+                  }
+                  ProductAdapter adapter = new ProductAdapter(getActivity(),productsList);
+                  gView.setAdapter(adapter);
+                  adapter.notifyDataSetChanged();
+                  pd.dismiss();
 
-                    }
-                    ProductAdapter adapter = new ProductAdapter(getActivity(),productsList);
-                    gView.setAdapter(adapter);
-                    adapter.notifyDataSetChanged();
-                    pd.dismiss();
-
-                }else {
-                    // if the snapshot is empty we are displaying a toast message.
-                    productsList.clear();
-                    loadDatainGridViewRep();
-                    pd.dismiss();
-                    Toast.makeText(getActivity(), "No se encontrar el Producto", Toast.LENGTH_SHORT).show();
-                }
+              }else {
+                  // if the snapshot is empty we are displaying a toast message.
+                  productsList.clear();
+                  loadDatainGridViewRep();
+                  pd.dismiss();
+                  Toast.makeText(getActivity(), MESSAGE, Toast.LENGTH_SHORT).show();
+              }
 
 
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                pd.dismiss();
-                Toast.makeText(getActivity(), "Fail to load data..", Toast.LENGTH_SHORT).show();
-            }
-        });
+          }).addOnFailureListener(e -> {
+              pd.dismiss();
+              Toast.makeText(getActivity(), ERROR, Toast.LENGTH_SHORT).show();
+          });
 
 
 
     }
 
     private void searchspeed(String s){
-        db.collection("productos").orderBy("nombre").startAt(s).endAt(s + "\uf8ff").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>(){
+        db.collection(PRODUCTOS).orderBy("nombre").startAt(s).endAt(s + "\uf8ff").get().addOnSuccessListener(queryDocumentSnapshots -> {
+            if (!queryDocumentSnapshots.isEmpty()){
+                productsList.clear();
+                List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
+                for (DocumentSnapshot d : list) {
 
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots)  {
-                if (!queryDocumentSnapshots.isEmpty()){
-                    productsList.clear();
-                    List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
-                    for (DocumentSnapshot d : list) {
+                    // after getting this list we are passing
+                    // that list to our object class.
+                    Product products = d.toObject(Product.class);
+                    products.setId(d.getReference().getId());
+                    products.setNombre(products.getNombre().toUpperCase());
 
-                        // after getting this list we are passing
-                        // that list to our object class.
-                        Product products = d.toObject(Product.class);
-                        products.setId(d.getReference().getId());
-                        products.setNombre(products.getNombre().toUpperCase());
+                    // after getting data from Firebase
+                    // we are storing that data in our array list
+                    productsList.add(products);
 
-                        // after getting data from Firebase
-                        // we are storing that data in our array list
-                        productsList.add(products);
-
-                    }
-                    ProductAdapter adapter = new ProductAdapter(getActivity(),productsList);
-                    gView.setAdapter(adapter);
-                    adapter.notifyDataSetChanged();
-                    pd.dismiss();
-
-                }else {
-                    // if the snapshot is empty we are displaying a toast message.
-                    productsList.clear();
-                    loadDatainGridViewRep();
-                    pd.dismiss();
-                    Toast.makeText(getActivity(), "No se encontrar el Producto", Toast.LENGTH_SHORT).show();
                 }
-
-
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
+                ProductAdapter adapter = new ProductAdapter(getActivity(),productsList);
+                gView.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
                 pd.dismiss();
-                Toast.makeText(getActivity(), "Fail to load data..", Toast.LENGTH_SHORT).show();
+
+            }else {
+                // if the snapshot is empty we are displaying a toast message.
+                productsList.clear();
+                loadDatainGridViewRep();
+                pd.dismiss();
+                Toast.makeText(getActivity(), MESSAGE, Toast.LENGTH_SHORT).show();
             }
+
+
+        }).addOnFailureListener(e -> {
+            pd.dismiss();
+            Toast.makeText(getActivity(), ERROR, Toast.LENGTH_SHORT).show();
         });
     }
 }

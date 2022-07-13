@@ -34,84 +34,35 @@ import io.realm.Realm;
 import io.realm.RealmList;
 
 public class DetailProductDialog  extends DialogFragment{
-    public TextView editCodProduct;
-    public TextView editNameProduct;
-    public TextView editDescProduct;
-    public TextView editPriceProduct;
-    private EditText editCountProduct;
-    public ImageView imgProductView;
-    private Button btnRegistrar;
-    private Button btnCancelar;
-    private SharedPreferences prefs;
-    public  RealmList<Cart> carts;
+      TextView editCodProduct;
+     TextView editNameProduct;
+    TextView editDescProduct;
+      TextView editPriceProduct;
+    EditText editCountProduct;
+     ImageView imgProductView;
+     Button btnRegistrar;
+     Button btnCancelar;
+   SharedPreferences prefs;
+       RealmList<Cart> carts;
     private Purchase purchase;
-    public int purchaseId;
-    public FirebaseFirestore db;
-    public Realm realm;
+     int purchaseId;
+    FirebaseFirestore db;
+     Realm realm;
     private static final String ProductName = "productName";
-
-
+    String finalCountDefault;
+    Product  products;
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-
-        db = FirebaseFirestore.getInstance();
-        realm = Realm.getDefaultInstance();
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.detail_product_layout,null);
-        editCodProduct=(TextView) view.findViewById(R.id.textViewCod);
-        editNameProduct=(TextView) view.findViewById(R.id.textViewName);
-        editDescProduct=(TextView)  view.findViewById(R.id.textViewDesc);
-        editPriceProduct=(TextView)  view.findViewById(R.id.textViewPrice);
-        editCountProduct = (EditText) view.findViewById(R.id.editCantidad) ;
-        imgProductView = (ImageView) view.findViewById(R.id.imgProductView);
-        btnRegistrar = (Button) view.findViewById(R.id.btnRegistrarEdit);
-        btnCancelar = (Button) view.findViewById(R.id.btnCancelarEdit);
-        prefs =getContext().getSharedPreferences("Preferences", Context.MODE_PRIVATE);
-        Gson gson = new Gson();
-        String pro = Util.getProduct(prefs);
-
-
-        Product  products = gson.fromJson(pro,Product.class);
-
-        editCodProduct.setText("sku: "+products.getCodigo());
-        editNameProduct.setText(products.getNombre());
-        editDescProduct.setText(products.getDescripcion());
-        editPriceProduct.setText("S/. "+products.getPrecio());
-        editCountProduct.setHint("1");
-        editCountProduct.setInputType(InputType.TYPE_CLASS_NUMBER );
-        String countDefault="1";
-        editCountProduct.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
-        editCountProduct.setSingleLine(true);
-        if(Util.getPurchaseId(prefs) !=null){
-            int purchaseId = Util.getPurchaseId(prefs);
-            purchase = realm.where(Purchase.class).equalTo("id",purchaseId).findFirst();
-            if(purchase !=null) {
-                String nombre = products.getNombre();
-                 carts = purchase.getCarts();
-                Cart verCart = carts.where().equalTo(ProductName, nombre).findFirst();
-                if (verCart != null) {
-                    editCountProduct.setHint(verCart.getCountProduct());
-                    countDefault = verCart.getCountProduct();
-                }
-            }
-
-        }
-
-
-        editCodProduct.setOnClickListener(v -> {
-
-        });
-        Picasso.get().load(products.getImagen()).fit().into(imgProductView);
-        String finalCountDefault = countDefault;
+        UI(view);
         btnRegistrar.setOnClickListener(v -> {
             int purchaseId = Util.getPurchaseId(prefs);
             purchase = realm.where(Purchase.class).equalTo("id",purchaseId).findFirst();
             if(purchase !=null) {
                 if (Util.getPurchaseId(prefs) != null) {
-
-
                     String lista = Util.getPurchaseName(prefs);
                     String cantidad = editCountProduct.getText().toString().trim();
                     if (cantidad.isEmpty() || cantidad == null || cantidad == "") {
@@ -145,7 +96,6 @@ public class DetailProductDialog  extends DialogFragment{
 
                     } else {
                         boolean isstringint = isStringInteger(cantidad, 10);
-
                         if (isstringint) {
 
                             //parseInteger
@@ -211,34 +161,74 @@ public class DetailProductDialog  extends DialogFragment{
                             }
 
 
-                        } else {
+                        } else
                             Toast.makeText(getActivity(), "Ingresar  un valor entero a partir del 1", Toast.LENGTH_SHORT).show();
-
-                        }
                     }
                     SharedPreferences.Editor editor = prefs.edit();
                     editor.putBoolean("startnotify",true);
                     editor.commit();
-
-
-                    //Actualización del menu bar
                     getActivity().invalidateOptionsMenu();
-
                 } else {
                     Toast.makeText(getActivity(), "Seleccione una lista de Compra", Toast.LENGTH_SHORT).show();
                 }
-            }else{
+            }else
                 Toast.makeText(getActivity(), "Seleccionar un listado", Toast.LENGTH_SHORT).show();
-
-            }
         });
         btnCancelar.setOnClickListener(v -> dismiss());
         builder.setView(view);
 
-
         return builder.create();
     }
+    public void UI(View view){
+        db = FirebaseFirestore.getInstance();
+        realm = Realm.getDefaultInstance();
 
+        editCodProduct=(TextView) view.findViewById(R.id.textViewCod);
+        editNameProduct=(TextView) view.findViewById(R.id.textViewName);
+        editDescProduct=(TextView)  view.findViewById(R.id.textViewDesc);
+        editPriceProduct=(TextView)  view.findViewById(R.id.textViewPrice);
+        editCountProduct = (EditText) view.findViewById(R.id.editCantidad) ;
+        imgProductView = (ImageView) view.findViewById(R.id.imgProductView);
+        btnRegistrar = (Button) view.findViewById(R.id.btnRegistrarEdit);
+        btnCancelar = (Button) view.findViewById(R.id.btnCancelarEdit);
+        prefs =getContext().getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        String pro = Util.getProduct(prefs);
+
+
+        products = gson.fromJson(pro,Product.class);
+
+        editCodProduct.setText("sku: "+products.getCodigo());
+        editNameProduct.setText(products.getNombre());
+        editDescProduct.setText(products.getDescripcion());
+        editPriceProduct.setText("S/. "+products.getPrecio());
+        editCountProduct.setHint("1");
+        editCountProduct.setInputType(InputType.TYPE_CLASS_NUMBER );
+        String countDefault="1";
+        editCountProduct.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+        editCountProduct.setSingleLine(true);
+        if(Util.getPurchaseId(prefs) !=null){
+            int purchaseId = Util.getPurchaseId(prefs);
+            purchase = realm.where(Purchase.class).equalTo("id",purchaseId).findFirst();
+            if(purchase !=null) {
+                String nombre = products.getNombre();
+                carts = purchase.getCarts();
+                Cart verCart = carts.where().equalTo(ProductName, nombre).findFirst();
+                if (verCart != null) {
+                    editCountProduct.setHint(verCart.getCountProduct());
+                    countDefault = verCart.getCountProduct();
+                }
+            }
+
+        }
+        editCodProduct.setOnClickListener(v -> {
+        });
+        Picasso.get().load(products.getImagen()).fit().into(imgProductView);
+        finalCountDefault = countDefault;
+
+
+
+    }
 
     public static boolean isStringInteger(String stringToCheck, int radix) {
         try(    Scanner sc = new Scanner(stringToCheck.trim())){

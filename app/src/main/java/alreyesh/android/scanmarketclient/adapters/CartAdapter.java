@@ -20,18 +20,18 @@ import alreyesh.android.scanmarketclient.R;
 import io.realm.Realm;
 
 public class CartAdapter  extends RecyclerView.Adapter<CartAdapter.ViewHolder>{
-    private Context context;
+      Context context;
     private List<Cart> carts;
     private  int layout;
-    private Realm realm;
+     Realm realm;
     private CartAdapter.OnItemClickListener itemListener;
-    private CartAdapter.OnButtonClickListener btnListener;
-    private SharedPreferences prefs;
-    public CartAdapter(List<Cart> carts, int layout, CartAdapter.OnItemClickListener itemListener, CartAdapter.OnButtonClickListener btnListener) {
+
+     SharedPreferences prefs;
+    public CartAdapter(List<Cart> carts, int layout, CartAdapter.OnItemClickListener itemListener ) {
         this.carts = carts;
         this.layout = layout;
         this.itemListener = itemListener;
-        this.btnListener = btnListener;
+
     }
 
     @NonNull
@@ -48,7 +48,7 @@ public class CartAdapter  extends RecyclerView.Adapter<CartAdapter.ViewHolder>{
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.bind(carts.get(position),itemListener,btnListener);
+        holder.bind(carts.get(position),itemListener );
     }
 
     @Override
@@ -57,8 +57,10 @@ public class CartAdapter  extends RecyclerView.Adapter<CartAdapter.ViewHolder>{
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView  textViewName,textViewSubPrice,textViewCount;
-        public ImageView imgProductView;
+        TextView  textViewName;
+         TextView  textViewSubPrice;
+        TextView  textViewCount;
+       ImageView imgProductView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -68,26 +70,13 @@ public class CartAdapter  extends RecyclerView.Adapter<CartAdapter.ViewHolder>{
             textViewCount =(TextView) itemView.findViewById(R.id.textViewCountP);
 
         }
-        public void bind(final Cart cart, final CartAdapter.OnItemClickListener itemListener, final CartAdapter.OnButtonClickListener btnListener ){
+        public void bind(final Cart cart, final CartAdapter.OnItemClickListener itemListener ){
             textViewName.setText(cart.getProductName());
             textViewSubPrice.setText("S/. "+cart.getSubPrice());
             textViewCount.setText(cart.getCountProduct() +" und");
             Picasso.get().load(cart.getImagenProduct()).fit().into(imgProductView);
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    itemListener.onItemClick(cart,getBindingAdapterPosition());
-                }
-            });
-            itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-
-                    return false;
-
-                }
-            });
+            itemView.setOnClickListener(v -> itemListener.onItemClick(cart,getBindingAdapterPosition()));
+            itemView.setOnLongClickListener(v -> false);
 
         }
 

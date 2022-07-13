@@ -28,7 +28,7 @@ public Purchase(){
 }
 
     public Purchase(String name, float limit, int color, String emailID,int icon) {
-        this.id = MyApp.PurchaseID.incrementAndGet();
+        this.id = MyApp.purchaseID.incrementAndGet();
         this.name = name;
         this.limit = limit;
         this.color = color;

@@ -54,18 +54,15 @@ public class ProductAdapter extends ArrayAdapter<Product> implements Serializabl
         Picasso.get().load(products.getImagen()).fit().into(imgProductView);
         textViewName.setText(products.getNombre());
         textViewPrice.setText("S/. "+products.getPrecio());
-       listitemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String json = gson.toJson(products);
-                editor.putString("productos",json);
-                editor.commit();
-                FragmentManager manager = ((AppCompatActivity)context).getSupportFragmentManager();
-                DetailProductDialog detailProductDialog  = new DetailProductDialog();
+       listitemView.setOnClickListener(v -> {
+           String json = gson.toJson(products);
+           editor.putString("productos",json);
+           editor.commit();
+           FragmentManager manager = ((AppCompatActivity)context).getSupportFragmentManager();
+           DetailProductDialog detailProductDialog  = new DetailProductDialog();
 
-                detailProductDialog.show(manager, "Detalle del Producto");
+           detailProductDialog.show(manager, "Detalle del Producto");
 
-             }
         });
 
 

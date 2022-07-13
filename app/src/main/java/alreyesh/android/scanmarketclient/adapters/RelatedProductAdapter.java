@@ -37,6 +37,9 @@ public class RelatedProductAdapter  extends RecyclerView.Adapter<RelatedProductA
     private Realm realm;
     private Purchase purchase;
     private SharedPreferences prefs;
+    private  String cantidad;
+    private static final String MESSAGE = "Se Ingreso Correctamente a la Cesta";  // Compliant
+
     public RelatedProductAdapter(List<Product> products, int layout, OnItemClickListener itemListener, OnButtonClickListener btnListener) {
         this.products = products;
         this.layout = layout;
@@ -55,7 +58,7 @@ public class RelatedProductAdapter  extends RecyclerView.Adapter<RelatedProductA
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.bind(products.get(position),itemListener,btnListener);
+        holder.bind(products.get(position),btnListener);
     }
 
     @Override
@@ -64,12 +67,12 @@ public class RelatedProductAdapter  extends RecyclerView.Adapter<RelatedProductA
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
-        public TextView name;
-        public TextView price;
-        public EditText count;
-        public ImageView img;
-        public Button btnAgregar;
-        public String defaultcount;
+         TextView name;
+         TextView price;
+         EditText count;
+         ImageView img;
+         Button btnAgregar;
+         String defaultcount;
 
 
 
@@ -82,7 +85,7 @@ public class RelatedProductAdapter  extends RecyclerView.Adapter<RelatedProductA
             btnAgregar=(Button) itemView.findViewById(R.id.btnAgregar);
 
         }
-        public void bind(final Product product, final RelatedProductAdapter.OnItemClickListener itemListener, final RelatedProductAdapter.OnButtonClickListener btnListener ) {
+        public void bind(final Product product, final RelatedProductAdapter.OnButtonClickListener btnListener ) {
             realm = Realm.getDefaultInstance();
             prefs = context.getSharedPreferences("Preferences", Context.MODE_PRIVATE);
             if(Util.getPurchaseId(prefs) !=null){
@@ -102,106 +105,54 @@ public class RelatedProductAdapter  extends RecyclerView.Adapter<RelatedProductA
                     Picasso.get().load(product.getImagen()).fit().into(img);
                     String lista = Util.getPurchaseName(prefs);
 
-                    btnAgregar.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            String cantidad = count.getText().toString().trim();
-                            if (cantidad.isEmpty() || cantidad == null || cantidad == ""){
-                                cantidad = defaultcount;
-                                Cart cartin;
-                                String nombre = product.getNombre();
-                                RealmList<Cart> carts = purchase.getCarts();
-                                cartin = carts.where().equalTo("productName", nombre).findFirst();
-                                if (cartin == null || cartin.getRealm().isEmpty()){
-                                    cartin = new Cart(product.getCodigo(), product.getNombre(), product.getImagen(), product.getPrecio(), cantidad, product.getPrecio());
-                                    realm.beginTransaction();
-                                    realm.copyToRealm(cartin);
-                                    purchase.getCarts().add(cartin);
-                                    realm.commitTransaction();
+                    btnAgregar.setOnClickListener(v -> {
+                         cantidad = count.getText().toString().trim();
+                        if (cantidad.isEmpty() || cantidad.equals("") ){
+                            cantempty(product, defaultcount);
+                            count.setHint(cantidad);
+                            count.setText("");
+                        }
+                        else{
+                            boolean isstringint = isStringInteger(cantidad, 10);
+                            if (isstringint == true){
+                                int cant = Integer.parseInt(cantidad);
+                                if (cant > 0){
+                                    Cart cartin;
 
-                                    Toast.makeText(context, "Se Ingreso Correctamente a la Cesta", Toast.LENGTH_SHORT).show();
-                                    ((MainActivity)context).invalidateOptionsMenu();
-                                }else{
-                                    realm.beginTransaction();
-                                    cartin.setCountProduct(cantidad);
-                                    cartin.setSubPrice(product.getPrecio());
-                                    realm.copyToRealmOrUpdate(cartin);
-                                    realm.commitTransaction();
+                                    String nombre1 = product.getNombre();
 
-
-                                    Toast.makeText(context ,"Se Actualizo el Producto en la Cesta", Toast.LENGTH_SHORT).show();
-                                    ((MainActivity)context).invalidateOptionsMenu();
-
-                                }
-                                Toast.makeText(context, "Se Ingreso Correctamente a la Cesta", Toast.LENGTH_SHORT).show();
-                                ((MainActivity)context).invalidateOptionsMenu();
-                                count.setHint(cantidad);
-                                count.setText("");
-
-
-                            }else{
-                                boolean isstringint = isStringInteger(cantidad, 10);
-                                if (isstringint == true){
-                                    int cant = Integer.parseInt(cantidad);
-                                    if (cant > 0){
-                                        Cart cartin;
-
-                                        String nombre = product.getNombre();
-
-                                        RealmList<Cart> carts = purchase.getCarts();
-                                        float precio = Float.parseFloat(product.getPrecio());
-                                        float subprice = precio * cant;
-                                        String subpricestring = String.valueOf(subprice);
-                                        cartin = carts.where().equalTo("productName", nombre).findFirst();
-                                        if (carts.size() > 0){
-                                            if (cartin == null || cartin.getRealm().isEmpty()){
-                                                realm.beginTransaction();
-                                                cartin = new Cart(product.getCodigo(), product.getNombre(), product.getImagen(), product.getPrecio(), cantidad, subpricestring);
-                                                realm.copyToRealm(cartin);
-                                                purchase.getCarts().add(cartin);
-                                                realm.commitTransaction();
-                                                Toast.makeText(context, "Se Ingreso Correctamente a la Cesta", Toast.LENGTH_SHORT).show();
-                                                ((MainActivity)context).invalidateOptionsMenu();
-                                            }else{
-                                                realm.beginTransaction();
-                                                cartin.setCountProduct(cantidad);
-                                                cartin.setSubPrice(subpricestring);
-                                                realm.copyToRealmOrUpdate(cartin);
-                                                realm.commitTransaction();
-                                                Toast.makeText(context ,"Se Actualizo el Producto en la Cesta", Toast.LENGTH_SHORT).show();
-                                                ((MainActivity)context).invalidateOptionsMenu();
-                                            }
-
-
-
-                                        }else{
-                                            realm.beginTransaction();
-                                            cartin = new Cart(product.getCodigo(), product.getNombre(), product.getImagen(), product.getPrecio(), cantidad, subpricestring);
-                                            realm.copyToRealm(cartin);
-                                            purchase.getCarts().add(cartin);
-                                            realm.commitTransaction();
-                                            Toast.makeText(context, "Se Ingreso Correctamente a la Cesta", Toast.LENGTH_SHORT).show();
-                                            ((MainActivity)context).invalidateOptionsMenu();
-
-                                        }
-
+                                    RealmList<Cart> carts1 = purchase.getCarts();
+                                    float precio = Float.parseFloat(product.getPrecio());
+                                    float subprice = precio * cant;
+                                    String subpricestring = String.valueOf(subprice);
+                                    cartin = carts1.where().equalTo("productName", nombre1).findFirst();
+                                    if (!carts1.isEmpty()){
+                                      cartsexist(product,cartin,subpricestring);
 
                                     }else{
-                                        Toast.makeText(context, "  Ingresar valor mayor o igual a 1", Toast.LENGTH_SHORT).show();
+                                        cartin = new Cart(product.getCodigo(), product.getNombre(), product.getImagen(), product.getPrecio(), cantidad, subpricestring);
+
+                                        cartsnoexist(product,cartin);
+
 
                                     }
 
 
-
-
                                 }else{
-                                    Toast.makeText(context, "Error al ingresar. Ingresar valor mayor o igual a 1", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(context, "  Ingresar valor mayor o igual a 1", Toast.LENGTH_SHORT).show();
 
                                 }
+
+
+
+
+                            }else{
+                                Toast.makeText(context, "Error al ingresar. Ingresar valor mayor o igual a 1", Toast.LENGTH_SHORT).show();
 
                             }
 
                         }
+
                     });
 
 
@@ -236,10 +187,75 @@ public class RelatedProductAdapter  extends RecyclerView.Adapter<RelatedProductA
         void onButtonClick(Product product, int position);
     }
     public static boolean isStringInteger(String stringToCheck, int radix) {
-        Scanner sc = new Scanner(stringToCheck.trim());
-        if(!sc.hasNextInt(radix)) return false;
-        sc.nextInt(radix);
-        return !sc.hasNext();
-    }
+        try(  Scanner sc = new Scanner(stringToCheck.trim())){
+            if(!sc.hasNextInt(radix))
+                return false;
+            sc.nextInt(radix);
+            return !sc.hasNext();
+        }
 
+
+    }
+    private void cantempty(Product product, String defaultcount){
+        cantidad = defaultcount;
+        Cart cartin;
+        String nombre = product.getNombre();
+        RealmList<Cart> carts = purchase.getCarts();
+        cartin = carts.where().equalTo("productName", nombre).findFirst();
+        if (cartin == null || cartin.getRealm().isEmpty()){
+            cartin = new Cart(product.getCodigo(), product.getNombre(), product.getImagen(), product.getPrecio(), cantidad, product.getPrecio());
+            realm.beginTransaction();
+            realm.copyToRealm(cartin);
+            purchase.getCarts().add(cartin);
+            realm.commitTransaction();
+
+            Toast.makeText(context, MESSAGE, Toast.LENGTH_SHORT).show();
+            ((MainActivity)context).invalidateOptionsMenu();
+        }else{
+            realm.beginTransaction();
+            cartin.setCountProduct(cantidad);
+            cartin.setSubPrice(product.getPrecio());
+            realm.copyToRealmOrUpdate(cartin);
+            realm.commitTransaction();
+
+
+            Toast.makeText(context ,"Se Actualizo el Producto en la Cesta", Toast.LENGTH_SHORT).show();
+            ((MainActivity)context).invalidateOptionsMenu();
+
+        }
+        Toast.makeText(context, MESSAGE, Toast.LENGTH_SHORT).show();
+        ((MainActivity)context).invalidateOptionsMenu();
+
+
+
+    }
+    private void cartsexist(Product product, Cart cartin, String subpricestring ){
+        if (cartin == null || cartin.getRealm().isEmpty()){
+            realm.beginTransaction();
+            cartin = new Cart(product.getCodigo(), product.getNombre(), product.getImagen(), product.getPrecio(), cantidad, subpricestring);
+            realm.copyToRealm(cartin);
+            purchase.getCarts().add(cartin);
+            realm.commitTransaction();
+            Toast.makeText(context, MESSAGE, Toast.LENGTH_SHORT).show();
+            ((MainActivity)context).invalidateOptionsMenu();
+        }else{
+            realm.beginTransaction();
+            cartin.setCountProduct(cantidad);
+            cartin.setSubPrice(subpricestring);
+            realm.copyToRealmOrUpdate(cartin);
+            realm.commitTransaction();
+            Toast.makeText(context ,"Se Actualizo el Producto en la Cesta", Toast.LENGTH_SHORT).show();
+            ((MainActivity)context).invalidateOptionsMenu();
+        }
+
+
+    }
+    private void   cartsnoexist(Product product, Cart cartin ){
+        realm.beginTransaction();
+        realm.copyToRealm(cartin);
+        purchase.getCarts().add(cartin);
+        realm.commitTransaction();
+        Toast.makeText(context, MESSAGE, Toast.LENGTH_SHORT).show();
+        ((MainActivity)context).invalidateOptionsMenu();
+    }
 }

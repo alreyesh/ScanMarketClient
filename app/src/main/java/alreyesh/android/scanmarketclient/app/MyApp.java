@@ -15,15 +15,15 @@ import io.realm.RealmResults;
 
 
 public class MyApp extends Application {
-    public static AtomicInteger PurchaseID = new AtomicInteger();
-    public static AtomicInteger CartID = new AtomicInteger();
+    public static AtomicInteger purchaseID = new AtomicInteger();
+    public static    AtomicInteger cartID = new AtomicInteger();
 
     @Override
     public void onCreate() {
         setUpRealmConfig();
         Realm realm = Realm.getDefaultInstance();
-        PurchaseID= getIdByTable(realm, Purchase.class);
-        CartID= getIdByTable(realm, Cart.class);
+        purchaseID= getIdByTable(realm, Purchase.class);
+        cartID= getIdByTable(realm, Cart.class);
         realm.close();
         SystemClock.sleep(3000);
         super.onCreate();
@@ -39,7 +39,7 @@ public class MyApp extends Application {
     }
     private <T extends RealmObject>AtomicInteger getIdByTable(Realm realm, Class<T>anyClass){
         RealmResults<T> results = realm.where(anyClass).findAll();
-        return(results.size()>0)? new AtomicInteger(results.max("id").intValue()): new AtomicInteger();
+        return(!results.isEmpty())? new AtomicInteger(results.max("id").intValue()): new AtomicInteger();
     }
 
 

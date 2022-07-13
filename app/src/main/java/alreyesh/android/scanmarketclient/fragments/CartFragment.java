@@ -29,7 +29,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-import com.rowland.cartcounter.view.CartCounterActionView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -51,19 +50,19 @@ public class CartFragment extends Fragment  implements RealmChangeListener<Realm
 
     private SharedPreferences prefs;
     private RealmList<Cart> carts;
-    public RecyclerView recycler;
+     RecyclerView recycler;
     private CartAdapter adapter;
-    public TextView txtListadoCompra;
-    private RecyclerView.LayoutManager mLayoutManager;
+     TextView txtListadoCompra;
+      RecyclerView.LayoutManager mLayoutManager;
     private Realm realm;
     private Purchase purchase;
-    private int purchaseId;
+    public int purchaseId;
 
-    private   CartCounterActionView actionviewCart;
-    public MenuItem menuId;
-    private int cantCart;
-    public   float totalCart;
-    private static final String StartNotify = "startnotify";
+
+    MenuItem menuId;
+
+      float totalCart;
+    private static final String STARTNOTIFY = "startnotify";
     public CartFragment() {
         // Required empty public constructor
         setHasOptionsMenu(true);
@@ -139,14 +138,7 @@ View v =  inflater.inflate(R.layout.fragment_cart, container, false);
         mLayoutManager = new LinearLayoutManager(getActivity());
         recycler.setLayoutManager(mLayoutManager);
 
-        adapter = new CartAdapter(carts, R.layout.recycler_view_list_cart_item, new CartAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(Cart cart, int position) {
-                showAlertForEditing(cart);
-            }
-        }, (cart, position) -> {
-
-        });
+        adapter = new CartAdapter(carts, R.layout.recycler_view_list_cart_item, (cart, position) -> showAlertForEditing(cart)  );
         recycler.setAdapter(adapter);
 
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.LEFT|ItemTouchHelper.RIGHT) {
@@ -174,7 +166,7 @@ View v =  inflater.inflate(R.layout.fragment_cart, container, false);
         carts.get(position).deleteFromRealm();
         realm.commitTransaction();
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean(StartNotify,true);
+        editor.putBoolean(STARTNOTIFY,true);
         editor.commit();
         getActivity().invalidateOptionsMenu();
         adapter.notifyDataSetChanged();
@@ -185,7 +177,7 @@ View v =  inflater.inflate(R.layout.fragment_cart, container, false);
         realm.commitTransaction();
         getActivity().invalidateOptionsMenu();
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean(StartNotify,true);
+        editor.putBoolean(STARTNOTIFY,true);
         editor.commit();
         adapter.notifyDataSetChanged();
     }
@@ -197,7 +189,7 @@ View v =  inflater.inflate(R.layout.fragment_cart, container, false);
         realm.commitTransaction();
         adapter.notifyDataSetChanged();
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean(StartNotify,true);
+        editor.putBoolean(STARTNOTIFY,true);
         editor.commit();
         getActivity().invalidateOptionsMenu();
     }
@@ -224,51 +216,46 @@ View v =  inflater.inflate(R.layout.fragment_cart, container, false);
         cantidad.setSingleLine(true);
         Picasso.get().load(cart.getImagenProduct()).fit().into(imgView);
         AlertDialog dialog = builder.create();
-        btnRegister.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String countText = cantidad.getText().toString().trim();
-                   if(countText !=null|| countText != "") {
+        btnRegister.setOnClickListener(v -> {
+            String countText = cantidad.getText().toString().trim();
+               if(countText !=null) {
 
-                  boolean isstringint = isStringInteger(countText, 10);
-                  if(isstringint== true){
-                      int counInt = Integer.parseInt(countText);
-                        if(counInt >0){
-                            float proprice = Float.parseFloat(cart.getProductPrice());
-                            float propricefloat = counInt * proprice;
-                            String result = String.valueOf(propricefloat);
-                            editCart(result,countText,cart);
+              boolean isstringint = isStringInteger(countText, 10);
+              if(isstringint){
+                  int counInt = Integer.parseInt(countText);
+                    if(counInt >0){
+                        float proprice = Float.parseFloat(cart.getProductPrice());
+                        float propricefloat = counInt * proprice;
+                        String result = String.valueOf(propricefloat);
+                        editCart(result,countText,cart);
 
-                            Toast.makeText(getActivity(), "Se Actualizo", Toast.LENGTH_SHORT).show();
-                            dialog.dismiss();
-                        }else{
-                            Toast.makeText(getActivity(), "Ingresar valor mayor a 0", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Se Actualizo", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                    }else{
+                        Toast.makeText(getActivity(), "Ingresar valor mayor a 0", Toast.LENGTH_SHORT).show();
 
-                        }
+                    }
 
-                  }else{
-                      Toast.makeText(getActivity(), "Ingresar un numero entero", Toast.LENGTH_SHORT).show();
+              }else{
+                  Toast.makeText(getActivity(), "Ingresar un numero entero", Toast.LENGTH_SHORT).show();
 
-                  }
-
-                }
+              }
 
             }
+
         });
-        btnCancelar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
+        btnCancelar.setOnClickListener(v -> dialog.dismiss());
 
         dialog.show();
     }
     public static boolean isStringInteger(String stringToCheck, int radix) {
-        Scanner sc = new Scanner(stringToCheck.trim());
-        if(!sc.hasNextInt(radix)) return false;
-        sc.nextInt(radix);
-        return !sc.hasNext();
+        try(  Scanner sc = new Scanner(stringToCheck.trim())){
+            if(!sc.hasNextInt(radix)) return false;
+            sc.nextInt(radix);
+            return !sc.hasNext();
+        }
+
+
     }
 
 }

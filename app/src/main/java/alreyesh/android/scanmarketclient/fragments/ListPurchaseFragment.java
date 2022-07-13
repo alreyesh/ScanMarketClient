@@ -34,16 +34,16 @@ import io.realm.Sort;
 public class ListPurchaseFragment extends Fragment implements RealmChangeListener<RealmResults<Purchase>> {
     private Realm realm;
     private RealmResults<Purchase> purchases;
-    private RecyclerView recycler;
+     RecyclerView recycler;
     private PurchaseAdapter adapter;
-    private RecyclerView.LayoutManager mLayoutManager;
-    private FirebaseAuth mAuth;
-    private SharedPreferences prefs;
-    private   CartCounterActionView actionviewCart;
-    private  MenuItem menuId;
-    private int cantCart;
-    private int purchaseId;
-    private Purchase purchase;
+      RecyclerView.LayoutManager mLayoutManager;
+     FirebaseAuth mAuth;
+    SharedPreferences prefs;
+       CartCounterActionView actionviewCart;
+      MenuItem menuId;
+     int cantCart;
+     int purchaseId;
+      Purchase purchase;
     public ListPurchaseFragment() {
         // Required empty public constructor
         setHasOptionsMenu(true);
@@ -57,11 +57,7 @@ public class ListPurchaseFragment extends Fragment implements RealmChangeListene
 
     }
 
-    @Override
-    public void onPrepareOptionsMenu(@NonNull Menu menu) {
-        super.onPrepareOptionsMenu(menu);
 
-    }
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
@@ -74,17 +70,15 @@ public class ListPurchaseFragment extends Fragment implements RealmChangeListene
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.action_delete_all:
-                realm.beginTransaction();
-                realm.deleteAll();
-                realm.commitTransaction();
-                getActivity().invalidateOptionsMenu();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        if(item.getItemId() == R.id.action_delete_all ) {
+            realm.beginTransaction();
+            realm.deleteAll();
+            realm.commitTransaction();
+            getActivity().invalidateOptionsMenu();
+            return true;
+        }else
+            return super.onOptionsItemSelected(item);
 
-        }
     }
 
     @Override
@@ -107,44 +101,35 @@ public class ListPurchaseFragment extends Fragment implements RealmChangeListene
        mLayoutManager = new LinearLayoutManager(getActivity());
         recycler.setLayoutManager(mLayoutManager);
         adapter = new PurchaseAdapter(purchases, R.layout.recycler_view_list_purchase_item,
-                new PurchaseAdapter.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(Purchase purchase, int position) {
-                        CartFragment cartFragment = new CartFragment();
+                (purchase, position) -> {
+                    CartFragment cartFragment = new CartFragment();
 
-                        SharedPreferences.Editor editor = prefs.edit();
-                        editor.putInt("idp", purchase.getId());
-                        editor.putString("np", purchase.getName());
-                        editor.putInt("cp", purchase.getColor());
-                        editor.putFloat("limitp", purchase.getLimit());
-                        editor.putInt("iconp",purchase.getIcon());
-                        editor.commit();
-                        cantCart = purchase.getCarts().size();
-                        getActivity().invalidateOptionsMenu();
-                        getActivity().getSupportFragmentManager()
-                                .beginTransaction().replace(R.id.content_frame, cartFragment)
-                                .commit();
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putInt("idp", purchase.getId());
+                    editor.putString("np", purchase.getName());
+                    editor.putInt("cp", purchase.getColor());
+                    editor.putFloat("limitp", purchase.getLimit());
+                    editor.putInt("iconp",purchase.getIcon());
+                    editor.commit();
+                    cantCart = purchase.getCarts().size();
+                    getActivity().invalidateOptionsMenu();
+                    getActivity().getSupportFragmentManager()
+                            .beginTransaction().replace(R.id.content_frame, cartFragment)
+                            .commit();
 
 
-                    }
-                }, new PurchaseAdapter.OnButtonClickListener() {
-            @Override
-            public void onButtonClick(Purchase purchase, int position) {
+                }, (purchase, position) -> {
 
-            }
-        }, new PurchaseAdapter.OnLongClickListener() {
-            @Override
-            public void onLongClick(Purchase purchase, int position) {
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putBoolean("cep",true);
-                editor.putInt("sp",purchase.getId());
-                editor.commit();
+                }, (purchase, position) -> {
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putBoolean("cep",true);
+                    editor.putInt("sp",purchase.getId());
+                    editor.commit();
 
-                AddListPurchaseDialog addListPurchaseDialog = new AddListPurchaseDialog();
-                addListPurchaseDialog.show(getActivity().getSupportFragmentManager(),"addListPurchase");
+                    AddListPurchaseDialog addListPurchaseDialog = new AddListPurchaseDialog();
+                    addListPurchaseDialog.show(getActivity().getSupportFragmentManager(),"addListPurchase");
 
-            }
-        }
+                }
 
 
         );

@@ -22,9 +22,9 @@ public class NotificationHandler  extends ContextWrapper {
     private NotificationManager manager;
     private SharedPreferences prefs;
     public static final String CHANNEL_HIGH_ID ="1";
-    private  final String CHANNEL_HIGH_NAME ="HIGH CHANNEL";
+    private static final String CHANNELHIGHNAME ="HIGH CHANNEL";
     public static final String CHANNEL_LOW_ID ="2";
-    private  final String CHANNEL_LOW_NAME ="LOW CHANNEL";
+    private static final String CHANNELLOWNAME ="LOW CHANNEL";
     public NotificationHandler(Context context) {
         super(context);
         createChannels();
@@ -42,20 +42,20 @@ public class NotificationHandler  extends ContextWrapper {
         if(Build.VERSION.SDK_INT >= 26){
             //Creatting  High channel
             NotificationChannel highChannel = new NotificationChannel(
-                    CHANNEL_HIGH_ID,CHANNEL_HIGH_NAME,NotificationManager.IMPORTANCE_HIGH);
+                    CHANNEL_HIGH_ID, CHANNELHIGHNAME,NotificationManager.IMPORTANCE_HIGH);
             //Extra Config
             highChannel.enableLights(true);
             highChannel.setLightColor(Color.RED);
             highChannel.setShowBadge(true);
             highChannel.enableVibration(true);
-          //  highChannel.setVibrationPattern(new long[] {100,200,300,400,500,400,300,200,400});
+
            Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
             highChannel.setSound(defaultSoundUri,null);
 
             highChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
             //Creating Low channel
             NotificationChannel lowChannel = new NotificationChannel(
-                    CHANNEL_LOW_ID,CHANNEL_LOW_NAME,NotificationManager.IMPORTANCE_LOW);
+                    CHANNEL_LOW_ID, CHANNELLOWNAME,NotificationManager.IMPORTANCE_LOW);
             lowChannel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
             lowChannel.setSound(defaultSoundUri,null);
             getManager().createNotificationChannel(highChannel);
@@ -86,7 +86,7 @@ public class NotificationHandler  extends ContextWrapper {
         return this.createNotificationWithoutChannel(title,message);
     }
     private Notification.Builder createNotificationWithChannel(String title,String message, String channelId){
-            Integer icon = Util.getIconPurchase(prefs);
+
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
             Intent notificationIntent = new Intent(getApplicationContext(), MainActivity.class);
             notificationIntent.putExtra("showCartView", true);
@@ -106,7 +106,7 @@ public class NotificationHandler  extends ContextWrapper {
         return null;
     }
     private Notification.Builder createNotificationWithoutChannel(String title,String message){
-        Integer icon = Util.getIconPurchase(prefs);
+
 
         Intent notificationIntent = new Intent(getApplicationContext(), MainActivity.class);
         notificationIntent.putExtra("showCartView", true);
