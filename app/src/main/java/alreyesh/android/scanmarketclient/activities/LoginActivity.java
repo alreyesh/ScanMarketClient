@@ -4,6 +4,7 @@ package alreyesh.android.scanmarketclient.activities;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKeys;
@@ -32,6 +33,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 
@@ -39,6 +42,8 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -65,7 +70,7 @@ public class LoginActivity extends AppCompatActivity {
     private Button btnGoogle;
      GoogleSignInClient mGoogleSignInClient;
       GoogleSignInAccount account;
-
+    private FirebaseFirestore db;
     // Facebook
       CallbackManager mCallbackManager;
      Button btnFacebook;
@@ -82,7 +87,7 @@ public class LoginActivity extends AppCompatActivity {
         prefs = Util.getSP(getApplication());
         //Util.getSP(context);
         mAuth = FirebaseAuth.getInstance();
-
+        db = FirebaseFirestore.getInstance();
         pBar= (ProgressBar) findViewById(R.id.progressbar);
         pBar.setVisibility(View.INVISIBLE);
         setCredentialsIfExists();
@@ -178,9 +183,40 @@ public class LoginActivity extends AppCompatActivity {
         return password.length()>4;
     }
     private void goToMain(){
-        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
+
+        FirebaseUser user = mAuth.getCurrentUser();
+        String userEmail = user.getEmail();
+
+        db.collection("usuarios").whereEqualTo("uid", userEmail)
+                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                Intent intent;
+                if ( !queryDocumentSnapshots.isEmpty()){
+                      intent = new Intent(LoginActivity.this, MainActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+                }else{
+                     intent = new Intent(LoginActivity.this, AccountInfoActivity.class);
+
+                }
+                startActivity(intent);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
+
+
+
+
+
+
+
+
+
     }
     private void auth(String email, String password) {
         mAuth.signInWithEmailAndPassword(email,password)

@@ -261,7 +261,7 @@ dependencies {
     implementation "androidx.preference:preference:$preference_version"
     // Kotlin
     implementation "androidx.preference:preference-ktx:$preference_version"
-
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
 
 }
 

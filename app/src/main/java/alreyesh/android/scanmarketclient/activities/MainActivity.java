@@ -43,6 +43,7 @@ import java.util.List;
 
 import alreyesh.android.scanmarketclient.camara.CamaraActivity;
 import alreyesh.android.scanmarketclient.dialog.AddListPurchaseDialog;
+import alreyesh.android.scanmarketclient.fragments.AccountInfoFragment;
 import alreyesh.android.scanmarketclient.fragments.CartFragment;
 import alreyesh.android.scanmarketclient.fragments.HomeFragment;
 import alreyesh.android.scanmarketclient.fragments.ListProductFragment;
@@ -159,6 +160,10 @@ public class MainActivity extends AppCompatActivity {
                     Util.removeSharedPreferences(prefs);
                     logOut();
                     break;
+                case R.id.my_info:
+                    fragment = new AccountInfoFragment();
+                    fragmentTransaction = true;
+                    break;
                 default:
                     return super.onOptionsItemSelected(item);
             }
@@ -232,6 +237,12 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, CamaraActivity.class);
                 startActivity(intent);
                 return true;
+            case R.id.my_info:
+                AccountInfoFragment accountInfoFragment = new AccountInfoFragment();
+                getSupportFragmentManager()
+                        .beginTransaction().replace(R.id.content_frame,accountInfoFragment)
+                        .commit();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -257,7 +268,9 @@ public class MainActivity extends AppCompatActivity {
  private void colorbar( Menu menu){
      if (Util.getPurchaseId(prefs) != null){
          purchaseId = Util.getPurchaseId(prefs);
-         purchase = realm.where(Purchase.class).equalTo("id", purchaseId).findFirst();
+         FirebaseUser user = mAuth.getCurrentUser();
+         String userEmail = user.getEmail();
+         purchase = realm.where(Purchase.class).equalTo("id", purchaseId).equalTo("emailID",userEmail).findFirst();
          menuId=  menu.findItem(R.id.action_addcart);
          totalId = menu.findItem(R.id.shopping_total);
          actionviewCart = (CartCounterActionView)menuId.getActionView();

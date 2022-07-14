@@ -29,6 +29,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -57,7 +59,7 @@ public class CartFragment extends Fragment  implements RealmChangeListener<Realm
     private Realm realm;
     private Purchase purchase;
     public int purchaseId;
-
+    FirebaseAuth mAuth;
 
     MenuItem menuId;
 
@@ -96,7 +98,7 @@ public class CartFragment extends Fragment  implements RealmChangeListener<Realm
 
 View v =  inflater.inflate(R.layout.fragment_cart, container, false);
         prefs =Util.getSP(getContext());
-
+        mAuth = FirebaseAuth.getInstance();
         String titulo= Util.getPurchaseName(prefs);
         Integer colorparse = Util.getPurchaseColor(prefs);
 
@@ -104,7 +106,9 @@ View v =  inflater.inflate(R.layout.fragment_cart, container, false);
         realm = Realm.getDefaultInstance();
         if(Util.getPurchaseId(prefs) != null){
             purchaseId =  Util.getPurchaseId(prefs);
-            purchase = realm.where(Purchase.class).equalTo("id",purchaseId).findFirst();
+            FirebaseUser user = mAuth.getCurrentUser();
+            String userEmail = user.getEmail();
+            purchase = realm.where(Purchase.class).equalTo("id",purchaseId).equalTo("emailID",userEmail).findFirst();
 
             if(purchase != null){
                 carts = purchase.getCarts();
@@ -118,6 +122,18 @@ View v =  inflater.inflate(R.layout.fragment_cart, container, false);
                     totalCart+= parsesubtotal;
                 }
 
+
+                txtListadoCompra= (TextView)v.findViewById(R.id.txtListadoCompra);
+                txtListadoCompra.setText(titulo);
+                ((AppCompatActivity)getActivity()).getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colorparse));
+                recycler=(RecyclerView) v.findViewById(R.id.recyclerViewCart);
+                recycler.setHasFixedSize(true);
+                recycler.setItemAnimator(new DefaultItemAnimator());
+                mLayoutManager = new LinearLayoutManager(getActivity());
+                recycler.setLayoutManager(mLayoutManager);
+
+                adapter = new CartAdapter(carts, R.layout.recycler_view_list_cart_item, (cart, position) -> showAlertForEditing(cart)  );
+                recycler.setAdapter(adapter);
                 getActivity().invalidateOptionsMenu();
 
 
@@ -128,18 +144,6 @@ View v =  inflater.inflate(R.layout.fragment_cart, container, false);
 
 
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
-
-        txtListadoCompra= (TextView)v.findViewById(R.id.txtListadoCompra);
-        txtListadoCompra.setText(titulo);
-         ((AppCompatActivity)getActivity()).getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colorparse));
-        recycler=(RecyclerView) v.findViewById(R.id.recyclerViewCart);
-        recycler.setHasFixedSize(true);
-        recycler.setItemAnimator(new DefaultItemAnimator());
-        mLayoutManager = new LinearLayoutManager(getActivity());
-        recycler.setLayoutManager(mLayoutManager);
-
-        adapter = new CartAdapter(carts, R.layout.recycler_view_list_cart_item, (cart, position) -> showAlertForEditing(cart)  );
-        recycler.setAdapter(adapter);
 
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.LEFT|ItemTouchHelper.RIGHT) {
             @Override
