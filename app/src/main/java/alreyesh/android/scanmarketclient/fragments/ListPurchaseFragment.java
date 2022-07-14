@@ -26,6 +26,7 @@ import alreyesh.android.scanmarketclient.adapters.PurchaseAdapter;
 import alreyesh.android.scanmarketclient.dialog.AddListPurchaseDialog;
 import alreyesh.android.scanmarketclient.models.Purchase;
 import alreyesh.android.scanmarketclient.R;
+import alreyesh.android.scanmarketclient.utils.Util;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
@@ -91,7 +92,7 @@ public class ListPurchaseFragment extends Fragment implements RealmChangeListene
         String userEmail = user.getEmail();
 
         purchases = realm.where(Purchase.class).equalTo("emailID",userEmail).findAll().sort("id", Sort.DESCENDING);
-        prefs =getActivity().getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+        prefs = Util.getSP(getActivity());
        purchases.addChangeListener(this);
 
         View view = inflater.inflate(R.layout.fragment_list_purchase, container, false);

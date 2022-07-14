@@ -17,6 +17,7 @@ import java.util.List;
 
 import alreyesh.android.scanmarketclient.models.Cart;
 import alreyesh.android.scanmarketclient.R;
+import alreyesh.android.scanmarketclient.utils.Util;
 import io.realm.Realm;
 
 public class CartAdapter  extends RecyclerView.Adapter<CartAdapter.ViewHolder>{
@@ -39,7 +40,7 @@ public class CartAdapter  extends RecyclerView.Adapter<CartAdapter.ViewHolder>{
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(layout,parent,false);
         context = parent.getContext();
-        prefs = context.getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+        prefs =   Util.getSP(context);
         ViewHolder vh = new ViewHolder(v);
         realm = Realm.getDefaultInstance();
 

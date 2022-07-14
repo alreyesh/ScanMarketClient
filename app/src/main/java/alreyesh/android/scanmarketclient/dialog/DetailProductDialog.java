@@ -65,7 +65,7 @@ public class DetailProductDialog  extends DialogFragment{
                 if (Util.getPurchaseId(prefs) != null) {
                     String lista = Util.getPurchaseName(prefs);
                     String cantidad = editCountProduct.getText().toString().trim();
-                    if (cantidad.isEmpty() || cantidad == null || cantidad == "") {
+                    if (cantidad.isEmpty() || cantidad == null || cantidad.equals("") ) {
                         cantidad = finalCountDefault;
 
                         Cart cartin;
@@ -191,7 +191,7 @@ public class DetailProductDialog  extends DialogFragment{
         imgProductView = (ImageView) view.findViewById(R.id.imgProductView);
         btnRegistrar = (Button) view.findViewById(R.id.btnRegistrarEdit);
         btnCancelar = (Button) view.findViewById(R.id.btnCancelarEdit);
-        prefs =getContext().getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+        prefs = Util.getSP(getContext());
         Gson gson = new Gson();
         String pro = Util.getProduct(prefs);
 

@@ -57,7 +57,7 @@ public class ListProductFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         pd= new ProgressDialog(getContext());
-        prefs =getActivity().getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+        prefs = Util.getSP(getActivity());
       ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         Integer colorparse = Util.getPurchaseColor(prefs);
@@ -188,7 +188,7 @@ public class ListProductFragment extends Fragment {
             @Override
             public boolean onQueryTextChange(String newText) {
 
-                if (newText == " "||newText.isEmpty() ) {
+                if (newText.equals(" ") ||newText.isEmpty() ) {
                       loadDatainGridView();
                 }else{
                      searchspeed(newText);

@@ -67,7 +67,7 @@ public class RecommentFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        prefs =getActivity().getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+        prefs =Util.getSP(getActivity() );
         realm = Realm.getDefaultInstance();
 
     }
@@ -121,7 +121,7 @@ public class RecommentFragment extends Fragment {
                 if (Util.getPurchaseId(prefs) != null){
                     String lista = Util.getPurchaseName(prefs);
                     String cantidad = editProductoCantidad.getText().toString().trim();
-                    if (cantidad.isEmpty() || cantidad == null || cantidad == ""){
+                    if (cantidad.isEmpty() || cantidad == null || cantidad.equals("")){
                         cantidad = finalCountDefault;
 
                         Cart cartin;
@@ -243,19 +243,30 @@ public class RecommentFragment extends Fragment {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                     if(!queryDocumentSnapshots.isEmpty()){
-                        if(productsList !=null) productsList.clear();
-                        List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
-                        for(DocumentSnapshot d:list){
-                            Product products = d.toObject(Product.class);
-                            products.setId(d.getReference().getId());
-                            products.setNombre(products.getNombre().toLowerCase());
-                            productsList.add(products);
-                        }
-                        txtProductName.setText(productsList.get(0).getNombre());
-                        txtProductoPrecio.setText("S/. "+ productsList.get(0).getPrecio()+" c/u.");
-                        Picasso.get().load(productsList.get(0).getImagen()).fit().into(imageViewProducto);
 
-                        ProductAdapter adapter = new ProductAdapter(getActivity(),productsList);
+                        try {
+
+                           productsList.clear();
+                            List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
+                            for(DocumentSnapshot d:list){
+                                Product products = d.toObject(Product.class);
+                                products.setId(d.getReference().getId());
+                                products.setNombre(products.getNombre().toLowerCase());
+                                productsList.add(products);
+                            }
+                            txtProductName.setText(productsList.get(0).getNombre());
+                            txtProductoPrecio.setText("S/. "+ productsList.get(0).getPrecio()+" c/u.");
+                            Picasso.get().load(productsList.get(0).getImagen()).fit().into(imageViewProducto);
+
+                            ProductAdapter adapter = new ProductAdapter(getActivity(),productsList);
+                        }
+                        catch(NullPointerException e) {
+                            System.out.println("NullPointerException thrown!");
+                        }
+
+
+
+
 
 
                     }
@@ -320,9 +331,12 @@ public class RecommentFragment extends Fragment {
         return view;
     }
     public static boolean isStringInteger(String stringToCheck, int radix) {
-        Scanner sc = new Scanner(stringToCheck.trim());
-        if(!sc.hasNextInt(radix)) return false;
-        sc.nextInt(radix);
-        return !sc.hasNext();
+        try( Scanner sc = new Scanner(stringToCheck.trim())){
+            if(!sc.hasNextInt(radix)) return false;
+            sc.nextInt(radix);
+            return !sc.hasNext();
+        }
+
+
     }
 }

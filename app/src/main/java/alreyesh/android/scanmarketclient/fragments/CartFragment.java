@@ -95,7 +95,7 @@ public class CartFragment extends Fragment  implements RealmChangeListener<Realm
                              Bundle savedInstanceState) {
 
 View v =  inflater.inflate(R.layout.fragment_cart, container, false);
-        prefs =getContext().getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+        prefs =Util.getSP(getContext());
 
         String titulo= Util.getPurchaseName(prefs);
         Integer colorparse = Util.getPurchaseColor(prefs);

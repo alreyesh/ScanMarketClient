@@ -1,21 +1,25 @@
 package alreyesh.android.scanmarketclient.activities;
 
 
-import androidx.annotation.Nullable;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKeys;
 
-import android.app.ProgressDialog;
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
+
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,6 +42,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.logging.Logger;
 
 import alreyesh.android.scanmarketclient.R;
 import alreyesh.android.scanmarketclient.utils.Util;
@@ -55,12 +60,12 @@ public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "EmailPassword";
     private static final String MESSAGE = "Authentication failed.";
 
-    private ProgressDialog mDialog;
+    private ProgressBar pBar;
     //google
     private Button btnGoogle;
      GoogleSignInClient mGoogleSignInClient;
       GoogleSignInAccount account;
-    private static final  int RC_SIGN_IN =123;
+
     // Facebook
       CallbackManager mCallbackManager;
      Button btnFacebook;
@@ -74,26 +79,12 @@ public class LoginActivity extends AppCompatActivity {
         bindUI();
         createRequest();
         String masterKeyAlias = null;
-        try {
-            masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC);
-            EncryptedSharedPreferences.create(
-                    "secret",
-                    masterKeyAlias,
-                    getApplication(),
-                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-            );
-        } catch (GeneralSecurityException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-
-        prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+        prefs = Util.getSP(getApplication());
+        //Util.getSP(context);
         mAuth = FirebaseAuth.getInstance();
-        mDialog = new ProgressDialog(this);
+
+        pBar= (ProgressBar) findViewById(R.id.progressbar);
+        pBar.setVisibility(View.INVISIBLE);
         setCredentialsIfExists();
         textRegister.setOnClickListener(v -> {
             Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
@@ -110,9 +101,8 @@ public class LoginActivity extends AppCompatActivity {
             String password = editTextPassword.getText().toString();
 
             if(login(email,password)){
-                mDialog.setMessage("Iniciando Sesión");
-                mDialog.setCanceledOnTouchOutside(false);
-                mDialog.show();
+                pBar.setVisibility(View.VISIBLE);
+
                 auth(email,password);
 
             }
@@ -212,7 +202,7 @@ public class LoginActivity extends AppCompatActivity {
                                 Toast.LENGTH_SHORT).show();
 
                     }
-                    mDialog.dismiss();
+                    pBar.setVisibility(View.INVISIBLE);
                 });
     }
     //GoogleAccount
@@ -226,30 +216,37 @@ public class LoginActivity extends AppCompatActivity {
 
     }
     private void signIn() {
-        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+
+        exampleActivityResult.launch(mGoogleSignInClient.getSignInIntent());
 
 
-        startActivityForResult(signInIntent, RC_SIGN_IN);
     }
+    ActivityResultLauncher<Intent> exampleActivityResult= registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(result.getData());
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+                    handleSignInResult(task);
+                }
+            });
 
-        if (requestCode == RC_SIGN_IN) {
-            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            try {
-                // Google Sign In was successful, authenticate with Firebase
-                account = task.getResult(ApiException.class);
-                Log.d(TAG, "firebaseAuthWithGoogle:" + account.getId());
-                firebaseAuthWithGoogle(account.getIdToken());
-            } catch (ApiException e) {
-                // Google Sign In failed, update UI appropriately
-                Log.w(TAG, "Google sign in failed", e);
-            }
+    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
+        try {
+            account  = completedTask.getResult(ApiException.class);
+
+            // Signed in successfully, show authenticated UI.
+            Log.d(TAG, "firebaseAuthWithGoogle:" + account.getId());
+            firebaseAuthWithGoogle(account.getIdToken());
+        } catch (ApiException e) {
+            // The ApiException status code indicates the detailed failure reason.
+            // Please refer to the GoogleSignInStatusCodes class reference for more information.
+            Log.w(TAG, "Google sign in failed", e);
+
         }
-
     }
+
+
 
     private void firebaseAuthWithGoogle(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);

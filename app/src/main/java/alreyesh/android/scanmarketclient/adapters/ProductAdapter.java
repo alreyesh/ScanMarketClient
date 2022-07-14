@@ -24,12 +24,18 @@ import java.util.ArrayList;
 import alreyesh.android.scanmarketclient.dialog.DetailProductDialog;
 import alreyesh.android.scanmarketclient.model.Product;
 import alreyesh.android.scanmarketclient.R;
+import alreyesh.android.scanmarketclient.utils.Util;
 
-public class ProductAdapter extends ArrayAdapter<Product> implements Serializable {
+public class ProductAdapter extends ArrayAdapter<Product>  {
     private Context context;
     private int layout;
     private ArrayList<Product> products;
     private SharedPreferences prefs;
+
+
+
+
+
     public ProductAdapter(@NonNull Context context, ArrayList<Product> products) {
         super(context, 0,products);
         this.context = context;
@@ -41,7 +47,7 @@ public class ProductAdapter extends ArrayAdapter<Product> implements Serializabl
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         View listitemView =convertView;
-        prefs =getContext().getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+        prefs = Util.getSP(context);
         SharedPreferences.Editor editor = prefs.edit();
         Gson gson = new Gson();
         if(listitemView == null){

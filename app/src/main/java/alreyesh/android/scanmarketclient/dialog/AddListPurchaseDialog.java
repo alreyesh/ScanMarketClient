@@ -182,7 +182,7 @@ public class AddListPurchaseDialog extends DialogFragment implements IconDialog.
         btnCancelar = view.findViewById(R.id.btnCancel);
         btnColor = view.findViewById(R.id.color_select_button);
         iconView = view.findViewById(R.id.icon_select_button);
-        prefs = getActivity().getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+        prefs = Util.getSP(getActivity());
         mAuth = FirebaseAuth.getInstance();
 
         realm = Realm.getDefaultInstance();

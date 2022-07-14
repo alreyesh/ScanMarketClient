@@ -23,6 +23,7 @@ import java.util.List;
 import alreyesh.android.scanmarketclient.models.Cart;
 import alreyesh.android.scanmarketclient.models.Purchase;
 import alreyesh.android.scanmarketclient.R;
+import alreyesh.android.scanmarketclient.utils.Util;
 import io.realm.RealmList;
 
 public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.ViewHolder>{
@@ -49,7 +50,7 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.ViewHo
     public  PurchaseAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(layout,parent,false);
         context = parent.getContext();
-        prefs = context.getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+        prefs = Util.getSP(context);
         ViewHolder vh = new ViewHolder(v);
         return vh;
     }

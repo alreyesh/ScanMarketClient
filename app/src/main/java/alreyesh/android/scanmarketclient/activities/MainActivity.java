@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+        prefs = Util.getSP(getApplication());
         setToolbar();
         createRequest();
           ui();
@@ -169,20 +169,23 @@ public class MainActivity extends AppCompatActivity {
             }
             return true;
         });
+        Bundle bundle =  getIntent().getExtras();
+        if(bundle !=null){
+            String resultado= getIntent().getExtras().getString("cameras");
+            if(resultado!= null) {
+                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new RecommentFragment()).commit();
 
-        String resultado= getIntent().getExtras().getString("cameras");
-        if(resultado!= null) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new RecommentFragment()).commit();
+            }
+            boolean reloadFragmentFromNotification = getIntent().getExtras().getBoolean("showCartView",false);
+            if (reloadFragmentFromNotification){
+                Fragment fragment = new CartFragment();
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.content_frame,fragment)
+                        .commit();
+            }
+        }
 
-        }
-        boolean reloadFragmentFromNotification = getIntent().getExtras().getBoolean("showCartView",false);
-        if (reloadFragmentFromNotification){
-            Fragment fragment = new CartFragment();
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction()
-                    .replace(R.id.content_frame,fragment)
-                    .commit();
-        }
         invalidateOptionsMenu();
     }
 

@@ -87,7 +87,7 @@ public class RelatedProductAdapter  extends RecyclerView.Adapter<RelatedProductA
         }
         public void bind(final Product product, final RelatedProductAdapter.OnButtonClickListener btnListener ) {
             realm = Realm.getDefaultInstance();
-            prefs = context.getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+            prefs = Util.getSP(context);
             if(Util.getPurchaseId(prefs) !=null){
                 int purchaseId = Util.getPurchaseId(prefs);
                 purchase = realm.where(Purchase.class).equalTo("id",purchaseId).findFirst();

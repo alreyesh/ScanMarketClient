@@ -69,7 +69,7 @@ public class NotificationHandler  extends ContextWrapper {
     }
 
     public Notification.Builder createNotification(String title,String message, boolean isHighImportant){
-        prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+        prefs = Util.getSP(getApplicationContext());
         Integer colorparse = Util.getPurchaseColor(prefs);
         colorpick = colorparse;
         if(colorpick ==null){

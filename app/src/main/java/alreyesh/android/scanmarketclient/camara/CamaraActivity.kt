@@ -3,6 +3,7 @@ package alreyesh.android.scanmarketclient.camara
 import alreyesh.android.scanmarketclient.activities.MainActivity
 
 import alreyesh.android.scanmarketclient.databinding.ActivityCameraBinding
+import alreyesh.android.scanmarketclient.utils.Util
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
@@ -151,8 +152,7 @@ class CamaraActivity : AppCompatActivity(){
             .addOnSuccessListener {
                 if(it.documents.size >0){
 
-                    //Toast.makeText(this, "Producto en la base de datos:  ${it.documents.get(0).data?.get("nombre") }  ", Toast.LENGTH_SHORT).show()
-                    val sharedPreferences: SharedPreferences = this.getSharedPreferences("Preferences",Context.MODE_PRIVATE)
+                      val sharedPreferences: SharedPreferences = Util.getSP(this)
                     val editor: SharedPreferences.Editor =  sharedPreferences.edit()
                     val codigo:String?= it.documents.get(0).get("codigo").toString()
                     val imagen:String?= it.documents.get(0).get("imagen").toString()

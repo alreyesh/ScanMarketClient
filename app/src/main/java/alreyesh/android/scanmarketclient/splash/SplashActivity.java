@@ -19,7 +19,7 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        prefs= getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+        prefs= Util.getSP(getApplication());
         Intent intentLogin = new Intent(this, LoginActivity.class);
         Intent intentMain = new Intent(this, MainActivity.class);
         if(!TextUtils.isEmpty(Util.getUserMailPrefs(prefs)) && !TextUtils.isEmpty(Util.getUserPassPrefs(prefs))){
