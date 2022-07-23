@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -38,6 +39,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import alreyesh.android.scanmarketclient.adapters.CartAdapter;
+import alreyesh.android.scanmarketclient.dialog.QrDialog;
 import alreyesh.android.scanmarketclient.models.Cart;
 import alreyesh.android.scanmarketclient.models.Purchase;
 import alreyesh.android.scanmarketclient.R;
@@ -56,11 +58,12 @@ public class CartFragment extends Fragment  implements RealmChangeListener<Realm
     private CartAdapter adapter;
      TextView txtListadoCompra;
       RecyclerView.LayoutManager mLayoutManager;
+      RecyclerView mRecycler;
     private Realm realm;
     private Purchase purchase;
     public int purchaseId;
     FirebaseAuth mAuth;
-
+    Button  btnPagar;
     MenuItem menuId;
 
       float totalCart;
@@ -101,7 +104,9 @@ View v =  inflater.inflate(R.layout.fragment_cart, container, false);
         mAuth = FirebaseAuth.getInstance();
         String titulo= Util.getPurchaseName(prefs);
         Integer colorparse = Util.getPurchaseColor(prefs);
-
+        btnPagar = v.findViewById(R.id.btnPagar);
+        btnPagar.setVisibility(View.GONE);
+        mRecycler= v.findViewById(R.id.recyclerViewCart);
 
         realm = Realm.getDefaultInstance();
         if(Util.getPurchaseId(prefs) != null){
@@ -109,9 +114,22 @@ View v =  inflater.inflate(R.layout.fragment_cart, container, false);
             FirebaseUser user = mAuth.getCurrentUser();
             String userEmail = user.getEmail();
             purchase = realm.where(Purchase.class).equalTo("id",purchaseId).equalTo("emailID",userEmail).findFirst();
-
-            if(purchase != null){
+           // purchase.getCarts().size() >0
+            //purchase != null
+            if(purchase.getCarts().size() >0){
                 carts = purchase.getCarts();
+                Integer color = Util.getPurchaseColor(prefs);
+                btnPagar.setVisibility(View.VISIBLE);
+                btnPagar.setBackgroundColor(color);
+                btnPagar.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        FragmentManager manager = getActivity().getSupportFragmentManager();
+                        QrDialog qrdialog = new QrDialog();
+                        qrdialog.show(manager,"QR");
+                    }
+                });
+
 
                 List<Cart> list = new ArrayList<>();
                 list.addAll(carts);
@@ -173,6 +191,10 @@ View v =  inflater.inflate(R.layout.fragment_cart, container, false);
         editor.putBoolean(STARTNOTIFY,true);
         editor.commit();
         getActivity().invalidateOptionsMenu();
+        if(carts.size()==0)
+            btnPagar.setVisibility(View.GONE);
+
+
         adapter.notifyDataSetChanged();
     }
     private void deleteCarts(){
@@ -183,6 +205,7 @@ View v =  inflater.inflate(R.layout.fragment_cart, container, false);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(STARTNOTIFY,true);
         editor.commit();
+        btnPagar.setVisibility(View.GONE);
         adapter.notifyDataSetChanged();
     }
     private void editCart(String subprice,String count,Cart  cart){

@@ -9,7 +9,8 @@ import androidx.security.crypto.MasterKeys;
 
 public class Util {
     public static SharedPreferences getSP(Context context){
-        String masterKeyAlias = null;
+        return context.getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+      /*  String masterKeyAlias = null;
         try {
             masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC);
           return EncryptedSharedPreferences.create(
@@ -24,21 +25,23 @@ public class Util {
         }
 
         return null;
+
+       */
     }
 
 
     public  static String getUserAccount(SharedPreferences preferences){
-        return preferences.getString("account","");
+        return preferences.getString("account"," ");
     }
     public static String getUserMailPrefs(SharedPreferences preferences){
-        return preferences.getString("email","");
+        return preferences.getString("email"," ");
     }
     public static String getProduct(SharedPreferences preferences){
         return preferences.getString("productos","");
     }
 
     public static String getUserPassPrefs(SharedPreferences preferences){
-        return preferences.getString("pass","");
+        return preferences.getString("pass"," ");
     }
 
     public static Integer getPurchaseId(SharedPreferences preferences){
@@ -82,7 +85,18 @@ public class Util {
     public static Boolean getStartNotification(SharedPreferences preferences){
         return preferences.getBoolean("startnotify",false);
     }
-
+    public static String getOrderCod(SharedPreferences preferences){
+        return preferences.getString("ordercod","");
+    }
+    public static String getOrderDate(SharedPreferences preferences){
+        return preferences.getString("orderdate","");
+    }
+    public static String getOrderTotal(SharedPreferences preferences){
+        return preferences.getString("ordertotal","");
+    }
+    public static String getOrderDetail(SharedPreferences preferences){
+        return preferences.getString("orderdetail","");
+    }
 
     public static void removeSharedPreferences(SharedPreferences preferences){
         SharedPreferences.Editor editor = preferences.edit();

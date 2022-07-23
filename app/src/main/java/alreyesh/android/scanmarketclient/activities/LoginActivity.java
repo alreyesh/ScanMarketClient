@@ -141,13 +141,20 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void setCredentialsIfExists(){
-       String email = Util.getUserMailPrefs(prefs);
-       String password = Util.getUserPassPrefs(prefs);
-        if(!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)){
-            editTextEmail.setText(email);
-            editTextPassword.setText(password);
-            switchRemember.setChecked(true);
+
+        try{
+            String email = Util.getUserMailPrefs(prefs);
+            String password = Util.getUserPassPrefs(prefs);
+            if(!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)){
+                editTextEmail.setText(email);
+                editTextPassword.setText(password);
+                switchRemember.setChecked(true);
+            }
+
+        }catch(NullPointerException e){
+            System.out.print("NullPointerException caught");
         }
+
     }
 
     private boolean login(String email,String password){

@@ -91,7 +91,8 @@ public class MainActivity extends AppCompatActivity {
         createRequest();
           ui();
         setFragmentByDefault();
-        String account = Util.getUserAccount(prefs);
+
+
         account();
         drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
@@ -100,6 +101,12 @@ public class MainActivity extends AppCompatActivity {
                 imgUsername=(ImageView)drawerView.findViewById(R.id.usernameImg);
                  signInAccount = GoogleSignIn.getLastSignedInAccount(MainActivity.this);
                 Uri gimg;
+                String account = null;
+                try{
+                    account = Util.getUserAccount(prefs);
+                }catch (NullPointerException e){
+
+                }
                 String name;
                 if( account.equals("google")  && signInAccount !=null){
 
@@ -335,9 +342,9 @@ public class MainActivity extends AppCompatActivity {
                     ((TextView) viewtexttotal).setTextSize(TypedValue.COMPLEX_UNIT_SP, 14); // Increase font size
                 }
             }
-
             SharedPreferences.Editor editor = prefs.edit();
             editor.putBoolean("startnotify",false);
+            editor.putString("total",String.valueOf(totalCart));
             editor.commit();
         }
 
@@ -416,11 +423,19 @@ public class MainActivity extends AppCompatActivity {
 
     }
     private void drawableColorselected(){
-        Integer colorparse = Util.getPurchaseColor(prefs);
-        if(colorparse !=0){
-              getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colorparse));
-        }else{
-             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary,null)));
+        try{
+            Integer colorparse = Util.getPurchaseColor(prefs);
+            if(colorparse !=0){
+                getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colorparse));
+            }else{
+                getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary,null)));
+            }
+        }catch(NullPointerException e){
+            System.out.print("NullPointerException caught");
         }
+
+
+
+
     }
 }

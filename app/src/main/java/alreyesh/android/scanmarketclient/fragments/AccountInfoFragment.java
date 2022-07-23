@@ -77,39 +77,37 @@ public class AccountInfoFragment extends Fragment {
         editNumDocumento = view.findViewById(R.id.editNumDocumento);
         spinnerTipoDocumento = view.findViewById(R.id.spinnerTipoDocumento);
         btnGrabar = view.findViewById(R.id.btnGrabar);
-        db = FirebaseFirestore.getInstance();
-        mAuth = FirebaseAuth.getInstance();
+          db = FirebaseFirestore.getInstance();
+         mAuth = FirebaseAuth.getInstance();
         loadspinner();
         loadinfo();
-        btnGrabar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String textNombre = editTextNombre.getText().toString().trim();
-                String textApellidos = editTextApellidos.getText().toString().trim();
-                String textCelular = editTextCelular.getText().toString().trim();
-                String spinnertext = spinnerTipoDocumento.getSelectedItem().toString();
-                String numDocumento = editNumDocumento.getText().toString().trim();
-                if(id.isEmpty()|| id == ""){
-                    postInfo(textNombre,textApellidos,textCelular,spinnertext,numDocumento);
-                /*  if(textNombre.isEmpty() && textApellidos.isEmpty() && textCelular.isEmpty() && numDocumento.isEmpty())
-                       Toast.makeText(getContext(),"Ingresar los datos", Toast.LENGTH_SHORT).show();
-                   else{
-                       postInfo(textNombre,textApellidos,textCelular,spinnertext,numDocumento);
-                   }
-                    */
+        btnGrabar.setOnClickListener(v -> {
 
-                }else{
-                    updateInfo(textNombre,textApellidos,textCelular,spinnertext,numDocumento,id);
-                  /*  if(textNombre.isEmpty() && textNombre.isEmpty() && textCelular.isEmpty() && numDocumento.isEmpty())
-                        Toast.makeText(getContext(),"Ingresar los datos", Toast.LENGTH_SHORT).show();
-                    else{
+            String textNombre = editTextNombre.getText().toString().trim();
+            String textApellidos = editTextApellidos.getText().toString().trim();
+            String textCelular = editTextCelular.getText().toString().trim();
+            String spinnertext = spinnerTipoDocumento.getSelectedItem().toString();
+            String numDocumento = editNumDocumento.getText().toString().trim();
+            if(id.isEmpty()|| id.equals("") ){
+                postInfo(textNombre,textApellidos,textCelular,spinnertext,numDocumento);
+             if(textNombre.isEmpty() && textApellidos.isEmpty() && textCelular.isEmpty() && numDocumento.isEmpty())
+                   Toast.makeText(getContext(),"Ingresar los datos", Toast.LENGTH_SHORT).show();
+               else{
+                   postInfo(textNombre,textApellidos,textCelular,spinnertext,numDocumento);
+               }
 
-                    }
 
-                   */
+            }else{
+                updateInfo(textNombre,textApellidos,textCelular,spinnertext,numDocumento,id);
+          if(textNombre.isEmpty() && textNombre.isEmpty() && textCelular.isEmpty() && numDocumento.isEmpty())
+                    Toast.makeText(getContext(),"Ingresar los datos", Toast.LENGTH_SHORT).show();
+                else{
+
                 }
 
+
             }
+
         });
 
 
@@ -125,30 +123,23 @@ public class AccountInfoFragment extends Fragment {
         map.put("celular", textCelular.toLowerCase());
         map.put("documento", numDocumento.toLowerCase());
         map.put("tipodocumento", spinnertext);
-        db.collection("usuarios").add(map).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-            @Override
-            public void onSuccess(DocumentReference documentReference) {
-                editTextNombre.setText("");
-                editTextApellidos.setText("");
-                editTextCelular.setText("");
-                editNumDocumento.setText("");
-                Toast.makeText(getContext(), "Se Actualizaron los datos", Toast.LENGTH_SHORT).show();
-                loadinfo();
+       db.collection("usuarios").add(map).addOnSuccessListener(documentReference -> {
+           editTextNombre.setText("");
+           editTextApellidos.setText("");
+           editTextCelular.setText("");
+           editNumDocumento.setText("");
+           Toast.makeText(getContext(), "Se Actualizaron los datos", Toast.LENGTH_SHORT).show();
+           loadinfo();
 
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getContext(), "Error al Ingresar", Toast.LENGTH_SHORT).show();
+       }).addOnFailureListener(e -> Toast.makeText(getContext(), "Error al Ingresar", Toast.LENGTH_SHORT).show());
 
-            }
-        });
+
     }
     public void  updateInfo(String textNombre,String textApellidos,String textCelular,String spinnertext,String numDocumento,String id){
-        FirebaseUser user = mAuth.getCurrentUser();
+       FirebaseUser user = mAuth.getCurrentUser();
         String userEmail = user.getEmail();
         Map<String, Object> map = new HashMap<>();
-        map.put("uid", userEmail.toLowerCase());
+       map.put("uid", userEmail.toLowerCase());
         if(!textNombre.isEmpty())
         map.put("nombre", textNombre.toLowerCase());
         if(!textApellidos.isEmpty())
@@ -159,23 +150,16 @@ public class AccountInfoFragment extends Fragment {
         map.put("documento", numDocumento.toLowerCase());
         map.put("tipodocumento", spinnertext);
 
-        db.collection("usuarios").document(id).update(map).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void unused) {
-                editTextNombre.setText("");
-                editTextApellidos.setText("");
-                editTextCelular.setText("");
-                editNumDocumento.setText("");
-                Toast.makeText(getContext(), "Se Actualizaron los datos", Toast.LENGTH_SHORT).show();
-                loadinfo();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
+        db.collection("usuarios").document(id).update(map).addOnSuccessListener(unused -> {
+            editTextNombre.setText("");
+            editTextApellidos.setText("");
+            editTextCelular.setText("");
+            editNumDocumento.setText("");
+            Toast.makeText(getContext(), "Se Actualizaron los datos", Toast.LENGTH_SHORT).show();
+            loadinfo();
+        }).addOnFailureListener(e -> {
 
-            }
         });
-
 
 
     }
@@ -192,40 +176,36 @@ public class AccountInfoFragment extends Fragment {
         adapter.notifyDataSetChanged();
     }
     public void loadinfo(){
-        FirebaseUser user = mAuth.getCurrentUser();
-        String userEmail = user.getEmail();
-        db.collection("usuarios").whereEqualTo("uid", userEmail).get() .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if( task.isSuccessful()){
-                    for(QueryDocumentSnapshot document: task.getResult()){
-                        User user = document.toObject(User.class);
-                        id = document.getId();
-                        editTextNombre.setHint( StringUtils.capitalize(user.getNombre()));
-                        editTextApellidos.setHint(StringUtils.capitalize(user.getApellidos()));
-                        editTextCelular.setHint(user.getCelular());
-                        editNumDocumento.setHint(user.getDocumento());
-                        switch (user.getTipodocumento()){
-                            case "DNI":
-                                spinnerTipoDocumento.setSelection(0);
-                                break;
-                            case "RUC":
-                                    spinnerTipoDocumento.setSelection(1);
-                                break;
-                            default:
-                                spinnerTipoDocumento.setSelection(2);
-                                break;
-                        }
+      FirebaseUser user = mAuth.getCurrentUser();
+     String userEmail = user.getEmail();
+     db.collection("usuarios").whereEqualTo("uid", userEmail).get() .addOnCompleteListener(task -> {
+         if( task.isSuccessful()){
+             for(QueryDocumentSnapshot document: task.getResult()){
+                 User user1 = document.toObject(User.class);
+                 id = document.getId();
+                 editTextNombre.setHint( StringUtils.capitalize(user1.getNombre()));
+                 editTextApellidos.setHint(StringUtils.capitalize(user1.getApellidos()));
+                 editTextCelular.setHint(user1.getCelular());
+                 editNumDocumento.setHint(user1.getDocumento());
+                 switch (user1.getTipodocumento()){
+                     case "DNI":
+                         spinnerTipoDocumento.setSelection(0);
+                         break;
+                     case "RUC":
+                             spinnerTipoDocumento.setSelection(1);
+                         break;
+                     default:
+                         spinnerTipoDocumento.setSelection(2);
+                         break;
+                 }
 
-                    }
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
+             }
+         }
+     }).addOnFailureListener(e -> {
 
-            }
-        });
+     });
+
+
     }
 
 
