@@ -26,6 +26,7 @@ import alreyesh.android.scanmarketclient.adapters.PurchaseAdapter;
 import alreyesh.android.scanmarketclient.dialog.AddListPurchaseDialog;
 import alreyesh.android.scanmarketclient.models.Purchase;
 import alreyesh.android.scanmarketclient.R;
+import alreyesh.android.scanmarketclient.notifications.NotificacionPush;
 import alreyesh.android.scanmarketclient.utils.Util;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;

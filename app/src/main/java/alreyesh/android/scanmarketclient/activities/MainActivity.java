@@ -1,11 +1,13 @@
 package alreyesh.android.scanmarketclient.activities;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
 import android.app.Notification;
@@ -18,6 +20,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 
+import android.os.PersistableBundle;
 import android.text.SpannableString;
 import android.util.TypedValue;
 import android.view.Menu;
@@ -43,6 +46,7 @@ import java.util.List;
 
 import alreyesh.android.scanmarketclient.camara.CamaraActivity;
 import alreyesh.android.scanmarketclient.dialog.AddListPurchaseDialog;
+import alreyesh.android.scanmarketclient.dialog.NotificationDialog;
 import alreyesh.android.scanmarketclient.fragments.AccountInfoFragment;
 import alreyesh.android.scanmarketclient.fragments.CartFragment;
 import alreyesh.android.scanmarketclient.fragments.HomeFragment;
@@ -52,6 +56,7 @@ import alreyesh.android.scanmarketclient.fragments.PurchaseHistoryFragment;
 import alreyesh.android.scanmarketclient.fragments.RecommentFragment;
 import alreyesh.android.scanmarketclient.models.Cart;
 import alreyesh.android.scanmarketclient.models.Purchase;
+import alreyesh.android.scanmarketclient.notifications.NotificacionPush;
 import alreyesh.android.scanmarketclient.notifications.NotificationHandler;
 import alreyesh.android.scanmarketclient.R;
 import alreyesh.android.scanmarketclient.utils.Util;
@@ -76,7 +81,8 @@ public class MainActivity extends AppCompatActivity {
        CartCounterActionView actionviewCart;
      MenuItem menuId;
      MenuItem totalId;
-     Toolbar totalToolId;
+    View v;
+    Toolbar totalToolId;
      int cantCart;
      Realm realm;
 //notificacion
@@ -86,6 +92,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+
+
+
+        v = getWindow().getDecorView().findViewById(android.R.id.content);
+
+
         prefs = Util.getSP(getApplication());
         setToolbar();
         createRequest();
@@ -188,6 +202,16 @@ public class MainActivity extends AppCompatActivity {
                 getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new RecommentFragment()).commit();
 
             }
+            String noti = getIntent().getExtras().getString("notfy","off");
+            if(noti.equals("on")){
+                NotificationDialog notificacion = new NotificationDialog();
+                FragmentManager fragmentManager =  getSupportFragmentManager();
+                notificacion.show(fragmentManager, "notificacionview");
+
+
+            }
+
+
             boolean reloadFragmentFromNotification = getIntent().getExtras().getBoolean("showCartView",false);
             if (reloadFragmentFromNotification){
                 Fragment fragment = new CartFragment();
@@ -199,6 +223,32 @@ public class MainActivity extends AppCompatActivity {
         }
 
         invalidateOptionsMenu();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        NotificacionPush p = new NotificacionPush();
+        p.onNotiPause(getApplication());
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        NotificacionPush p = new NotificacionPush();
+        p.onNotiPause(getApplication());
+    }
+
+    @Override
+    public void onRestoreInstanceState(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
+        super.onRestoreInstanceState(savedInstanceState, persistentState);
+
     }
 
     @Override
@@ -416,7 +466,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
     private void sendNotification(String name ,float total ,float limit,boolean isHighImportance){
-        Notification.Builder nb  = notificacionHandler.createNotification(name,"Con S/."+total +" excedio el limite de compra de S/."+limit,isHighImportance);
+        Notification.Builder nb  = notificacionHandler.createNotification(name,"Con S/."+total +" excedio el limite de compra de S/."+limit,isHighImportance,"alarma");
 
          notificacionHandler.getManager().notify(1,nb.build());
 

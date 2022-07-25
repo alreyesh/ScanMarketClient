@@ -15,9 +15,12 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
+import com.google.firebase.Timestamp;
 import com.google.gson.Gson;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import alreyesh.android.scanmarketclient.R;
@@ -85,8 +88,9 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
 
         }
         public void bind ( final Order order,final  OnItemClickListener itemListener){
+        String date=    new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(order.getFecha() );
             textCodOrder.setText("cod: "+order.getCodorder());
-            textDateOrder.setText("fecha: "+order.getFecha());
+            textDateOrder.setText("fecha: "+date);
             textTotalOrder.setText("total: S/."+ order.getTotal());
 
             itemView.setOnClickListener(new View.OnClickListener() {
@@ -96,7 +100,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
                     String json = gson.toJson(order.getProductos());
                     SharedPreferences.Editor editor = prefs.edit();
                     editor.putString("ordercod",order.getCodorder());
-                    editor.putString("orderdate",order.getFecha());
+                    editor.putString("orderdate",date);
                     editor.putString("ordertotal",order.getTotal());
                     editor.putString("orderdetail",json);
                     editor.commit();

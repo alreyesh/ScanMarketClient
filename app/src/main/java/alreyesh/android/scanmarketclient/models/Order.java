@@ -1,18 +1,21 @@
 package alreyesh.android.scanmarketclient.models;
 
 
+import com.google.firebase.Timestamp;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Order {
     private String codorder;
     private String user;
-    private String fecha;
+    private Date fecha;
     private String total;
     private ArrayList<DetailProduct> productos;
     public Order(){
     }
-    public Order(String codorder, String user, String fecha, String total, ArrayList<DetailProduct> productos) {
+    public Order(String codorder, String user, Date fecha, String total, ArrayList<DetailProduct> productos) {
         this.codorder = codorder;
         this.user = user;
         this.fecha = fecha;
@@ -36,11 +39,11 @@ public class Order {
         this.user = user;
     }
 
-    public String getFecha() {
+    public Date getFecha() {
         return fecha;
     }
 
-    public void setFecha(String fecha) {
+    public void setFecha(Date fecha) {
         this.fecha = fecha;
     }
 

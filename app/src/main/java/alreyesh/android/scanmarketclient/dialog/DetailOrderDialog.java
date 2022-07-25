@@ -76,7 +76,7 @@ RecyclerView recyclerview;
         String fechaOrder = Util.getOrderDate(prefs);
         String totalOrder = Util.getOrderTotal(prefs);
         String json = Util.getOrderDetail(prefs);
-        txtPagar.setText("Total a pagar: S/. "+totalOrder);
+        txtPagar.setText("Total pagado: S/. "+totalOrder);
         textCodOrder.setText("cod: "+codOrder);
         txtDate.setText("Fecha: "+fechaOrder);
         btnAceptar.setOnClickListener(new View.OnClickListener() {

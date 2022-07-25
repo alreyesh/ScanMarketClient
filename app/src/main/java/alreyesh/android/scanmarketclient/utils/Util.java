@@ -97,7 +97,15 @@ public class Util {
     public static String getOrderDetail(SharedPreferences preferences){
         return preferences.getString("orderdetail","");
     }
-
+    public static String getTitle(SharedPreferences preferences){
+        return preferences.getString("titlenoti","");
+    }
+    public static String getTitleShort(SharedPreferences preferences){
+        return preferences.getString("shortnoti","");
+    }
+    public static String getDescrip(SharedPreferences preferences){
+        return preferences.getString("descripnoti","");
+    }
     public static void removeSharedPreferences(SharedPreferences preferences){
         SharedPreferences.Editor editor = preferences.edit();
         editor.remove("email");

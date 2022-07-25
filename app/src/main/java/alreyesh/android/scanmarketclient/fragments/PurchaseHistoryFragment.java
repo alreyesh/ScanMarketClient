@@ -5,12 +5,14 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.util.Pair;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,15 +25,26 @@ import com.google.android.material.datepicker.DateValidatorPointBackward;
 import com.google.android.material.datepicker.DateValidatorPointForward;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
+import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.type.DateTime;
 
 import java.lang.reflect.Field;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 import alreyesh.android.scanmarketclient.R;
@@ -82,7 +95,7 @@ public class PurchaseHistoryFragment extends Fragment {
         MaterialDatePicker.Builder<Pair<Long, Long>> materialDateBuilder = MaterialDatePicker.Builder.dateRangePicker();
         CalendarConstraints.Builder calendarConstraintBuilder = new CalendarConstraints.Builder();
         calendarConstraintBuilder.setValidator(DateValidatorPointBackward.now());
-        materialDateBuilder.setTitleText("SELECCIONAR FECHA");
+        materialDateBuilder.setTitleText("SELECCIONAR FECHA DE INICIO Y FIN");
         materialDateBuilder.setCalendarConstraints(calendarConstraintBuilder.build());
         final MaterialDatePicker<Pair<Long,Long> > materialDatePicker = materialDateBuilder.build();
         imgDatePicker.setOnClickListener(new View.OnClickListener() {
@@ -95,17 +108,28 @@ public class PurchaseHistoryFragment extends Fragment {
         materialDatePicker.addOnPositiveButtonClickListener(new MaterialPickerOnPositiveButtonClickListener<Pair<Long, Long>>() {
             @Override
             public void onPositiveButtonClick(Pair<Long, Long> selection) {
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                Calendar cal = Calendar.getInstance();
-                cal.setTimeInMillis(selection.second);
-                cal.add(Calendar.DATE,1);
 
-                Date f1 = new Date(TimeUnit.SECONDS.toMillis(selection.first));
-                Date f2 = new Date(TimeUnit.SECONDS.toMillis(selection.second));
 
-                String fecha1 = sdf.format(f1);
-                String fecha2 = sdf.format(f2);
-                Toast.makeText(getActivity(),"F: " + sdf.format(cal.getTime()),Toast.LENGTH_SHORT).show();
+                Calendar calendar1 = Calendar.getInstance();
+                calendar1.setTimeInMillis(selection.first  );
+                calendar1.set(Calendar.HOUR_OF_DAY, 0);
+                calendar1.add(Calendar.DATE, 1);
+                Calendar calendar2 = Calendar.getInstance();
+                calendar2.setTimeInMillis(selection.second  );
+                calendar2.set(Calendar.AM_PM, Calendar.PM );
+                calendar2.set(Calendar.HOUR_OF_DAY,23);
+                calendar2.set(Calendar.MINUTE,59);
+                calendar2.set(Calendar.SECOND,59);
+                calendar2.add(Calendar.DATE, 1);
+
+                Date date1 = calendar1.getTime();
+                Date date2 = calendar2.getTime();
+
+                Long r1 = date1.getTime();
+                Long r2 = date2.getTime();
+
+                loadDataOrderByDates(r1,r2);
+
             }
         });
 
@@ -143,6 +167,7 @@ public class PurchaseHistoryFragment extends Fragment {
             }else{
                 orderList.clear();
                 pd.dismiss();
+                Toast.makeText(getActivity(),"No hay datos de Compras",Toast.LENGTH_SHORT).show();
             }
 
 
@@ -156,5 +181,54 @@ public class PurchaseHistoryFragment extends Fragment {
 
     }
 
+    private void loadDataOrderByDates(Long  d1, Long d2){
+        //Toast.makeText(getActivity(),"d1: " + d1,Toast.LENGTH_SHORT).show();
+        String email = Util.getUserMailPrefs(prefs);
+        Log.d("email","email: " +  email);
+       db.collection("order").whereGreaterThanOrEqualTo("longtime",d1).whereLessThan("longtime",d2).get().addOnSuccessListener(queryDocumentSnapshots ->{
+            if(!queryDocumentSnapshots.isEmpty()){
+                if(orderList != null)
+                    orderList.clear();
+                List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
+                for(DocumentSnapshot d: list){
+                    Order oders =  d.toObject(Order.class);
+                    Log.d("orderemail","orderemail: " +  oders.getUser());
+                    if(oders.getUser().equals(email)){
+                        orderList.add(oders);
+                    }
+                }
 
+                adapter = new OrderAdapter(orderList, new OrderAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(Order order, int position) {
+                        DetailOrderDialog detailOrderDialog = new DetailOrderDialog();
+                        detailOrderDialog.show(getActivity().getSupportFragmentManager(),"detailOrderDialog");
+                    }
+                });
+                recyclerhistory.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
+
+
+            }else{
+                orderList.clear();
+                recyclerhistory.setAdapter(null);
+                adapter.notifyDataSetChanged();
+                Toast.makeText(getActivity(),"No hay datos de Compras",Toast.LENGTH_SHORT).show();
+
+            }
+
+
+        } ).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                pd.dismiss();
+                Toast.makeText(getActivity(),"Error de Data ",Toast.LENGTH_SHORT).show();
+            }
+        }) ;
+
+
+
+
+
+    }
 }

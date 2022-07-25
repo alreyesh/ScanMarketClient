@@ -33,6 +33,7 @@ import java.util.List;
 import alreyesh.android.scanmarketclient.adapters.ProductAdapter;
 import alreyesh.android.scanmarketclient.model.Product;
 import alreyesh.android.scanmarketclient.R;
+import alreyesh.android.scanmarketclient.notifications.NotificacionPush;
 import alreyesh.android.scanmarketclient.utils.Util;
 
 
@@ -80,6 +81,7 @@ public class ListProductFragment extends Fragment {
         productsTestList = new ArrayList<>();
 
         loadDatainGridView();
+
 
         registerForContextMenu(gView);
         getActivity().invalidateOptionsMenu();

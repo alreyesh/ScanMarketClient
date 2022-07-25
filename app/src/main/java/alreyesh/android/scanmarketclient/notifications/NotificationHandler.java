@@ -68,14 +68,15 @@ public class NotificationHandler  extends ContextWrapper {
         }
     }
 
-    public Notification.Builder createNotification(String title,String message, boolean isHighImportant){
+    public Notification.Builder createNotification(String title,String message, boolean isHighImportant,String type){
         prefs = Util.getSP(getApplicationContext());
         Integer colorparse = Util.getPurchaseColor(prefs);
         colorpick = colorparse;
         if(colorpick ==null){
             colorpick = getColor(R.color.colorPrimary);
         }
-        if(Build.VERSION.SDK_INT >= 26){
+        if(type == "alarma"){
+            if(Build.VERSION.SDK_INT >= 26){
                 if(isHighImportant){
                     return this.createNotificationWithChannel(title,message, CHANNEL_HIGH_ID);
 
@@ -83,8 +84,22 @@ public class NotificationHandler  extends ContextWrapper {
                 return this.createNotificationWithChannel(title,message, CHANNEL_LOW_ID);
 
             }
-        return this.createNotificationWithoutChannel(title,message);
+            return this.createNotificationWithoutChannel(title,message);
+        }else if(type == "push"){
+            if(Build.VERSION.SDK_INT >= 26){
+
+                return this.createPushWithChannel(title,message,CHANNEL_HIGH_ID);
+
+            }
+
+            return this.createPushWithoutChannel(title,message);
+
+        }
+
+       return null;
+
     }
+    //Alerta
     private Notification.Builder createNotificationWithChannel(String title,String message, String channelId){
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
@@ -110,6 +125,48 @@ public class NotificationHandler  extends ContextWrapper {
 
         Intent notificationIntent = new Intent(getApplicationContext(), MainActivity.class);
         notificationIntent.putExtra("showCartView", true);
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingNotificationIntent = PendingIntent.getActivity(getApplicationContext(),0,notificationIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+        return new Notification.Builder(getApplicationContext())
+                .setContentTitle(title)
+                .setContentText(message)
+                .setContentIntent(pendingNotificationIntent)
+                .setSound(defaultSoundUri)
+                .setColor(colorpick)
+                .setSmallIcon(R.mipmap.ic_logo_scan_market)
+                .setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(),R.mipmap.ic_logo_scan_market))
+                .setAutoCancel(true);
+    }
+
+    //Push
+
+    private Notification.Builder createPushWithChannel(String title,String message, String channelId){
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            Intent notificationIntent = new Intent(getApplicationContext(), MainActivity.class);
+            notificationIntent.putExtra("notfy", "on");
+            notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            PendingIntent pendingNotificationIntent = PendingIntent.getActivity(getApplicationContext(),0,notificationIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+            return new Notification.Builder(getApplicationContext(), channelId)
+                    .setContentTitle(title)
+                    .setContentText(message)
+                    .setColor(colorpick)
+                    .setContentIntent(pendingNotificationIntent)
+                    .setSmallIcon(R.mipmap.ic_logo_scan_market)
+                    .setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(),R.mipmap.ic_logo_scan_market))
+
+                    .setAutoCancel(true);
+
+        }
+        return null;
+    }
+
+    private Notification.Builder createPushWithoutChannel(String title,String message){
+
+
+        Intent notificationIntent = new Intent(getApplicationContext(), MainActivity.class);
+        notificationIntent.putExtra("notfy", "on");
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingNotificationIntent = PendingIntent.getActivity(getApplicationContext(),0,notificationIntent,PendingIntent.FLAG_UPDATE_CURRENT);
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);

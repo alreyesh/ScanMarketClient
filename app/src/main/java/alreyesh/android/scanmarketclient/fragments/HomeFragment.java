@@ -15,6 +15,7 @@ import android.widget.Button;
 
 import alreyesh.android.scanmarketclient.camara.CamaraActivity;
 import alreyesh.android.scanmarketclient.R;
+import alreyesh.android.scanmarketclient.notifications.NotificacionPush;
 
 
 public class HomeFragment extends Fragment {
@@ -30,6 +31,8 @@ public class HomeFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getActivity().invalidateOptionsMenu();
+
+
     }
 
     @Override
@@ -42,8 +45,21 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+            NotificacionPush p = new NotificacionPush();
+            p.onNotiPause(getContext());
+
+
+        try {
+
+        } catch (IllegalStateException ignored) {
+            // There's no way to avoid getting this if saveInstanceState has already been called.
+
+        }
+
+
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
+
         btnCamera =(Button)view.findViewById(R.id.btnScan);
         btnCamera.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,5 +71,18 @@ public class HomeFragment extends Fragment {
 
         getActivity().invalidateOptionsMenu();
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
     }
 }
