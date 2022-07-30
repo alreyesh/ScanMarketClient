@@ -116,32 +116,35 @@ public class MainActivity extends AppCompatActivity {
                  signInAccount = GoogleSignIn.getLastSignedInAccount(MainActivity.this);
                 Uri gimg;
                 String account = null;
+                String name= null;
                 try{
                     account = Util.getUserAccount(prefs);
+                    if( account.equals("google")  && signInAccount !=null){
+
+                        gimg=  signInAccount.getPhotoUrl();
+                        name = signInAccount.getDisplayName();
+                        txtUsername.setText(name);
+                        imgUsername.setImageURI(null);
+                        Picasso.get()
+                                .load(gimg)
+                                .placeholder(R.drawable.rolemarket)
+                                .fit()
+                                .centerCrop().into(imgUsername);
+                    }else{
+                        Drawable myImage = getResources().getDrawable(R.drawable.rolemarket,null);
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        if(user !=null){
+                            String usern = user.getEmail();
+                            imgUsername.setImageDrawable(myImage);
+                            txtUsername.setText(usern);
+                        }
+                    }
+
+
                 }catch (NullPointerException e){
 
                 }
-                String name;
-                if( account.equals("google")  && signInAccount !=null){
 
-                    gimg=  signInAccount.getPhotoUrl();
-                    name = signInAccount.getDisplayName();
-                    txtUsername.setText(name);
-                   imgUsername.setImageURI(null);
-                    Picasso.get()
-                            .load(gimg)
-                            .placeholder(R.drawable.rolemarket)
-                            .fit()
-                            .centerCrop().into(imgUsername);
-                }else{
-                      Drawable myImage = getResources().getDrawable(R.drawable.rolemarket,null);
-                    FirebaseUser user = mAuth.getCurrentUser();
-                    if(user !=null){
-                        String usern = user.getEmail();
-                        imgUsername.setImageDrawable(myImage);
-                        txtUsername.setText(usern);
-                    }
-                }
             }
             @Override
             public void onDrawerOpened(@NonNull View drawerView) {

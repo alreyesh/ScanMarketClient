@@ -47,34 +47,43 @@ public class NotificacionPush {
        db.collection("notificacion").addSnapshotListener(new EventListener<QuerySnapshot>() {
            @Override
            public void onEvent(@Nullable QuerySnapshot snapshot, @Nullable FirebaseFirestoreException e) {
+               if( snapshot == null){
+                   return;
+               }
                if (e != null) {
                    Log.w("TAG", "listen:error", e);
                    return;
                }
 
-               for (DocumentChange dc : snapshot.getDocumentChanges()) {
-                   switch (dc.getType()) {
-                       case ADDED:
-                           Log.d("TAG", "New city: " + dc.getDocument().getData());
-                           break;
-                       case MODIFIED:
-                           Log.d("TAG", "Modified city: " + dc.getDocument().getData());
-                           Map<String, Object> o = dc.getDocument().getData();
-                           editor.putString("titlenoti",(String)o.get("titulo"));
-                           editor.putString("shortnoti",(String)o.get("textocorto"));
-                           editor.putString("descripnoti",(String)o.get("mensaje"));
-                           editor.commit();
-                           // Notify notify = o.toObject(Notify.class);
-                           Log.d("d", "Current data: " +(String) o.get("titulo")  );
 
-                          //sendNotification(notify.getTitulo(),notify.getTextocorto(),true);
-                           sendNotification((String) o.get("titulo"),(String)  o.get("textocorto"),true);
-                           break;
-                       case REMOVED:
-                           Log.d("TAG", "Removed city: " + dc.getDocument().getData());
-                           break;
-                   }
-               }
+                try{
+                    for (DocumentChange dc : snapshot.getDocumentChanges()) {
+                        switch (dc.getType()) {
+                            case ADDED:
+                                Log.d("TAG", "New city: " + dc.getDocument().getData());
+                                break;
+                            case MODIFIED:
+                                Log.d("TAG", "Modified city: " + dc.getDocument().getData());
+                                Map<String, Object> o = dc.getDocument().getData();
+                                editor.putString("titlenoti",(String)o.get("titulo"));
+                                editor.putString("shortnoti",(String)o.get("textocorto"));
+                                editor.putString("descripnoti",(String)o.get("mensaje"));
+                                editor.commit();
+                                // Notify notify = o.toObject(Notify.class);
+                                Log.d("d", "Current data: " +(String) o.get("titulo")  );
+
+                                //sendNotification(notify.getTitulo(),notify.getTextocorto(),true);
+                                sendNotification((String) o.get("titulo"),(String)  o.get("textocorto"),true);
+                                break;
+                            case REMOVED:
+                                Log.d("TAG", "Removed city: " + dc.getDocument().getData());
+                                break;
+                        }
+                    }
+                }catch (NullPointerException n){
+
+                }
+
            }
        });
     }
@@ -91,6 +100,10 @@ public class NotificacionPush {
 
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshot, @Nullable FirebaseFirestoreException e) {
+                if(snapshot == null){
+                    return;
+                }
+
                 if (e != null) {
                     Log.w("TAG", "listen:error", e);
                     return;

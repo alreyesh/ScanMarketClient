@@ -60,10 +60,10 @@
             android:id="@+id/color_select_button"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:background="@color/md_grey_100"
-            tools:background="@color/md_orange_900"
             android:layout_marginRight="20dp"
-            />
+
+            android:backgroundTint="@color/white"
+           />
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -80,6 +80,7 @@
             android:text="Icono"
             android:textColor="@color/colorAccent"
             android:layout_marginLeft="20dp"
+
 
             />
 

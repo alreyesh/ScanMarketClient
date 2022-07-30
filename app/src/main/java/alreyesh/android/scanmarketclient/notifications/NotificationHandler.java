@@ -75,7 +75,7 @@ public class NotificationHandler  extends ContextWrapper {
         if(colorpick ==null){
             colorpick = getColor(R.color.colorPrimary);
         }
-        if(type == "alarma"){
+        if(type.equals("alarma") ){
             if(Build.VERSION.SDK_INT >= 26){
                 if(isHighImportant){
                     return this.createNotificationWithChannel(title,message, CHANNEL_HIGH_ID);
@@ -85,7 +85,7 @@ public class NotificationHandler  extends ContextWrapper {
 
             }
             return this.createNotificationWithoutChannel(title,message);
-        }else if(type == "push"){
+        }else if(type.equals("push") ){
             if(Build.VERSION.SDK_INT >= 26){
 
                 return this.createPushWithChannel(title,message,CHANNEL_HIGH_ID);

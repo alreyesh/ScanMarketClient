@@ -38,6 +38,12 @@
             android:gravity="center"
             tools:text="Precio" />
 
+        <TextView
+            android:id="@+id/textViewDescuento"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            tools:text="Descuento" />
 
 
     </LinearLayout>

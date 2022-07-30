@@ -25,6 +25,7 @@
         android:layout_marginRight="10dp"
         android:layout_marginBottom="5dp"
         android:layout_weight="1"
+        android:scrollbars = "vertical"
         android:text="Descripcion"
         android:textAlignment="gravity"
         android:textSize="18sp" />

@@ -99,7 +99,7 @@ public class AccountInfoFragment extends Fragment {
 
             }else{
                 updateInfo(textNombre,textApellidos,textCelular,spinnertext,numDocumento,id);
-          if(textNombre.isEmpty() && textNombre.isEmpty() && textCelular.isEmpty() && numDocumento.isEmpty())
+          if(  textNombre.isEmpty() && textCelular.isEmpty() && numDocumento.isEmpty())
                     Toast.makeText(getContext(),"Ingresar los datos", Toast.LENGTH_SHORT).show();
                 else{
 

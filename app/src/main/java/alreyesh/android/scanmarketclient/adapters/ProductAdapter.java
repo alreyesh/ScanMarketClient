@@ -3,6 +3,8 @@ package alreyesh.android.scanmarketclient.adapters;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,9 +59,24 @@ public class ProductAdapter extends ArrayAdapter<Product>  {
         ImageView imgProductView = listitemView.findViewById(R.id.imgProductView);
         TextView   textViewName = listitemView.findViewById(R.id.textViewName);
         TextView textViewPrice = listitemView.findViewById(R.id.textViewPrice);
+        TextView textViewDescuento = listitemView.findViewById(R.id.textViewDescuento);
+        float descuento = Float.parseFloat(products.getDescuento());
+        if(descuento >0.0) {
+            textViewPrice.setText("S/. "+products.getDescuento());
+            textViewPrice.setTextSize(16);
+            textViewDescuento.setText("S/. "+products.getPrecio());
+            textViewDescuento.setTextSize(12);
+            textViewDescuento.setTextColor(Color.RED);
+            textViewDescuento.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+        }else{
+            textViewPrice.setText("S/. "+products.getPrecio());
+        }
+
+
         Picasso.get().load(products.getImagen()).fit().into(imgProductView);
         textViewName.setText(products.getNombre());
-        textViewPrice.setText("S/. "+products.getPrecio());
+
+
        listitemView.setOnClickListener(v -> {
            String json = gson.toJson(products);
            editor.putString("productos",json);

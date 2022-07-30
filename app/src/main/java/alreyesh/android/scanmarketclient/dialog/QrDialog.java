@@ -152,35 +152,41 @@ public class QrDialog extends DialogFragment {
         String email = convertirEmail(userEmail);
         String u1;
         String u2;
-        if(email.length()>4){
-            u1 =  email.substring(0,2);
-            u2 = email.substring(2,4);
-        }else{
-            u1 =  email.substring(0,1);
-            u2 =  email.substring(1,2);
-        }
+        if(email !=null) {
+            if (email.length() > 4) {
+                u1 = email.substring(0, 2);
+                u2 = email.substring(2, 4);
+            } else {
+                u1 = email.substring(0, 1);
+                u2 = email.substring(1, 2);
+            }
 
-        Calendar cal = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        try {
-            cal.setTime(sdf.parse(fechaactual));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+            Calendar cal = Calendar.getInstance();
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+            try {
+                cal.setTime(sdf.parse(fechaactual));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
 
-        int day = cal.get(Calendar.DAY_OF_MONTH);
-        int mounth = cal.get(Calendar.MONTH);
-        int year = cal.get(Calendar.YEAR);
-        int hour = cal.get(Calendar.HOUR);
-        int minute = cal.get(Calendar.MINUTE);
-        String codigo = hour+u2+day+mounth+u1+minute;
-        return codigo;
+            int day = cal.get(Calendar.DAY_OF_MONTH);
+            int mounth = cal.get(Calendar.MONTH);
+            int year = cal.get(Calendar.YEAR);
+            int hour = cal.get(Calendar.HOUR);
+            int minute = cal.get(Calendar.MINUTE);
+            String codigo = hour+u2+day+mounth+u1+minute;
+            return codigo;
+
+
+        }
+        return  null;
+
     }
     private String convertirEmail(String user){
         String result= null;
         for(int i=0; i< user.length();i++ ){
             String c = user.substring(i,i);
-                if(c != "." && c!="_"&& c!="-")
+                if(!c.equals(".")  && !c.equals("_") && !c.equals("-"))
                 result += c;
         }
 

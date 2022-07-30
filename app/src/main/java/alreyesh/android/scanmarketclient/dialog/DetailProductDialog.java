@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.method.DigitsKeyListener;
@@ -38,6 +40,7 @@ public class DetailProductDialog  extends DialogFragment{
      TextView editNameProduct;
     TextView editDescProduct;
       TextView editPriceProduct;
+    TextView editDescuento;
     EditText editCountProduct;
      ImageView imgProductView;
      Button btnRegistrar;
@@ -74,7 +77,15 @@ public class DetailProductDialog  extends DialogFragment{
                         RealmList<Cart> carts = purchase.getCarts();
                         cartin = carts.where().equalTo(ProductName, nombre).findFirst();
                         if (cartin == null || cartin.getRealm().isEmpty()) {
-                            cartin = new Cart(products.getCodigo(), products.getNombre(), products.getImagen(), products.getPrecio(), cantidad, products.getPrecio());
+
+                            Float d = Float.parseFloat(products.getDescuento());
+                            String realprice;
+                            if(d >0.0){
+                                realprice = products.getDescuento();
+                            }else{
+                                realprice = products.getPrecio();
+                            }
+                            cartin = new Cart(products.getCodigo(), products.getNombre(), products.getImagen(), realprice, cantidad,realprice);
                             realm.beginTransaction();
                             realm.copyToRealm(cartin);
                             purchase.getCarts().add(cartin);
@@ -107,7 +118,17 @@ public class DetailProductDialog  extends DialogFragment{
                                 String nombre = products.getNombre();
 
                                 RealmList<Cart> carts = purchase.getCarts();
-                                float precio = Float.parseFloat(products.getPrecio());
+
+                                Float d = Float.parseFloat(products.getDescuento());
+                                String realprice;
+                                if(d >0.0){
+                                    realprice = products.getDescuento();
+                                }else{
+                                    realprice = products.getPrecio();
+                                }
+
+
+                                float precio = Float.parseFloat(realprice);
                                 float subprice = precio * cant;
                                 String subpricestring = String.valueOf(subprice);
                                 cartin = carts.where().equalTo(ProductName, nombre).findFirst();
@@ -118,7 +139,7 @@ public class DetailProductDialog  extends DialogFragment{
 
                                         //parseString
                                         realm.beginTransaction();
-                                        cartin = new Cart(products.getCodigo(), products.getNombre(), products.getImagen(), products.getPrecio(), cantidad, subpricestring);
+                                        cartin = new Cart(products.getCodigo(), products.getNombre(), products.getImagen(), realprice, cantidad, subpricestring);
                                         realm.copyToRealm(cartin);
                                         purchase.getCarts().add(cartin);
                                         realm.commitTransaction();
@@ -141,7 +162,7 @@ public class DetailProductDialog  extends DialogFragment{
 
                                 } else {
                                     realm.beginTransaction();
-                                    cartin = new Cart(products.getCodigo(), products.getNombre(), products.getImagen(), products.getPrecio(), cantidad, subpricestring);
+                                    cartin = new Cart(products.getCodigo(), products.getNombre(), products.getImagen(), realprice, cantidad, subpricestring);
                                     realm.copyToRealm(cartin);
                                     purchase.getCarts().add(cartin);
                                     realm.commitTransaction();
@@ -187,6 +208,7 @@ public class DetailProductDialog  extends DialogFragment{
         editNameProduct=(TextView) view.findViewById(R.id.textViewName);
         editDescProduct=(TextView)  view.findViewById(R.id.textViewDesc);
         editPriceProduct=(TextView)  view.findViewById(R.id.textViewPrice);
+        editDescuento = (TextView) view.findViewById(R.id.textViewDescuento);
         editCountProduct = (EditText) view.findViewById(R.id.editCantidad) ;
         imgProductView = (ImageView) view.findViewById(R.id.imgProductView);
         btnRegistrar = (Button) view.findViewById(R.id.btnRegistrarEdit);
@@ -201,7 +223,20 @@ public class DetailProductDialog  extends DialogFragment{
         editCodProduct.setText("sku: "+products.getCodigo());
         editNameProduct.setText(products.getNombre());
         editDescProduct.setText(products.getDescripcion());
-        editPriceProduct.setText("S/. "+products.getPrecio());
+
+        float descuento = Float.parseFloat(products.getDescuento());
+        if(descuento >0.0) {
+            editPriceProduct.setText("S/. "+products.getDescuento());
+            editPriceProduct.setTextSize(16);
+            editDescuento.setText("S/. "+products.getPrecio());
+            editDescuento.setTextSize(12);
+            editDescuento.setTextColor(Color.RED);
+            editDescuento.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+        }else{
+            editPriceProduct.setText("S/. "+products.getPrecio());
+        }
+
+
         editCountProduct.setHint("1");
         editCountProduct.setInputType(InputType.TYPE_CLASS_NUMBER );
         String countDefault="1";

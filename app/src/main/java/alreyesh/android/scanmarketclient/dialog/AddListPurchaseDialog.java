@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -208,7 +209,7 @@ public class AddListPurchaseDialog extends DialogFragment implements IconDialog.
                 .setColorRes(getResources().getIntArray(R.array.demo_colors))
                 .setColorListener((i, s) -> {
                     btnColor.setBackgroundColor(i);
-
+                    Toast.makeText(getActivity(),"color: "+i, Toast.LENGTH_SHORT).show();
                         color = i;
                         })
                 .show();
