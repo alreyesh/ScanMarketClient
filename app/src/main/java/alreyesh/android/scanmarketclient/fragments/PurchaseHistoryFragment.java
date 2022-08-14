@@ -50,6 +50,7 @@ import java.util.concurrent.TimeUnit;
 import alreyesh.android.scanmarketclient.R;
 import alreyesh.android.scanmarketclient.adapters.OrderAdapter;
 import alreyesh.android.scanmarketclient.dialog.DetailOrderDialog;
+import alreyesh.android.scanmarketclient.models.DetailProduct;
 import alreyesh.android.scanmarketclient.models.Order;
 import alreyesh.android.scanmarketclient.utils.Util;
 
@@ -133,10 +134,25 @@ public class PurchaseHistoryFragment extends Fragment {
             }
         });
 
-        loadDataOrder();
-
+     loadDataOrder();
+       // loadDataOrderTest();
 
         return v;
+    }
+
+    private void loadDataOrderTest() {
+        ArrayList<DetailProduct> detailproducts = new ArrayList<>();
+        detailproducts.add(new DetailProduct("cod","LECHE","10","45.0","https://firebasestorage.googleapis.com/v0/b/role-market.appspot.com/o/FotosProducto%2Fcod55_1669521510?alt=media&token=171db8d1-31f8-41b3-8363-a763d630071b"));
+        orderList.add(new Order("3u276n51","alfreyh@gmail.com", new Date() ,"386.4", detailproducts));
+        adapter = new OrderAdapter(orderList, new OrderAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(Order order, int position) {
+                DetailOrderDialog detailOrderDialog = new DetailOrderDialog();
+                detailOrderDialog.show(getActivity().getSupportFragmentManager(),"detailOrderDialog");
+            }
+        });
+        recyclerhistory.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
     }
 
     private void loadDataOrder(){

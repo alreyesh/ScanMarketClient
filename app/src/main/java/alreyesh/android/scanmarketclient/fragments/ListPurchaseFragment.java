@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.cazaea.sweetalert.SweetAlertDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.rowland.cartcounter.view.CartCounterActionView;
@@ -94,6 +95,10 @@ public class ListPurchaseFragment extends Fragment implements RealmChangeListene
 
         purchases = realm.where(Purchase.class).equalTo("emailID",userEmail).findAll().sort("id", Sort.DESCENDING);
         prefs = Util.getSP(getActivity());
+
+
+
+
        purchases.addChangeListener(this);
 
         View view = inflater.inflate(R.layout.fragment_list_purchase, container, false);

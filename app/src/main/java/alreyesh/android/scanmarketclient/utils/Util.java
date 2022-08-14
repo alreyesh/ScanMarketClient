@@ -65,7 +65,9 @@ public class Util {
     public static Boolean getCreateOrEditPurchase(SharedPreferences preferences){
         return preferences.getBoolean("cep",false);
     }
-
+    public static Boolean getDecisionPurchase(SharedPreferences preferences){
+        return preferences.getBoolean("newp",false);
+    }
 
     public static String getTotalCart(SharedPreferences preferences){
         return preferences.getString("total","");

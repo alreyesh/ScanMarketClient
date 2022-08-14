@@ -23,6 +23,7 @@ import android.widget.SearchView;
 import android.widget.Toast;
 
 
+import com.cazaea.sweetalert.SweetAlertDialog;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -31,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import alreyesh.android.scanmarketclient.adapters.ProductAdapter;
+import alreyesh.android.scanmarketclient.dialog.AddListPurchaseDialog;
 import alreyesh.android.scanmarketclient.model.Product;
 import alreyesh.android.scanmarketclient.R;
 import alreyesh.android.scanmarketclient.notifications.NotificacionPush;
@@ -71,6 +73,12 @@ public class ListProductFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().invalidateOptionsMenu();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
        View view = inflater.inflate(R.layout.fragment_list_product, container, false);
@@ -81,6 +89,30 @@ public class ListProductFragment extends Fragment {
         productsTestList = new ArrayList<>();
 
         loadDatainGridView();
+        Integer purchase = Util.getPurchaseId(prefs);
+        if( purchase.equals(0)){
+            new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText("Registrar")
+                    .setContentText("Registre y seleccione un listado de compras antes de añadir los productos")
+                    .setConfirmText("Ir")
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sDialog) {
+                            sDialog.dismissWithAnimation();
+                            SharedPreferences.Editor editor = prefs.edit();
+                            editor.putBoolean("cep",false);
+                            editor.putBoolean("newp",true);
+                            editor.commit();
+
+                            AddListPurchaseDialog addListPurchaseDialog = new AddListPurchaseDialog();
+                            addListPurchaseDialog.show(getActivity().getSupportFragmentManager(),"addListPurchase");
+
+                        }
+                    })
+                    .show();
+
+
+        }
 
 
         registerForContextMenu(gView);

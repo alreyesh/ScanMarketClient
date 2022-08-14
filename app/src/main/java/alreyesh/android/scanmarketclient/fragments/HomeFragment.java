@@ -46,7 +46,7 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
 
             NotificacionPush p = new NotificacionPush();
-            p.onNotiPause(getContext());
+              p.onNotiPause(getContext());
 
 
         try {

@@ -22,6 +22,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 
 
+import com.cazaea.sweetalert.SweetAlertDialog;
 import com.github.dhaval2404.colorpicker.MaterialColorPickerDialog;
 
 import com.github.dhaval2404.colorpicker.model.ColorShape;
@@ -34,6 +35,8 @@ import com.maltaisn.icondialog.IconView;
 
 import java.util.Scanner;
 
+import alreyesh.android.scanmarketclient.fragments.CartFragment;
+import alreyesh.android.scanmarketclient.fragments.ListProductFragment;
 import alreyesh.android.scanmarketclient.models.Purchase;
 import alreyesh.android.scanmarketclient.R;
 import alreyesh.android.scanmarketclient.utils.Util;
@@ -73,7 +76,7 @@ public class AddListPurchaseDialog extends DialogFragment implements IconDialog.
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View   view = inflater.inflate(R.layout.add_list_purchase_dialog_layout, null);
         UI(view);
-
+        Context context = getContext();
         // Comprobar si va a ser una acción para editar o para creación
         Boolean p = Util.getCreateOrEditPurchase(prefs);
         if(Boolean.TRUE.equals(p)) {
@@ -137,7 +140,52 @@ public class AddListPurchaseDialog extends DialogFragment implements IconDialog.
                            realm.beginTransaction();
                            realm.copyToRealmOrUpdate(purs);
                            realm.commitTransaction();
-                           dismiss();
+
+
+                           Boolean decision = Util.getDecisionPurchase(prefs);
+                           if(Boolean.TRUE.equals(decision)){
+                               SharedPreferences.Editor editor = prefs.edit();
+                               editor.putBoolean("newp",false);
+                               editor.commit();
+                               new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
+                                       .setTitleText("Registrar")
+                                       .setContentText("Desea seleccionar el listado creado")
+                                       .setConfirmText("Si")
+                                       .setCancelText("No")
+                                       .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                           @Override
+                                           public void onClick(SweetAlertDialog sDialog) {
+                                               sDialog.dismissWithAnimation();
+                                               editor.putInt("idp", purs.getId());
+                                               editor.putString("np", purs.getName());
+                                               editor.putInt("cp", purs.getColor());
+                                               editor.putFloat("limitp", purs.getLimit());
+                                               editor.putInt("iconp",purs.getIcon());
+                                               editor.commit();
+
+
+                                               getActivity().invalidateOptionsMenu();
+
+                                               dismiss();
+
+                                           }
+                                       })
+                                       .showCancelButton(true)
+                                       .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                           @Override
+                                           public void onClick(SweetAlertDialog sDialog) {
+                                               sDialog.cancel();
+
+                                           }
+                                       })
+                                       .show();
+
+
+
+
+
+                           }
+
                        }else{
                            Toast.makeText(getActivity(),"Ingresar  un valor de limite  mayor a 0.0",Toast.LENGTH_SHORT).show();
 
@@ -151,6 +199,9 @@ public class AddListPurchaseDialog extends DialogFragment implements IconDialog.
 
 
                 }
+
+
+
             }else{
                 Toast.makeText(getActivity(), "The data is not valid, please check the fields again", Toast.LENGTH_SHORT).show();
             }

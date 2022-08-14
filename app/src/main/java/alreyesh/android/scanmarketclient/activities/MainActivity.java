@@ -238,14 +238,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         NotificacionPush p = new NotificacionPush();
-        p.onNotiPause(getApplication());
+      p.onNotiPause(getApplication());
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
         NotificacionPush p = new NotificacionPush();
-        p.onNotiPause(getApplication());
+       p.onNotiPause(getApplication());
     }
 
     @Override
