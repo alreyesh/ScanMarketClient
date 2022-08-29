@@ -91,17 +91,19 @@ public class ListPurchaseFragment extends Fragment implements RealmChangeListene
         realm = Realm.getDefaultInstance();
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
-        String userEmail = user.getEmail();
 
-        purchases = realm.where(Purchase.class).equalTo("emailID",userEmail).findAll().sort("id", Sort.DESCENDING);
-        prefs = Util.getSP(getActivity());
-
-
-
-
-       purchases.addChangeListener(this);
-
+       prefs = Util.getSP(getActivity());
         View view = inflater.inflate(R.layout.fragment_list_purchase, container, false);
+
+        if(user != null){
+            String userEmail = user.getEmail();
+
+            purchases = realm.where(Purchase.class).equalTo("emailID",userEmail).findAll().sort("id", Sort.DESCENDING);
+            purchases.addChangeListener(this);
+
+
+
+
        recycler=(RecyclerView) view.findViewById(R.id.recyclerView);
        recycler.setHasFixedSize(true);
        recycler.setItemAnimator(new DefaultItemAnimator());
@@ -158,8 +160,13 @@ public class ListPurchaseFragment extends Fragment implements RealmChangeListene
             }
         }).attachToRecyclerView(recycler);
 
-     purchases.addChangeListener(this);
+
         getActivity().invalidateOptionsMenu();
+
+
+        }
+
+
         return view;
     }
 

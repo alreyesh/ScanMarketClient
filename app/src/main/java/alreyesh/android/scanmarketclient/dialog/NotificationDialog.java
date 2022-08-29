@@ -47,6 +47,10 @@ public class NotificationDialog extends DialogFragment {
         btnOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putBoolean("turnnoti",true);
+                editor.commit();
+
                 dismiss();
             }
         });

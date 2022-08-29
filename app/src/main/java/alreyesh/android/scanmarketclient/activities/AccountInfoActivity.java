@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import alreyesh.android.scanmarketclient.R;
+import alreyesh.android.scanmarketclient.utils.ValidatedInfo;
 
 public class AccountInfoActivity extends AppCompatActivity {
     EditText editTextNombre;
@@ -36,6 +37,7 @@ public class AccountInfoActivity extends AppCompatActivity {
     EditText editNumDocumento;
     Spinner spinnerTipoDocumento;
     private Button btnSiguiente;
+    private Button btnPrueba;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     @Override
@@ -49,6 +51,7 @@ public class AccountInfoActivity extends AppCompatActivity {
         categorias.add("DNI");
         categorias.add("RUC");
         categorias.add("CEX");
+        categorias.add("Pasaporte");
         ArrayAdapter<String> adapter = new ArrayAdapter (this,android.R.layout.simple_spinner_item,categorias);
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -57,7 +60,19 @@ public class AccountInfoActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
         spinnerTipoDocumento.setSelection(0);
         FirebaseUser user = mAuth.getCurrentUser();
-
+        btnPrueba.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String textNombre = editTextNombre.getText().toString().trim();
+                String textApellidos = editTextApellidos.getText().toString().trim();
+                String textCelular = editTextCelular.getText().toString().trim();
+                String spinnertext = spinnerTipoDocumento.getSelectedItem().toString();
+                String numDocumento = editNumDocumento.getText().toString().trim();
+                if(ValidatedInfo.validaty(getContext(), textNombre,textApellidos,textCelular,spinnertext,numDocumento)){
+                    Toast.makeText(getContext(),"Prueba:Registrado satisfactoriamente",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
         btnSiguiente.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -67,9 +82,7 @@ public class AccountInfoActivity extends AppCompatActivity {
                 String numDocumento = editNumDocumento.getText().toString();
                 String  textSpinner = spinnerTipoDocumento.getSelectedItem().toString();
                 String userEmail = user.getEmail();
-                if(txtNombre.isEmpty()|| txtApellidos.isEmpty()||txtCelular.isEmpty()||numDocumento.isEmpty()||textSpinner.isEmpty()){
-                    Toast.makeText(getApplication(), "Rellenar todos los campos", Toast.LENGTH_SHORT).show();
-                }else{
+                if(ValidatedInfo.validaty(getApplication(),txtNombre,txtApellidos,txtCelular,textSpinner,numDocumento)){
                     Map<String, Object> map = new HashMap<>();
                     map.put("uid", userEmail.toLowerCase());
                     map.put("nombre", txtNombre.toLowerCase());
@@ -98,8 +111,8 @@ public class AccountInfoActivity extends AppCompatActivity {
 
                         }
                     });
-
                 }
+
 
 
 
@@ -109,6 +122,8 @@ public class AccountInfoActivity extends AppCompatActivity {
 
 
     }
+
+
 
     @Override
     protected void onStart() {
@@ -123,5 +138,6 @@ public class AccountInfoActivity extends AppCompatActivity {
           editNumDocumento = (EditText) findViewById(R.id.editNumDocumento);
           spinnerTipoDocumento= findViewById(R.id.spinnerTipoDocumento);
             btnSiguiente = (Button) findViewById(R.id.btnSiguiente);
+        btnPrueba =(Button) findViewById(R.id.btnProbar);
     }
 }

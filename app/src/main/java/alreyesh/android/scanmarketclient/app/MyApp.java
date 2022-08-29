@@ -34,6 +34,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 
 import alreyesh.android.scanmarketclient.models.Cart;
+import alreyesh.android.scanmarketclient.models.Pending;
 import alreyesh.android.scanmarketclient.models.Purchase;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -42,6 +43,7 @@ import io.realm.RealmResults;
 
 
 public class MyApp extends Application {
+    public static AtomicInteger pendingID = new AtomicInteger();
     public static AtomicInteger purchaseID = new AtomicInteger();
     public static    AtomicInteger cartID = new AtomicInteger();
 
@@ -49,6 +51,7 @@ public class MyApp extends Application {
     public void onCreate() {
         setUpRealmConfig();
         Realm realm = Realm.getDefaultInstance();
+        pendingID = getIdByTable(realm, Pending.class);
         purchaseID= getIdByTable(realm, Purchase.class);
         cartID= getIdByTable(realm, Cart.class);
         realm.close();

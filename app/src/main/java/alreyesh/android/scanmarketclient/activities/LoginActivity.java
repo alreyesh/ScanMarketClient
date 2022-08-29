@@ -62,6 +62,7 @@ public class LoginActivity extends AppCompatActivity {
     private Button btnLogin;
 
     private FirebaseAuth mAuth;
+
     private static final String TAG = "EmailPassword";
     private static final String MESSAGE = "Authentication failed.";
 

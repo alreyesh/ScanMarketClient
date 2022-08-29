@@ -171,6 +171,9 @@ dependencies {
     //SweetAlertDialog https://github.com/achmadqomarudin/SweetAlertDialog
     implementation 'com.github.cazaea:sweet-alert-dialog:1.0.0'
 
+    //Worker
+    implementation 'androidx.work:work-runtime:2.7.1'
+
     //Selenium
 //implementation 'com.github.appium:java-client:7.6.0'
     //compileOnly ('org.seleniumhq.selenium:selenium-java:3.141.59')

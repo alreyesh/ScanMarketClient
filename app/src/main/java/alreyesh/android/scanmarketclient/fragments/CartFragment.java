@@ -94,6 +94,7 @@ public class CartFragment extends Fragment  implements RealmChangeListener<Realm
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -124,6 +125,10 @@ View v =  inflater.inflate(R.layout.fragment_cart, container, false);
                 btnPagar.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+
+
+
+
                         FragmentManager manager = getActivity().getSupportFragmentManager();
                         QrDialog qrdialog = new QrDialog();
                         qrdialog.show(manager,"QR");
@@ -152,9 +157,10 @@ View v =  inflater.inflate(R.layout.fragment_cart, container, false);
 
                 adapter = new CartAdapter(carts, R.layout.recycler_view_list_cart_item, (cart, position) -> showAlertForEditing(cart)  );
                 recycler.setAdapter(adapter);
+
                 getActivity().invalidateOptionsMenu();
 
-
+                adapter.notifyDataSetChanged();
 
             }
 
@@ -175,22 +181,28 @@ View v =  inflater.inflate(R.layout.fragment_cart, container, false);
             }
         }).attachToRecyclerView(recycler);
 
-        getActivity().invalidateOptionsMenu();
+
 
         return v;
     }
     @Override
     public void onChange(RealmResults<Cart> carts) {
-        adapter.notifyDataSetChanged();
+        //adapter.notifyDataSetChanged();
+        Toast.makeText(getActivity(), "Cambio:"+carts.size(), Toast.LENGTH_SHORT).show();
     }
+
+
+
     private void deleteCart(int position) {
         realm.beginTransaction();
         carts.get(position).deleteFromRealm();
         realm.commitTransaction();
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(STARTNOTIFY,true);
+        editor.putBoolean("qrstate",false);
         editor.commit();
         getActivity().invalidateOptionsMenu();
+
         if(carts.size()==0)
             btnPagar.setVisibility(View.GONE);
 
@@ -204,6 +216,7 @@ View v =  inflater.inflate(R.layout.fragment_cart, container, false);
         getActivity().invalidateOptionsMenu();
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(STARTNOTIFY,true);
+        editor.putBoolean("qrstate",false);
         editor.commit();
         btnPagar.setVisibility(View.GONE);
         adapter.notifyDataSetChanged();

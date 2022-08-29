@@ -3,6 +3,7 @@ package alreyesh.android.scanmarketclient.dialog;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -42,6 +43,7 @@ import alreyesh.android.scanmarketclient.R;
 import alreyesh.android.scanmarketclient.models.Cart;
 import alreyesh.android.scanmarketclient.models.DetailProduct;
 import alreyesh.android.scanmarketclient.models.Order;
+import alreyesh.android.scanmarketclient.models.Pending;
 import alreyesh.android.scanmarketclient.models.Purchase;
 import alreyesh.android.scanmarketclient.utils.Util;
 import io.realm.Realm;
@@ -61,6 +63,32 @@ public class QrDialog extends DialogFragment {
     String fechaactual;
     Order order;
     List<DetailProduct> list;
+    Bitmap bitmap;
+    private Pending pending;
+
+    @Override
+    public void onDismiss(@NonNull DialogInterface dialog) {
+        super.onDismiss(dialog);
+        String qrfill = Util.getQRCode(prefs);
+        Boolean stateqr = Util.getStateQr(prefs);
+        String total = Util.getTotalCart(prefs);
+        String qr = Util.getQRCode(prefs);
+        if(Boolean.FALSE.equals(stateqr) || qr.equals("") ){
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            byte[] byteArray = stream.toByteArray();
+            pending = new Pending(qrfill,purchase.getEmailID(),fechaactual,total,purchase.getCarts(), byteArray);
+            realm.beginTransaction();
+            realm.copyToRealmOrUpdate(pending);
+            realm.commitTransaction();
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("qrstate",true);
+            editor.commit();
+        }
+
+
+    }
+
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -84,12 +112,29 @@ public class QrDialog extends DialogFragment {
         Date today = new Date();
           fechaactual = sdf.format(today);
         String total = Util.getTotalCart(prefs);
-
-        pruebaJson(userEmail,total, fechaactual);
+        Boolean stateqr = Util.getStateQr(prefs);
+        String qr = Util.getQRCode(prefs);
+        pruebaJson(stateqr,qr, userEmail,total, fechaactual);
 
         btnAceptar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String qrfill = Util.getQRCode(prefs);
+                Toast.makeText(getContext(),"QR: "+ stateqr,Toast.LENGTH_SHORT).show();
+                if(Boolean.FALSE.equals(stateqr)   ){
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    Toast.makeText(getContext(),"pruebaQR",Toast.LENGTH_SHORT).show();
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    byte[] byteArray = stream.toByteArray();
+                    pending = new Pending(qrfill,purchase.getEmailID(),fechaactual,total,purchase.getCarts(), byteArray);
+                    realm.beginTransaction();
+                    realm.copyToRealmOrUpdate(pending);
+                    purchase.getCarts().deleteAllFromRealm();
+                    realm.commitTransaction();
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putBoolean("qrstate",true);
+                    editor.commit();
+                }
                 dismiss();
             }
         });
@@ -99,8 +144,16 @@ public class QrDialog extends DialogFragment {
         return builder.create();
     }
 
-    private void pruebaJson(String userEmail,String total, String fechaactual) {
-        String codorder = generatorCodOrder(userEmail,fechaactual);
+    private void pruebaJson( Boolean stateqr, String qr,String userEmail,String total, String fechaactual) {
+
+        if(Boolean.FALSE.equals(stateqr)   ){
+            String codorder = generatorCodOrder(userEmail,fechaactual);
+
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putString("qr",codorder);
+            editor.commit();
+        }
+
         JSONArray carrito = new JSONArray();
         list = new ArrayList<>();
         for(int i=0; i< carts.size();i++){
@@ -126,19 +179,20 @@ public class QrDialog extends DialogFragment {
 
         JSONObject ordenJson = new JSONObject();
         try{
-            ordenJson.put("codorder",codorder);
+            String qrfill = Util.getQRCode(prefs);
+            ordenJson.put("codorder",qrfill);
             ordenJson.put("user",userEmail);
             ordenJson.put("date",fechaactual);
             ordenJson.put("total",total);
             ordenJson.put("productos",carrito);
-
+            txtTexto.setText(qrfill);
         }catch (JSONException e){
             e.printStackTrace();
         }
 
         String jsonStr = ordenJson.toString();
       //txtTexto.setText(jsonStr);
-        Bitmap bitmap = QRCode.from(jsonStr).bitmap();
+          bitmap = QRCode.from(jsonStr).bitmap();
 
         imgQr.setImageBitmap(bitmap);
 
@@ -152,6 +206,7 @@ public class QrDialog extends DialogFragment {
         String email = convertirEmail(userEmail);
         String u1;
         String u2;
+
         if(email !=null) {
             if (email.length() > 4) {
                 u1 = email.substring(0, 2);
@@ -186,7 +241,7 @@ public class QrDialog extends DialogFragment {
         String result= null;
         for(int i=0; i< user.length();i++ ){
             String c = user.substring(i,i);
-                if(!c.equals(".")  && !c.equals("_") && !c.equals("-"))
+                if(!c.equals(".")  && !c.equals("_") && !c.equals("-") && !c.equals("@"))
                 result += c;
         }
 
@@ -196,7 +251,7 @@ public class QrDialog extends DialogFragment {
     private void UI(View view) {
         imgQr =(ImageView) view.findViewById(R.id.imgQR);
         btnAceptar= (Button) view.findViewById(R.id.btnAceptar);
-        txtTexto = (TextView)view.findViewById(R.id.txtTexto);
+        txtTexto = (TextView)view.findViewById(R.id.txtCodigo);
         prefs = Util.getSP(getContext());
 
     }

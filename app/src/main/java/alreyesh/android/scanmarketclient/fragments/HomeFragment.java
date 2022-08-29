@@ -45,8 +45,7 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-            NotificacionPush p = new NotificacionPush();
-              p.onNotiPause(getContext());
+
 
 
         try {

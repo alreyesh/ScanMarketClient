@@ -25,6 +25,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.regex.Pattern;
+
 import alreyesh.android.scanmarketclient.R;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -141,7 +143,11 @@ public class RegisterActivity extends AppCompatActivity {
         }else if(!password.equals(confirm) ){
             Toast.makeText(this,"La contraseña de confirmación no coinciden",Toast.LENGTH_SHORT).show();
             return false;
-        }else{
+        }else if(!isValidSpace(email,password)){
+            Toast.makeText(this,"correo y/o contraseña contiene espacio",Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        else{
             return true;
         }
     }
@@ -151,9 +157,25 @@ public class RegisterActivity extends AppCompatActivity {
     private boolean isValidPassword(String password){
         return password.length()>4;
     }
+
+    private boolean isValidSpace(String email,String password){
+        boolean emailspace = Pattern.matches("\\s+", email);
+        boolean passspace = Pattern.matches("\\s+", password);
+        if(Boolean.TRUE.equals(emailspace)) {
+            Toast.makeText(this, "Correo Invalido", Toast.LENGTH_SHORT).show();
+            return false;
+        }else if(Boolean.TRUE.equals(passspace)){
+            Toast.makeText(this, "Password Invalido", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+            return true;
+    }
+
+
     private void goToMain(){
-        Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+        Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.putExtra("register", "on");
         startActivity(intent);
     }
 

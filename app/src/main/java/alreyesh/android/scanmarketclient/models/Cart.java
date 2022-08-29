@@ -20,7 +20,7 @@ public class Cart  extends RealmObject {
 
 
     public Cart(String productID, String productName, String imagenProduct, String productPrice, String countProduct, String subPrice) {
-        this.id = MyApp.cartID.incrementAndGet();;
+        this.id = MyApp.cartID.incrementAndGet();
         this.productID = productID;
         this.productName = productName;
         this.imagenProduct = imagenProduct;

@@ -102,106 +102,107 @@ public class AddListPurchaseDialog extends DialogFragment implements IconDialog.
 
 
                  FirebaseUser user = mAuth.getCurrentUser();
+
+            if(user !=null){
                 String userEmail = user.getEmail();
-
-                if(name==null|| name.isEmpty()) {Toast.makeText(getActivity(),"Ingrese nombre de lista de compra",Toast.LENGTH_SHORT).show();}
-                else if(limit == null || limit.isEmpty()){Toast.makeText(getActivity(),"Ingrese limite de compra",Toast.LENGTH_SHORT).show();}
-                else{
-                   if(color == 0 ){
-                       if(!isCreation){
-                           color = purchase.getColor();
-                       }else
-                       color= R.color.md_green_100;
-
-                   }
-                   boolean isLimitFloat = isStringFloat(limit);
-                   if(isLimitFloat){
-                       float parseLimit = Float.parseFloat(limit);
-                       if(parseLimit >0.0) {
-
-                            int icono;
-                           if(selectedIcon != null){ icono = selectedIcon.getId();}
-                           else{
+                        if(name==null|| name.isEmpty()) {Toast.makeText(getActivity(),"Ingrese nombre de cesta de compra",Toast.LENGTH_SHORT).show();}
+                        else if(limit == null || limit.isEmpty()){Toast.makeText(getActivity(),"Ingrese limite de compra",Toast.LENGTH_SHORT).show();}
+                        else{
+                           if(color == 0 ){
                                if(!isCreation){
-                                   icono =purchase.getIcon();
+                                   color = purchase.getColor();
+                               }else
+                               color= R.color.md_green_100;
+
+                           }
+                           boolean isLimitFloat = isStringFloat(limit);
+                           if(isLimitFloat){
+                               float parseLimit = Float.parseFloat(limit);
+                               if(parseLimit >0.0) {
+
+                                    int icono;
+                                   if(selectedIcon != null){ icono = selectedIcon.getId();}
+                                   else{
+                                       if(!isCreation){
+                                           icono =purchase.getIcon();
+                                       }else{
+                                           icono = 471;
+
+                                       }
+
+                                   }
+
+
+                                   purs =new Purchase(name,parseLimit,color,userEmail,icono);
+                                   if(!isCreation){
+                                       purs.setId(purchaseId);
+                                       purs.setCarts(purchase.getCarts());
+                                   }
+                                   realm.beginTransaction();
+                                   realm.copyToRealmOrUpdate(purs);
+                                   realm.commitTransaction();
+
+
+                                   Boolean decision = Util.getDecisionPurchase(prefs);
+                                   if(Boolean.TRUE.equals(decision)){
+                                       SharedPreferences.Editor editor = prefs.edit();
+                                       editor.putBoolean("newp",false);
+                                       editor.commit();
+                                       new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
+                                               .setTitleText("Registrar")
+                                               .setContentText("Desea seleccionar el listado creado")
+                                               .setConfirmText("Si")
+                                               .setCancelText("No")
+                                               .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                                   @Override
+                                                   public void onClick(SweetAlertDialog sDialog) {
+                                                       sDialog.dismissWithAnimation();
+                                                       editor.putInt("idp", purs.getId());
+                                                       editor.putString("np", purs.getName());
+                                                       editor.putInt("cp", purs.getColor());
+                                                       editor.putFloat("limitp", purs.getLimit());
+                                                       editor.putInt("iconp",purs.getIcon());
+                                                       editor.commit();
+
+
+                                                       getActivity().invalidateOptionsMenu();
+
+                                                       dismiss();
+
+                                                   }
+                                               })
+                                               .showCancelButton(true)
+                                               .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                                   @Override
+                                                   public void onClick(SweetAlertDialog sDialog) {
+                                                       sDialog.cancel();
+
+                                                   }
+                                               })
+                                               .show();
+
+
+
+
+
+                                   }else{
+                                       dismiss();
+                                   }
+
                                }else{
-                                   icono = 471;
+                                   Toast.makeText(getActivity(),"Ingresar  un valor de limite  mayor a 0.0",Toast.LENGTH_SHORT).show();
 
                                }
 
+
+                           }else{
+                               Toast.makeText(getActivity(),"Ingresar  un valor de limite, numero decimal y mayor a 0.0",Toast.LENGTH_SHORT).show();
                            }
 
 
-                           purs =new Purchase(name,parseLimit,color,userEmail,icono);
-                           if(!isCreation){
-                               purs.setId(purchaseId);
-                               purs.setCarts(purchase.getCarts());
-                           }
-                           realm.beginTransaction();
-                           realm.copyToRealmOrUpdate(purs);
-                           realm.commitTransaction();
 
-
-                           Boolean decision = Util.getDecisionPurchase(prefs);
-                           if(Boolean.TRUE.equals(decision)){
-                               SharedPreferences.Editor editor = prefs.edit();
-                               editor.putBoolean("newp",false);
-                               editor.commit();
-                               new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
-                                       .setTitleText("Registrar")
-                                       .setContentText("Desea seleccionar el listado creado")
-                                       .setConfirmText("Si")
-                                       .setCancelText("No")
-                                       .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                           @Override
-                                           public void onClick(SweetAlertDialog sDialog) {
-                                               sDialog.dismissWithAnimation();
-                                               editor.putInt("idp", purs.getId());
-                                               editor.putString("np", purs.getName());
-                                               editor.putInt("cp", purs.getColor());
-                                               editor.putFloat("limitp", purs.getLimit());
-                                               editor.putInt("iconp",purs.getIcon());
-                                               editor.commit();
-
-
-                                               getActivity().invalidateOptionsMenu();
-
-                                               dismiss();
-
-                                           }
-                                       })
-                                       .showCancelButton(true)
-                                       .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                           @Override
-                                           public void onClick(SweetAlertDialog sDialog) {
-                                               sDialog.cancel();
-
-                                           }
-                                       })
-                                       .show();
-
-
-
-
-
-                           }
-
-                       }else{
-                           Toast.makeText(getActivity(),"Ingresar  un valor de limite  mayor a 0.0",Toast.LENGTH_SHORT).show();
-
-                       }
-
-
-                   }else{
-                       Toast.makeText(getActivity(),"Ingresar  un valor de limite, numero decimal y mayor a 0.0",Toast.LENGTH_SHORT).show();
-                   }
-
-
-
+                        }
                 }
-
-
-
             }else{
                 Toast.makeText(getActivity(), "The data is not valid, please check the fields again", Toast.LENGTH_SHORT).show();
             }
@@ -246,8 +247,8 @@ public class AddListPurchaseDialog extends DialogFragment implements IconDialog.
         iconView.setIcon(purchase.getIcon());
     }
     private void setDialogTitle() {
-        String title = "Editar Listado de Compra";
-        if (isCreation) title = "Crear Nuevo Listado de Compra";
+        String title = "Editar Cesta de Compra";
+        if (isCreation) title = "Crear Nueva Cesta de Compra";
         txtTitle.setText(title);
     }
     public void colorPicker(){

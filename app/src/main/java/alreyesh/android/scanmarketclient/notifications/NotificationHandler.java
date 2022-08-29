@@ -14,6 +14,8 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 
+import androidx.core.app.NotificationCompat;
+
 import alreyesh.android.scanmarketclient.activities.MainActivity;
 import alreyesh.android.scanmarketclient.R;
 import alreyesh.android.scanmarketclient.utils.Util;
@@ -63,8 +65,6 @@ public class NotificationHandler  extends ContextWrapper {
 
 
 
-        }else{
-
         }
     }
 
@@ -106,7 +106,7 @@ public class NotificationHandler  extends ContextWrapper {
             Intent notificationIntent = new Intent(getApplicationContext(), MainActivity.class);
             notificationIntent.putExtra("showCartView", true);
             notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            PendingIntent pendingNotificationIntent = PendingIntent.getActivity(getApplicationContext(),0,notificationIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent pendingNotificationIntent = PendingIntent.getActivity(getApplicationContext(),0,notificationIntent,PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
                   return new Notification.Builder(getApplicationContext(), channelId)
                         .setContentTitle(title)
                         .setContentText(message)
@@ -147,7 +147,8 @@ public class NotificationHandler  extends ContextWrapper {
             Intent notificationIntent = new Intent(getApplicationContext(), MainActivity.class);
             notificationIntent.putExtra("notfy", "on");
             notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            PendingIntent pendingNotificationIntent = PendingIntent.getActivity(getApplicationContext(),0,notificationIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent pendingNotificationIntent = PendingIntent.getActivity(getApplicationContext(),0,notificationIntent,PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
+
             return new Notification.Builder(getApplicationContext(), channelId)
                     .setContentTitle(title)
                     .setContentText(message)
@@ -157,6 +158,8 @@ public class NotificationHandler  extends ContextWrapper {
                     .setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(),R.mipmap.ic_logo_scan_market))
 
                     .setAutoCancel(true);
+
+
 
         }
         return null;
@@ -168,7 +171,7 @@ public class NotificationHandler  extends ContextWrapper {
         Intent notificationIntent = new Intent(getApplicationContext(), MainActivity.class);
         notificationIntent.putExtra("notfy", "on");
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingNotificationIntent = PendingIntent.getActivity(getApplicationContext(),0,notificationIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingNotificationIntent = PendingIntent.getActivity(getApplicationContext(),0,notificationIntent,PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
         return new Notification.Builder(getApplicationContext())
                 .setContentTitle(title)

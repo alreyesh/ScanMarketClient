@@ -3,9 +3,12 @@ package alreyesh.android.scanmarketclient.utils;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKeys;
+
+import alreyesh.android.scanmarketclient.notifications.NotificacionPush;
 
 public class Util {
     public static SharedPreferences getSP(Context context){
@@ -99,6 +102,11 @@ public class Util {
     public static String getOrderDetail(SharedPreferences preferences){
         return preferences.getString("orderdetail","");
     }
+
+    public static Boolean getNotiTurn(SharedPreferences preferences){
+        return preferences.getBoolean("turnnoti",false);
+    }
+
     public static String getTitle(SharedPreferences preferences){
         return preferences.getString("titlenoti","");
     }
@@ -108,6 +116,15 @@ public class Util {
     public static String getDescrip(SharedPreferences preferences){
         return preferences.getString("descripnoti","");
     }
+
+    public static String getQRCode(SharedPreferences preferences){
+        return preferences.getString("qr","");
+    }
+    public static Boolean getStateQr(SharedPreferences preferences){
+        return preferences.getBoolean("qrstate",false);
+
+    }
+
     public static void removeSharedPreferences(SharedPreferences preferences){
         SharedPreferences.Editor editor = preferences.edit();
         editor.remove("email");
@@ -115,6 +132,9 @@ public class Util {
         editor.apply();
     }
 
+    public static Boolean getTurnNotify(SharedPreferences preferences){
+    return preferences.getBoolean("turnm",true);
+    }
 
 
 

@@ -89,18 +89,35 @@
         android:hint="N. Documento"
         android:inputType="textPersonName"
         app:layout_constraintTop_toBottomOf="@+id/spinnerTipoDocumento" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/btnGrabar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="20dp"
+            android:gravity="center"
+            android:text="Guardar"
+            app:layout_constraintTop_toBottomOf="@+id/editNumDocumento" />
+        <Button
+            android:id="@+id/btnProbar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="20dp"
+            android:gravity="center"
+            android:text="Probar"
+            app:layout_constraintTop_toBottomOf="@+id/editNumDocumento" />
+    </LinearLayout>
 
-    <Button
-        android:id="@+id/btnGrabar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginBottom="20dp"
-        android:gravity="center"
-        android:text="Guardar"
-        app:layout_constraintTop_toBottomOf="@+id/editNumDocumento" />
 
 </LinearLayout>

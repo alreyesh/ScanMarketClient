@@ -10,6 +10,8 @@
     <item android:title="Mi Cuenta">
         <menu>
             <item  android:id="@+id/my_info" android:icon="@android:drawable/ic_dialog_info" android:title="Mi información" />
+            <item  android:id="@+id/my_settings" android:icon="@android:drawable/ic_menu_preferences" android:title="Mis Ajustes" />
+
             <item  android:id="@+id/menu_logout" android:icon="@android:drawable/ic_menu_revert" android:title="Cerrar Sesión" />
         </menu>
     </item>

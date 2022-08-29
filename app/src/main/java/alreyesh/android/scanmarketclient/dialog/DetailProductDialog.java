@@ -90,6 +90,11 @@ public class DetailProductDialog  extends DialogFragment{
                             realm.copyToRealm(cartin);
                             purchase.getCarts().add(cartin);
                             realm.commitTransaction();
+                            SharedPreferences.Editor editor = prefs.edit();
+                            editor.putBoolean("qrstate",false);
+                            editor.commit();
+
+
                             dismiss();
                             Toast.makeText(getActivity(), "Se añadio a la lista:" + lista, Toast.LENGTH_SHORT).show();
                             } else {
@@ -143,7 +148,9 @@ public class DetailProductDialog  extends DialogFragment{
                                         realm.copyToRealm(cartin);
                                         purchase.getCarts().add(cartin);
                                         realm.commitTransaction();
-
+                                        SharedPreferences.Editor editor = prefs.edit();
+                                        editor.putBoolean("qrstate",false);
+                                        editor.commit();
                                         Toast.makeText(getActivity(), "Producto Actualizado: " + lista, Toast.LENGTH_SHORT).show();
                                         dismiss();
 
