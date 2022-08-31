@@ -121,30 +121,7 @@ public class Notifyservice extends Service {
                         Boolean enviarnow;
                         switch (dc.getType()) {
                             case ADDED:
-                                Log.d("TAG", "New city: " + dc.getDocument().getData());
-                                o = dc.getDocument().getData();
-                                editor.putBoolean("turnnoti",false);
-                                editor.putString("titlenoti",(String)o.get("titulo"));
-                                editor.putString("shortnoti",(String)o.get("textocorto"));
-                                editor.putString("descripnoti",(String)o.get("mensaje"));
-                                editor.commit();
-                                // Notify notify = o.toObject(Notify.class);
-                                Log.d("d", "Current data: " +(String) o.get("titulo")  );
 
-                                //sendNotification(notify.getTitulo(),notify.getTextocorto(),true);
-                                Toast.makeText(context,"Esta: "+turn,Toast.LENGTH_SHORT).show();
-                                 enviarnow = (Boolean) o.get("sendnow");
-                                if(Boolean.TRUE.equals(enviarnow) ){
-                                    if(Boolean.TRUE.equals(turn)) {
-                                        sendNotification((String) o.get("titulo"),(String)  o.get("textocorto"),true);
-                                        Toast.makeText(context,"yendo por aqui 1",Toast.LENGTH_SHORT).show();
-                                    }
-                                }else{
-                                    Long  alertime = (Long) o.get("milisecond");
-                                    Data data = guardarData((String)o.get("titulo"),(String)o.get("textocorto"),(String)o.get("mensaje"),(String)o.get("codigo"));
-                                    Workmanagernoti.GuardarNoti(alertime,data,(String)o.get("codigo"),context);
-                                    Toast.makeText(context,"yendo por aqui 2",Toast.LENGTH_SHORT).show();
-                                }
                                 break;
                             case MODIFIED:
                                 Log.d("TAG", "Modified city: " + dc.getDocument().getData());
@@ -161,7 +138,7 @@ public class Notifyservice extends Service {
 
                                 //sendNotification(notify.getTitulo(),notify.getTextocorto(),true);
                                 Toast.makeText(context,"Esta: "+turn,Toast.LENGTH_SHORT).show();
-                                enviarnow = (Boolean) o.get("program");
+                                enviarnow = (Boolean) o.get("sendnow");
                                 if(Boolean.TRUE.equals(enviarnow) ){
                                     if(Boolean.TRUE.equals(turn)) {
                                         sendNotification((String) o.get("titulo"),(String)  o.get("textocorto"),true);

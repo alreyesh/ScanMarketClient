@@ -98,6 +98,7 @@ dependencies {
     implementation 'com.android.billingclient:billing:4.0.0'
     implementation 'com.google.ar:core:1.32.0'
     implementation 'androidx.security:security-crypto:1.0.0'
+    implementation 'androidx.work:work-runtime-ktx:2.7.1'
 
     androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.4.0'
 //    implementation 'androidx.camera:camera-core:1.0.2'
@@ -173,6 +174,7 @@ dependencies {
 
     //Worker
     implementation 'androidx.work:work-runtime:2.7.1'
+    implementation "androidx.work:work-runtime-ktx:2.7.1"
 
     //Selenium
 //implementation 'com.github.appium:java-client:7.6.0'

@@ -15,6 +15,8 @@ import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -22,11 +24,14 @@ import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.work.Data;
 import androidx.work.ForegroundInfo;
+import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 import androidx.work.WorkRequest;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
+
+import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.concurrent.TimeUnit;
 
@@ -45,6 +50,7 @@ public class Workmanagernoti extends Worker {
     private NotificationManager notificationManager;
     private SharedPreferences prefs;
     private Integer colorpick;
+    Handler mainThreadHandler = new Handler(Looper.getMainLooper());
     public Workmanagernoti(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
         this.context = context;
@@ -56,29 +62,48 @@ public class Workmanagernoti extends Worker {
         Toast.makeText(context,"Duracion: "+duracion,Toast.LENGTH_SHORT).show();
         //   .setInitialDelay(duracion, TimeUnit.MILLISECONDS).addTag(tag)
         //   .setInputData(data).build();
-        WorkRequest noti = new OneTimeWorkRequest.Builder(Workmanagernoti.class)
-                .setInitialDelay(1, TimeUnit.MINUTES).addTag(tag).build();
+      OneTimeWorkRequest noti = new OneTimeWorkRequest.Builder(Workmanagernoti.class)
+                .setInitialDelay(10, TimeUnit.SECONDS).addTag(tag).setInputData(data).build();;
+        WorkManager.getInstance( ).enqueue(noti);
 
-        WorkManager.getInstance(context).enqueue(noti);
+
+
+
+
     }
 
     @NonNull
     @Override
     public Result doWork() {
         Log.d("worknotifi","llego");
-      /*  String titulo = getInputData().getString("titulo");
+       String titulo = getInputData().getString("titulo");
         String detalle = getInputData().getString("detalle");
-         String texto = getInputData().getString("texto");
-         String cod = getInputData().getString("idnoti");
-*/
+
+
+
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             setForegroundAsync(createForegroundInfo("titulo","detalle"));
         }else{
-            sendNotification("titulo","detalle",true);
-            Toast.makeText(getApplicationContext(),"Prueba Programada",Toast.LENGTH_SHORT).show();
+            sendNotification(titulo,detalle,true);
+
         }
 
+
+
+
+
         return Result.success();
+    }
+
+    @NonNull
+    @Override
+    public ListenableFuture<ForegroundInfo> getForegroundInfoAsync() {
+
+        Toast.makeText(context,"Prueba notificacion",Toast.LENGTH_LONG).show();
+
+
+        return super.getForegroundInfoAsync();
     }
 
     private void sendNotification(String titulo, String detalle, boolean isHighImportance) {

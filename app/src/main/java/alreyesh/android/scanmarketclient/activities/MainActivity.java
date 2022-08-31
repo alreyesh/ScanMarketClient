@@ -120,6 +120,8 @@ public class MainActivity extends AppCompatActivity {
         if(user !=null){
             account(user);
            // checkRegister(user);
+        }else{
+            goToLogin();
         }
 
 
@@ -313,7 +315,12 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-
+    private void goToLogin(){
+        Intent intent = new Intent( this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.putExtra("register", "on");
+        startActivity(intent);
+    }
     @Override
     protected void onPause() {
         super.onPause();
@@ -491,22 +498,25 @@ public class MainActivity extends AppCompatActivity {
 
     }
     private void colorCart( View viewtexttotal, float limit,float totalCart){
-        if(totalCart>=limit){
+        if(limit!=0){
+            if(totalCart>=limit){
 
-            Toast.makeText(this, "Se Excedio ", Toast.LENGTH_SHORT).show();
-            if ( viewtexttotal instanceof TextView) {
-                ((TextView) viewtexttotal).setTextColor( Color.RED ); // Make text colour blue
-                ((TextView) viewtexttotal).setTextSize(TypedValue.COMPLEX_UNIT_SP, 16); // Increase font size
+                Toast.makeText(this, "Se Excedio ", Toast.LENGTH_SHORT).show();
+                if ( viewtexttotal instanceof TextView) {
+                    ((TextView) viewtexttotal).setTextColor( Color.RED ); // Make text colour blue
+                    ((TextView) viewtexttotal).setTextSize(TypedValue.COMPLEX_UNIT_SP, 16); // Increase font size
+                }
+
+            }else{
+
+                if ( viewtexttotal instanceof TextView) {
+                    ((TextView) viewtexttotal).setTextColor( Color.WHITE ); // Make text colour blue
+                    ((TextView) viewtexttotal).setTextSize(TypedValue.COMPLEX_UNIT_SP, 14); // Increase font size
+                }
+
             }
-
-        }else{
-
-            if ( viewtexttotal instanceof TextView) {
-                ((TextView) viewtexttotal).setTextColor( Color.WHITE ); // Make text colour blue
-                ((TextView) viewtexttotal).setTextSize(TypedValue.COMPLEX_UNIT_SP, 14); // Increase font size
-            }
-
         }
+
     }
     private void createRequest(){
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)

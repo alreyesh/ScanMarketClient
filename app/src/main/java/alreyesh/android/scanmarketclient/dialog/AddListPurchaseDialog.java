@@ -41,6 +41,8 @@ import alreyesh.android.scanmarketclient.models.Purchase;
 import alreyesh.android.scanmarketclient.R;
 import alreyesh.android.scanmarketclient.utils.Util;
 import io.realm.Realm;
+import io.realm.RealmResults;
+import io.realm.Sort;
 
 public class AddListPurchaseDialog extends DialogFragment implements IconDialog.Callback  {
     private TextView txtTitle;
@@ -50,7 +52,7 @@ public class AddListPurchaseDialog extends DialogFragment implements IconDialog.
      Button btnRegistrar;
     private Button btnColor;
      Button btnCancelar;
-
+    private RealmResults<Purchase> purchases;
 
 
     private IconView iconView;
@@ -58,6 +60,7 @@ public class AddListPurchaseDialog extends DialogFragment implements IconDialog.
 
     private Icon selectedIcon;
     private Purchase purchase;
+    private Purchase pexist;
     private   Purchase purs;
     private Realm realm;
     private int purchaseId;
@@ -102,109 +105,61 @@ public class AddListPurchaseDialog extends DialogFragment implements IconDialog.
 
 
                  FirebaseUser user = mAuth.getCurrentUser();
+                pexist = realm.where(Purchase.class).equalTo("name",name).equalTo("emailID",user.getEmail()).findFirst();
 
-            if(user !=null){
-                String userEmail = user.getEmail();
+                if(user !=null){
+                    String userEmail = user.getEmail();
+                    if(pexist == null){
                         if(name==null|| name.isEmpty()) {Toast.makeText(getActivity(),"Ingrese nombre de cesta de compra",Toast.LENGTH_SHORT).show();}
-                        else if(limit == null || limit.isEmpty()){Toast.makeText(getActivity(),"Ingrese limite de compra",Toast.LENGTH_SHORT).show();}
                         else{
-                           if(color == 0 ){
-                               if(!isCreation){
-                                   color = purchase.getColor();
-                               }else
-                               color= R.color.md_green_100;
+                            if(color == 0 ){
+                                if(!isCreation){
+                                    color = purchase.getColor();
+                                }else
+                                    color= R.color.md_green_100;
 
-                           }
-                           boolean isLimitFloat = isStringFloat(limit);
-                           if(isLimitFloat){
-                               float parseLimit = Float.parseFloat(limit);
-                               if(parseLimit >0.0) {
+                            }
+                            float parseLimit = 0;
+                            if(!limit.isEmpty()){
+                                boolean isLimitFloat = isStringFloat(limit);
+                                if(isLimitFloat){
+                                    parseLimit = Float.parseFloat(limit);
+                                    if(0.0>= parseLimit  ) {
+                                        Toast.makeText(getActivity(),"Ingresar  un valor de limite  mayor a 0.0",Toast.LENGTH_SHORT).show();
+                                    }
 
-                                    int icono;
-                                   if(selectedIcon != null){ icono = selectedIcon.getId();}
-                                   else{
-                                       if(!isCreation){
-                                           icono =purchase.getIcon();
-                                       }else{
-                                           icono = 471;
+                                }else{
+                                    Toast.makeText(getActivity(),"Ingresar  un valor de limite, numero entero o decimal y mayor a 0.0",Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                            int icono;
+                            if(selectedIcon != null){ icono = selectedIcon.getId();}
+                            else{
+                                if(!isCreation){
+                                    icono =purchase.getIcon();
+                                }else{
+                                    icono = 471;
 
-                                       }
+                                }
 
-                                   }
+                            }
 
-
-                                   purs =new Purchase(name,parseLimit,color,userEmail,icono);
-                                   if(!isCreation){
-                                       purs.setId(purchaseId);
-                                       purs.setCarts(purchase.getCarts());
-                                   }
-                                   realm.beginTransaction();
-                                   realm.copyToRealmOrUpdate(purs);
-                                   realm.commitTransaction();
-
-
-                                   Boolean decision = Util.getDecisionPurchase(prefs);
-                                   if(Boolean.TRUE.equals(decision)){
-                                       SharedPreferences.Editor editor = prefs.edit();
-                                       editor.putBoolean("newp",false);
-                                       editor.commit();
-                                       new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
-                                               .setTitleText("Registrar")
-                                               .setContentText("Desea seleccionar el listado creado")
-                                               .setConfirmText("Si")
-                                               .setCancelText("No")
-                                               .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                                   @Override
-                                                   public void onClick(SweetAlertDialog sDialog) {
-                                                       sDialog.dismissWithAnimation();
-                                                       editor.putInt("idp", purs.getId());
-                                                       editor.putString("np", purs.getName());
-                                                       editor.putInt("cp", purs.getColor());
-                                                       editor.putFloat("limitp", purs.getLimit());
-                                                       editor.putInt("iconp",purs.getIcon());
-                                                       editor.commit();
-
-
-                                                       getActivity().invalidateOptionsMenu();
-
-                                                       dismiss();
-
-                                                   }
-                                               })
-                                               .showCancelButton(true)
-                                               .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                                   @Override
-                                                   public void onClick(SweetAlertDialog sDialog) {
-                                                       sDialog.cancel();
-
-                                                   }
-                                               })
-                                               .show();
-
-
-
-
-
-                                   }else{
-                                       dismiss();
-                                   }
-
-                               }else{
-                                   Toast.makeText(getActivity(),"Ingresar  un valor de limite  mayor a 0.0",Toast.LENGTH_SHORT).show();
-
-                               }
-
-
-                           }else{
-                               Toast.makeText(getActivity(),"Ingresar  un valor de limite, numero decimal y mayor a 0.0",Toast.LENGTH_SHORT).show();
-                           }
-
-
+                            createPurchase(name,parseLimit,color,userEmail,icono);
 
                         }
+                    }else{
+                        Toast.makeText(getActivity(), "El nombre de la cesta ya existe", Toast.LENGTH_SHORT).show();
+
+                    }
+
+
+                }else{
+                    Toast.makeText(getActivity(), "Error con la base de datos, inicie sesión nuevamente", Toast.LENGTH_SHORT).show();
                 }
+
+
             }else{
-                Toast.makeText(getActivity(), "The data is not valid, please check the fields again", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Ingrese un nombre para la cesta de compra", Toast.LENGTH_SHORT).show();
             }
 
             getActivity().invalidateOptionsMenu();
@@ -227,6 +182,65 @@ public class AddListPurchaseDialog extends DialogFragment implements IconDialog.
 
         return builder.create();
     }
+
+    private void createPurchase(String name, float limit, int color, String emailID, int icon) {
+        purs =new Purchase(name,limit,color,emailID,icon);
+        if(!isCreation){
+            purs.setId(purchaseId);
+            purs.setCarts(purchase.getCarts());
+        }
+        realm.beginTransaction();
+        realm.copyToRealmOrUpdate(purs);
+        realm.commitTransaction();
+
+
+        Boolean decision = Util.getDecisionPurchase(prefs);
+        if(Boolean.TRUE.equals(decision)){
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("newp",false);
+            editor.commit();
+            new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText("Registrar")
+                    .setContentText("Desea seleccionar el listado creado")
+                    .setConfirmText("Si")
+                    .setCancelText("No")
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sDialog) {
+                            sDialog.dismissWithAnimation();
+                            editor.putInt("idp", purs.getId());
+                            editor.putString("np", purs.getName());
+                            editor.putInt("cp", purs.getColor());
+                            editor.putFloat("limitp", purs.getLimit());
+                            editor.putInt("iconp",purs.getIcon());
+                            editor.commit();
+
+
+                            getActivity().invalidateOptionsMenu();
+
+                            dismiss();
+
+                        }
+                    })
+                    .showCancelButton(true)
+                    .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sDialog) {
+                            sDialog.cancel();
+
+                        }
+                    })
+                    .show();
+
+
+
+
+
+        }else{
+            dismiss();
+        }
+    }
+
     private void UI(View view) {
         txtTitle = view.findViewById(R.id.textViewListPurchase);
         editTextName = view.findViewById(R.id.editNameList);
@@ -261,14 +275,16 @@ public class AddListPurchaseDialog extends DialogFragment implements IconDialog.
                 .setColorRes(getResources().getIntArray(R.array.demo_colors))
                 .setColorListener((i, s) -> {
                     btnColor.setBackgroundColor(i);
-                    Toast.makeText(getActivity(),"color: "+i, Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(getActivity(),"color: "+i, Toast.LENGTH_SHORT).show();
                         color = i;
                         })
                 .show();
     }
 
     private boolean isValidDataForNewPurchase(){
-        if(editTextName.getText().toString().length()>0 && editTextLimit.getText().toString().length()>0){
+        String nametext = editTextName.getText().toString().trim();
+        if(editTextName.getText().toString().length()>0){
+
             return true;
         }
             return false;

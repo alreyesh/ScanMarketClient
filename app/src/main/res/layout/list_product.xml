@@ -29,13 +29,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textSize="12sp"
+            android:textSize="10sp"
             tools:text="Nombre" />
+
         <TextView
             android:id="@+id/textViewPrice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
+            android:textSize="12sp"
             tools:text="Precio" />
 
         <TextView
@@ -43,6 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="right"
+            android:textSize="10sp"
             tools:text="Descuento" />
 
 

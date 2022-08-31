@@ -86,7 +86,7 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.ViewHo
         }
         public void bind(final Purchase purchase, final OnItemClickListener itemListener, final OnButtonClickListener btnListener,final OnLongClickListener longListener)
         {
-            name.setText( purchase.getName());
+            name.setText( purchase.getName().toUpperCase());
             limit.setText("S/. "+purchase.getLimit()+"");
             List<Cart> list = new ArrayList<Cart>();
             RealmList<Cart> carts=purchase.getCarts() ;
