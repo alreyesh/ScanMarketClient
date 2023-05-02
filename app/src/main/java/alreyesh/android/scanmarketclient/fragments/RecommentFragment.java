@@ -1,6 +1,6 @@
 package alreyesh.android.scanmarketclient.fragments;
 
-import android.content.Context;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -28,12 +28,14 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
 import alreyesh.android.scanmarketclient.adapters.ProductAdapter;
 import alreyesh.android.scanmarketclient.adapters.RelatedProductAdapter;
-import alreyesh.android.scanmarketclient.camara.CamaraActivity;
+
+import alreyesh.android.scanmarketclient.camarascan.DetectorActivity;
 import alreyesh.android.scanmarketclient.model.Product;
 import alreyesh.android.scanmarketclient.models.Cart;
 import alreyesh.android.scanmarketclient.models.Purchase;
@@ -45,19 +47,10 @@ import io.realm.RealmList;
 
 public class RecommentFragment extends Fragment {
     private SharedPreferences prefs;
-    private FirebaseFirestore db;
-    ArrayList<Product> productsList;
-    private TextView txtProductName,txtProductoPrecio;
-    private EditText editProductoCantidad;
-    private ImageView imageViewProducto;
-    private Button btnAgregar,btnCapturar;
-    private RecyclerView recyclerViewProducto;
-    private RecyclerView.LayoutManager mLayoutManager;
-    private Product product;
-    private RelatedProductAdapter adapter;
     private Realm realm;
     private Purchase purchase;
-
+    private static final String PRODUCTNAME= "productName";
+    private static final String MESSAGE = "Se Añadio el Producto en la cesta";
 
     public RecommentFragment() {
         // Required empty public constructor
@@ -77,18 +70,20 @@ public class RecommentFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.fragment_recomment, container, false);
         String producto = Util.getProductFromCamera(prefs);
-        txtProductName = (TextView)view.findViewById(R.id.txtProductName);
-        txtProductoPrecio = (TextView)view.findViewById(R.id.txtProductoPrecio);
-        editProductoCantidad = (EditText)view.findViewById(R.id.editProductoCantidad);
-        imageViewProducto = (ImageView)view.findViewById(R.id.imageViewProducto);
-        btnAgregar = (Button)view.findViewById(R.id.btnAgregar);
-        btnCapturar = (Button)view.findViewById(R.id.btnCapturar);
-        recyclerViewProducto =(RecyclerView)view.findViewById(R.id.recyclerViewProducto);
-        productsList = new ArrayList<>();
-        db = FirebaseFirestore.getInstance();
+        String categoria = Util.getCategoryFromCamera(prefs);
+        String predict = Util.getPredictFromCamera(prefs);
+        TextView txtProductName = (TextView)view.findViewById(R.id.txtProductName);
+        TextView txtProductoPrecio = (TextView)view.findViewById(R.id.txtProductoPrecio);
+        EditText editProductoCantidad = (EditText)view.findViewById(R.id.editProductoCantidad);
+        ImageView imageViewProducto = (ImageView)view.findViewById(R.id.imageViewProducto);
+        Button btnAgregar = (Button)view.findViewById(R.id.btnAgregar);
+        Button btnCapturar = (Button)view.findViewById(R.id.btnCapturar);
+        RecyclerView recyclerViewProducto =(RecyclerView)view.findViewById(R.id.recyclerViewProducto);
+        ArrayList<Product>  productsList = new ArrayList<>();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
          recyclerViewProducto.setHasFixedSize(true);
         recyclerViewProducto.setItemAnimator(new DefaultItemAnimator());
-        mLayoutManager = new LinearLayoutManager(getActivity());
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerViewProducto.setLayoutManager(mLayoutManager);
         String countDefault = "1";
         if(Util.getPurchaseId(prefs) !=null){
@@ -97,7 +92,7 @@ public class RecommentFragment extends Fragment {
             if(purchase !=null){
                 String nombre = producto;
                 RealmList<Cart> carts = purchase.getCarts();
-                Cart verCart = carts.where().equalTo("productName", nombre).findFirst();
+                Cart verCart = carts.where().equalTo(PRODUCTNAME, nombre).findFirst();
                 if (verCart != null){
                     editProductoCantidad.setHint(verCart.getCountProduct());
                     countDefault  = verCart.getCountProduct();
@@ -112,22 +107,20 @@ public class RecommentFragment extends Fragment {
 
         }
         String finalCountDefault = countDefault;
-        btnAgregar.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
+        btnAgregar.setOnClickListener(v -> {
             int purchaseId = Util.getPurchaseId(prefs);
             purchase = realm.where(Purchase.class).equalTo("id",purchaseId).findFirst();
             if(purchase !=null){
                 if (Util.getPurchaseId(prefs) != null){
-                    String lista = Util.getPurchaseName(prefs);
+
                     String cantidad = editProductoCantidad.getText().toString().trim();
-                    if (cantidad.isEmpty() || cantidad == null || cantidad.equals("")){
+                    if (cantidad.isEmpty()   || cantidad.equals("")){
                         cantidad = finalCountDefault;
 
                         Cart cartin;
                         String nombre =  producto;
                         RealmList<Cart> carts = purchase.getCarts();
-                        cartin = carts.where().equalTo("productName", nombre).findFirst();
+                        cartin = carts.where().equalTo(PRODUCTNAME, nombre).findFirst();
                         String codigo = Util.getCodigoFromCamera(prefs);
                         String imagen = Util.getImagenFromCamera(prefs);
                         String precio = Util.getPrecioFromCamera(prefs);
@@ -137,7 +130,7 @@ public class RecommentFragment extends Fragment {
                             realm.copyToRealm(cartin);
                             purchase.getCarts().add(cartin);
                             realm.commitTransaction();
-                            Toast.makeText(getActivity(), "Se Añadio el Producto en la cesta", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), MESSAGE, Toast.LENGTH_SHORT).show();
                             getActivity().invalidateOptionsMenu();
                         }else{
                             realm.beginTransaction();
@@ -166,8 +159,8 @@ public class RecommentFragment extends Fragment {
                                 float precio = Float.parseFloat(precios);
                                 float subprice = precio * cant;
                                 String subpricestring = String.valueOf(subprice);
-                                cartin = carts.where().equalTo("productName", nombre).findFirst();
-                                if (carts.size() > 0){
+                                cartin = carts.where().equalTo(PRODUCTNAME,nombre).findFirst();
+                                if (!carts.isEmpty()){
                                     if (cartin == null || cartin.getRealm().isEmpty()){
                                         realm.beginTransaction();
                                         cartin = new Cart(codigo,nombre,imagen,precios, cantidad, subpricestring);
@@ -177,7 +170,7 @@ public class RecommentFragment extends Fragment {
                                         editProductoCantidad.setHint(cantidad);
                                         editProductoCantidad.setText("");
 
-                                        Toast.makeText(getActivity(), "Se Añadio el Producto en la cesta", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getActivity(), MESSAGE, Toast.LENGTH_SHORT).show();
                                         getActivity().invalidateOptionsMenu();
                                     }else{
                                         realm.beginTransaction();
@@ -198,7 +191,7 @@ public class RecommentFragment extends Fragment {
                                     realm.commitTransaction();
                                     editProductoCantidad.setHint(cantidad);
                                     editProductoCantidad.setText("");
-                                    Toast.makeText(getActivity(), "Se Añadio el Producto en la cesta", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getActivity(), MESSAGE, Toast.LENGTH_SHORT).show();
                                     getActivity().invalidateOptionsMenu();
                                 }
 
@@ -228,18 +221,17 @@ public class RecommentFragment extends Fragment {
 
 
 
-        }
-    });
+        });
     btnCapturar.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(getActivity(), CamaraActivity.class);
-           startActivity(intent);
+            Intent intent = new Intent(getActivity(), DetectorActivity.class);
+            startActivity(intent);
         }
     });
 
 
-   db.collection("productos").whereEqualTo("nombre",producto).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+   db.collection("productos").whereEqualTo("predict",predict).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                     if(!queryDocumentSnapshots.isEmpty()){
@@ -277,8 +269,10 @@ public class RecommentFragment extends Fragment {
 
             }
         });
+//.collection("productos").orderBy("predict").startAt(producto).endAt(producto+"\uf8ff")
+       // Toast.makeText(getActivity(), "Categoria:"+ categoria, Toast.LENGTH_SHORT).show();
 
-   db.collection("productos").orderBy("nombre").startAt(producto).endAt(producto+"\uf8ff").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        db.collection("productos").whereEqualTo("categoria",categoria).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
        @Override
        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
            if (!queryDocumentSnapshots.isEmpty()){
@@ -299,21 +293,11 @@ public class RecommentFragment extends Fragment {
                     }
                     pos++;
                }
-               adapter = new RelatedProductAdapter(productsList, R.layout.recycler_view_list_related_product, new RelatedProductAdapter.OnItemClickListener() {
-                   @Override
-                   public void onItemClick(Product product, int position) {
-
-                   }
-               }, new RelatedProductAdapter.OnButtonClickListener() {
-                   @Override
-                   public void onButtonClick(Product product, int position) {
-
-                   }
-               });
+               RelatedProductAdapter adapter = new RelatedProductAdapter(productsList, R.layout.recycler_view_list_related_product  );
 
                recyclerViewProducto.setAdapter(adapter);
 
-
+               adapter.notifyDataSetChanged();
 
            }
        }

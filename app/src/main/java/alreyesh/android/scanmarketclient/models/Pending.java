@@ -1,9 +1,6 @@
 package alreyesh.android.scanmarketclient.models;
 
-import android.graphics.Bitmap;
 
-import java.util.ArrayList;
-import java.util.Date;
 
 import alreyesh.android.scanmarketclient.app.MyApp;
 import io.realm.RealmList;

@@ -1,11 +1,11 @@
 package alreyesh.android.scanmarketclient.fragments;
 
 
-import android.content.Intent;
+
 import android.os.Bundle;
 
 
-import androidx.annotation.NonNull;
+
 import androidx.fragment.app.Fragment;
 
 
@@ -19,29 +19,25 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
+
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
+
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.text.WordUtils;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
+
 
 import alreyesh.android.scanmarketclient.R;
-import alreyesh.android.scanmarketclient.activities.AccountInfoActivity;
-import alreyesh.android.scanmarketclient.activities.MainActivity;
+
 import alreyesh.android.scanmarketclient.model.User;
 import alreyesh.android.scanmarketclient.utils.ValidatedInfo;
 
@@ -56,6 +52,7 @@ public class AccountInfoFragment extends Fragment {
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
     String id;
+    private static final String USUARIOS= "usuarios";
     public AccountInfoFragment() {
         // Required empty public constructor
         setHasOptionsMenu(true);
@@ -79,24 +76,12 @@ public class AccountInfoFragment extends Fragment {
         editNumDocumento = view.findViewById(R.id.editNumDocumento);
         spinnerTipoDocumento = view.findViewById(R.id.spinnerTipoDocumento);
         btnGrabar = view.findViewById(R.id.btnGrabar);
-        btnPrueba = view.findViewById(R.id.btnProbar);
+
           db = FirebaseFirestore.getInstance();
          mAuth = FirebaseAuth.getInstance();
         loadspinner();
         loadinfo();
-        btnPrueba.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String textNombre = editTextNombre.getText().toString().trim();
-                String textApellidos = editTextApellidos.getText().toString().trim();
-                String textCelular = editTextCelular.getText().toString().trim();
-                String spinnertext = spinnerTipoDocumento.getSelectedItem().toString();
-                String numDocumento = editNumDocumento.getText().toString().trim();
-                if(ValidatedInfo.validaty(getContext(), textNombre,textApellidos,textCelular,spinnertext,numDocumento)){
-                    Toast.makeText(getContext(),"Prueba:Registrado satisfactoriamente",Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+
         btnGrabar.setOnClickListener(v -> {
 
             String textNombre = editTextNombre.getText().toString().trim();
@@ -128,7 +113,7 @@ public class AccountInfoFragment extends Fragment {
             Toast.makeText(getContext(), "Rellenar todos los campos", Toast.LENGTH_SHORT).show();
 
         }else{
-            if(ValidatedInfo.validaty(getContext(), textNombre,textApellidos,textCelular,spinnertext,numDocumento)){
+            if(Boolean.TRUE.equals( ValidatedInfo.validaty(getContext(), textNombre,textApellidos,textCelular,spinnertext,numDocumento))){
                 FirebaseUser user = mAuth.getCurrentUser();
                 String userEmail = user.getEmail();
                 Map<String, Object> map = new HashMap<>();
@@ -138,7 +123,7 @@ public class AccountInfoFragment extends Fragment {
                 map.put("celular", textCelular.toLowerCase());
                 map.put("documento", numDocumento.toLowerCase());
                 map.put("tipodocumento", spinnertext);
-                db.collection("usuarios").add(map).addOnSuccessListener(documentReference -> {
+                db.collection(USUARIOS).add(map).addOnSuccessListener(documentReference -> {
                     editTextNombre.setText("");
                     editTextApellidos.setText("");
                     editTextCelular.setText("");
@@ -158,30 +143,30 @@ public class AccountInfoFragment extends Fragment {
             String userEmail = user.getEmail();
             Map<String, Object> map = new HashMap<>();
             map.put("uid", userEmail.toLowerCase());
-            if(!textNombre.isEmpty()){
-                if(ValidatedInfo.isValidLastName(getContext(),textNombre)){
+
+                if(!textNombre.isEmpty() && ValidatedInfo.isValidName(getContext(),textNombre)){
                     map.put("nombre", textNombre.toLowerCase());
                 }
-            }
-            if(!textApellidos.isEmpty()){
-                if(ValidatedInfo.isValidLastName(getContext(),textApellidos)){
+
+
+                if(!textApellidos.isEmpty() && ValidatedInfo.isValidLastName(getContext(),textApellidos)){
                     map.put("apellidos", textApellidos.toLowerCase());
                 }
-            }
-            if(!textCelular.isEmpty()){
-                if(ValidatedInfo.isValidCellPhone(getContext(),textCelular)){
+
+
+                if(!textCelular.isEmpty() && ValidatedInfo.isValidCellPhone(getContext(),textCelular)){
                     map.put("celular", textCelular.toLowerCase());
                 }
-            }
 
-            if(!numDocumento.isEmpty()){
-                if(ValidatedInfo.isValidDocument(getContext(),spinnertext,numDocumento)){
+
+
+                if(!numDocumento.isEmpty() && ValidatedInfo.isValidDocument(getContext(),spinnertext,numDocumento)){
                     map.put("documento", numDocumento.toLowerCase());
                     map.put("tipodocumento", spinnertext);
                 }
-            }
 
-            db.collection("usuarios").document(id).update(map).addOnSuccessListener(unused -> {
+
+            db.collection(USUARIOS).document(id).update(map).addOnSuccessListener(unused -> {
                 editTextNombre.setText("");
                 editTextApellidos.setText("");
                 editTextCelular.setText("");
@@ -200,7 +185,7 @@ public class AccountInfoFragment extends Fragment {
         categorias.add("RUC");
         categorias.add("CEX");
         categorias.add("Pasaporte");
-        ArrayAdapter<String> adapter = new ArrayAdapter (getContext(),android.R.layout.simple_spinner_item,categorias);
+        ArrayAdapter<String> adapter = new ArrayAdapter<> (getContext(),android.R.layout.simple_spinner_item,categorias);
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerTipoDocumento.setAdapter(adapter);
@@ -210,7 +195,7 @@ public class AccountInfoFragment extends Fragment {
     public void loadinfo(){
       FirebaseUser user = mAuth.getCurrentUser();
      String userEmail = user.getEmail();
-     db.collection("usuarios").whereEqualTo("uid", userEmail).get() .addOnCompleteListener(task -> {
+     db.collection(USUARIOS).whereEqualTo("uid", userEmail).get() .addOnCompleteListener(task -> {
          if( task.isSuccessful()){
              for(QueryDocumentSnapshot document: task.getResult()){
                  User user1 = document.toObject(User.class);

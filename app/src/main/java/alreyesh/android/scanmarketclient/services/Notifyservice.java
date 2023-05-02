@@ -18,7 +18,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
+
 import androidx.core.app.NotificationCompat;
 import androidx.work.Data;
 
@@ -33,7 +33,7 @@ import java.util.Map;
 
 import alreyesh.android.scanmarketclient.R;
 import alreyesh.android.scanmarketclient.activities.MainActivity;
-import alreyesh.android.scanmarketclient.notifications.NotificacionPush;
+
 import alreyesh.android.scanmarketclient.notifications.NotificationHandler;
 import alreyesh.android.scanmarketclient.utils.Util;
 import alreyesh.android.scanmarketclient.work.Workmanagernoti;
@@ -48,12 +48,13 @@ public class Notifyservice extends Service {
     private FirebaseFirestore db;
     //notificacion
     public static final String CHANNEL_HIGH_ID ="1";
-    private static final String CHANNELHIGHNAME ="HIGH CHANNEL";
+    public static final String CHANNELHIGHNAME ="HIGH CHANNEL";
     public static final String CHANNEL_LOW_ID ="2";
-    private static final String CHANNELLOWNAME ="LOW CHANNEL";
-    private static final String CHANNEL_PUSH ="sevice_push";
+    public static final String CHANNELLOWNAME ="LOW CHANNEL";
+    public static final String CHANNEL_PUSH ="sevice_push";
     private NotificationManager manager;
-    private Integer colorpick;
+    private static final String titulo ="titulo";
+    private static final String textocorto = "textocorto";
     @Override
     public void onCreate() {
         super.onCreate();
@@ -62,9 +63,7 @@ public class Notifyservice extends Service {
         createChannels();
 
         if(Boolean.TRUE.equals(turn)){
-         /*   NotificacionPush p = new NotificacionPush();
-            p.onNotiPause(getApplication());
-            */
+
             onNotification(getApplication());
 
         }else{
@@ -82,10 +81,6 @@ public class Notifyservice extends Service {
 
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
 
     @Nullable
     @Override
@@ -129,24 +124,24 @@ public class Notifyservice extends Service {
 
                                  o = dc.getDocument().getData();
                                 editor.putBoolean("turnnoti",false);
-                                editor.putString("titlenoti",(String)o.get("titulo"));
-                                editor.putString("shortnoti",(String)o.get("textocorto"));
+                                editor.putString("titlenoti",(String)o.get(titulo));
+                                editor.putString("shortnoti",(String)o.get(textocorto));
                                 editor.putString("descripnoti",(String)o.get("mensaje"));
                                 editor.commit();
-                                // Notify notify = o.toObject(Notify.class);
-                                Log.d("d", "Current data: " +(String) o.get("titulo")  );
 
-                                //sendNotification(notify.getTitulo(),notify.getTextocorto(),true);
+                                Log.d("d", "Current data: " +(String) o.get(titulo)  );
+
+
                                 Toast.makeText(context,"Esta: "+turn,Toast.LENGTH_SHORT).show();
                                 enviarnow = (Boolean) o.get("sendnow");
                                 if(Boolean.TRUE.equals(enviarnow) ){
                                     if(Boolean.TRUE.equals(turn)) {
-                                        sendNotification((String) o.get("titulo"),(String)  o.get("textocorto"),true);
+                                        sendNotification((String) o.get(titulo),(String)  o.get(textocorto),true);
 
                                     }
                                 }else{
                                     Long alertime = (Long) o.get("milisecond");
-                                    Data data = guardarData((String)o.get("titulo"),(String)o.get("textocorto"),(String)o.get("mensaje"),(String)o.get("codigo"));
+                                    Data data = guardarData((String)o.get(titulo),(String)o.get(textocorto),(String)o.get("mensaje"),(String)o.get("codigo"));
                                     Workmanagernoti.GuardarNoti(alertime,data,(String)o.get("codigo"),context);
                                 }
 
@@ -175,7 +170,7 @@ public class Notifyservice extends Service {
     }
     private void sendNotification(String titulo ,String titulocorto,boolean isHighImportance ){
         Integer colorparse = Util.getPurchaseColor(prefs);
-        colorpick = colorparse;
+        int colorpick = colorparse;
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
             Intent notificationIntent = new Intent(getApplicationContext(), MainActivity.class);
             notificationIntent.putExtra("notfy", "on");
@@ -202,12 +197,12 @@ public class Notifyservice extends Service {
 
 
     }
-    private Data guardarData(String titulo,String textocorto,String texto,String id_noti){
+    private Data guardarData(String titulo,String textocorto,String texto,String idnoti){
         return new Data.Builder()
                 .putString("titulo",titulo)
                 .putString("detalle",textocorto)
                 .putString("texto",texto)
-                .putString("idnoti",id_noti)
+                .putString("idnoti",idnoti)
                 .build();
 
     }

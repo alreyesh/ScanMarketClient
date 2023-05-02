@@ -8,7 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
+
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,16 +22,13 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+
 
 import java.util.ArrayList;
-import java.util.List;
 
 import alreyesh.android.scanmarketclient.R;
 import alreyesh.android.scanmarketclient.adapters.OrderDetailAdapter;
-import alreyesh.android.scanmarketclient.models.Cart;
+
 import alreyesh.android.scanmarketclient.models.DetailProduct;
 import alreyesh.android.scanmarketclient.utils.Util;
 
@@ -44,7 +41,7 @@ RecyclerView recyclerview;
     RecyclerView recyclerHistoryItem;
     Button btnAceptar;
     SharedPreferences prefs;
-    private OrderDetailAdapter adapter;
+
     RecyclerView.LayoutManager mLayoutManager;
 
     @NonNull
@@ -53,14 +50,14 @@ RecyclerView recyclerview;
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.list_order_detail,null);
-        UI(view);
+        uis(view);
 
         builder.setView(view);
         return builder.create();
 
     }
 
-    private void UI(View view) {
+    private void uis(View view) {
         db = FirebaseFirestore.getInstance();
         txtPagar = view.findViewById(R.id.txtPagar);
         textCodOrder = view.findViewById(R.id.textCodOrder);
@@ -79,22 +76,12 @@ RecyclerView recyclerview;
         txtPagar.setText("Total pagado: S/. "+totalOrder);
         textCodOrder.setText("cod: "+codOrder);
         txtDate.setText("Fecha: "+fechaOrder);
-        btnAceptar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dismiss();
-            }
-        });
+        btnAceptar.setOnClickListener(v -> dismiss());
 
         Gson gson= new Gson();
         ArrayList<DetailProduct> products = gson .fromJson(json,new TypeToken< ArrayList<DetailProduct>>(){}.getType());
 
-        adapter = new OrderDetailAdapter(products, new OrderDetailAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(DetailProduct detailProduct, int position) {
-
-            }
-        });
+        OrderDetailAdapter   adapter = new OrderDetailAdapter(products );
         recyclerHistoryItem.setAdapter(adapter);
 
         adapter.notifyDataSetChanged();

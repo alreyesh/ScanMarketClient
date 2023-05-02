@@ -6,7 +6,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +21,7 @@ import androidx.fragment.app.DialogFragment;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.gson.Gson;
+
 
 import net.glxn.qrgen.android.QRCode;
 
@@ -36,8 +36,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.stream.Stream;
+
 
 import alreyesh.android.scanmarketclient.R;
 import alreyesh.android.scanmarketclient.models.Cart;
@@ -57,7 +56,7 @@ public class QrDialog extends DialogFragment {
     SharedPreferences prefs;
     private RealmList<Cart> carts;
     private Realm realm;
-    public int purchaseId;
+    int purchaseId;
     private Purchase purchase;
     FirebaseAuth mAuth;
     String fechaactual;
@@ -95,7 +94,7 @@ public class QrDialog extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.detail_qr,null);
-        UI(view);
+        uis(view);
         mAuth = FirebaseAuth.getInstance();
         purchaseId =  Util.getPurchaseId(prefs);
         FirebaseUser user = mAuth.getCurrentUser();
@@ -104,39 +103,33 @@ public class QrDialog extends DialogFragment {
         realm = Realm.getDefaultInstance();
         purchase = realm.where(Purchase.class).equalTo("id",purchaseId).equalTo("emailID",userEmail).findFirst();
       carts = purchase.getCarts();
-       /*   list = new ArrayList<>();
-       list.addAll(carts);
 
-       */
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         Date today = new Date();
           fechaactual = sdf.format(today);
         String total = Util.getTotalCart(prefs);
         Boolean stateqr = Util.getStateQr(prefs);
         String qr = Util.getQRCode(prefs);
-        pruebaJson(stateqr,qr, userEmail,total, fechaactual);
+        pruebaJson(stateqr , userEmail,total, fechaactual);
 
-        btnAceptar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String qrfill = Util.getQRCode(prefs);
-                Toast.makeText(getContext(),"QR: "+ stateqr,Toast.LENGTH_SHORT).show();
-                if(Boolean.FALSE.equals(stateqr)   ){
-                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    Toast.makeText(getContext(),"pruebaQR",Toast.LENGTH_SHORT).show();
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                    byte[] byteArray = stream.toByteArray();
-                    pending = new Pending(qrfill,purchase.getEmailID(),fechaactual,total,purchase.getCarts(), byteArray);
-                    realm.beginTransaction();
-                    realm.copyToRealmOrUpdate(pending);
-                    purchase.getCarts().deleteAllFromRealm();
-                    realm.commitTransaction();
-                    SharedPreferences.Editor editor = prefs.edit();
-                    editor.putBoolean("qrstate",true);
-                    editor.commit();
-                }
-                dismiss();
+        btnAceptar.setOnClickListener(v -> {
+            String qrfill = Util.getQRCode(prefs);
+            Toast.makeText(getContext(),"QR: "+ stateqr,Toast.LENGTH_SHORT).show();
+            if(Boolean.FALSE.equals(stateqr)   ){
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                Toast.makeText(getContext(),"pruebaQR",Toast.LENGTH_SHORT).show();
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                byte[] byteArray = stream.toByteArray();
+                pending = new Pending(qrfill,purchase.getEmailID(),fechaactual,total,purchase.getCarts(), byteArray);
+                realm.beginTransaction();
+                realm.copyToRealmOrUpdate(pending);
+                purchase.getCarts().deleteAllFromRealm();
+                realm.commitTransaction();
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putBoolean("qrstate",true);
+                editor.commit();
             }
+            dismiss();
         });
 
 
@@ -144,7 +137,7 @@ public class QrDialog extends DialogFragment {
         return builder.create();
     }
 
-    private void pruebaJson( Boolean stateqr, String qr,String userEmail,String total, String fechaactual) {
+    private void pruebaJson( Boolean stateqr ,String userEmail,String total, String fechaactual) {
 
         if(Boolean.FALSE.equals(stateqr)   ){
             String codorder = generatorCodOrder(userEmail,fechaactual);
@@ -191,12 +184,11 @@ public class QrDialog extends DialogFragment {
         }
 
         String jsonStr = ordenJson.toString();
-      //txtTexto.setText(jsonStr);
+
           bitmap = QRCode.from(jsonStr).bitmap();
 
         imgQr.setImageBitmap(bitmap);
 
-       // System.out.println("jsonString: "+jsonStr);
 
 
 
@@ -226,11 +218,11 @@ public class QrDialog extends DialogFragment {
 
             int day = cal.get(Calendar.DAY_OF_MONTH);
             int mounth = cal.get(Calendar.MONTH);
-            int year = cal.get(Calendar.YEAR);
+
             int hour = cal.get(Calendar.HOUR);
             int minute = cal.get(Calendar.MINUTE);
-            String codigo = hour+u2+day+mounth+u1+minute;
-            return codigo;
+
+            return  hour+u2+day+mounth+u1+minute;
 
 
         }
@@ -248,7 +240,7 @@ public class QrDialog extends DialogFragment {
 
         return result;
     }
-    private void UI(View view) {
+    private void uis(View view) {
         imgQr =(ImageView) view.findViewById(R.id.imgQR);
         btnAceptar= (Button) view.findViewById(R.id.btnAceptar);
         txtTexto = (TextView)view.findViewById(R.id.txtCodigo);
@@ -256,21 +248,5 @@ public class QrDialog extends DialogFragment {
 
     }
 
-    private void GenerateQR(){
-        Gson gson = new Gson();
-        Float limit =Util.getPurchaseLimit(prefs);
-        String totalidad = Util.getTotalCart(prefs);
-      //  Toast.makeText(getActivity(),"total:"+ limit +"y "+ totalidad, Toast.LENGTH_SHORT).show();
-        String json = gson.toJson(order);
 
-     /*   ByteArrayOutputStream stream = QRCode.from(json).withSize(150,150).stream();
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inPreferredConfig = Bitmap.Config.RGB_565;
-
-      */
-      //  Bitmap bitmap = BitmapFactory.decodeStream(stream, null, options);
-
-
-       // imgQr.setImageBitmap(bitmap);
-    }
 }

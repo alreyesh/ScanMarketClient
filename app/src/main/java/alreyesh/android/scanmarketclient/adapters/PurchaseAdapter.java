@@ -12,11 +12,12 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.ItemTouchHelper;
+
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.maltaisn.icondialog.IconView;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,19 +28,19 @@ import alreyesh.android.scanmarketclient.utils.Util;
 import io.realm.RealmList;
 
 public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.ViewHolder>{
-    private Context context;
+
     private List<Purchase> purchases;
     private  int layout;
     private OnItemClickListener itemListener;
-    private OnButtonClickListener btnListener;
-    private ItemTouchHelper itemTouchHelper;
+
+
     private OnLongClickListener longListener;
     private SharedPreferences prefs;
-    public PurchaseAdapter(List<Purchase> purchases, int layout, OnItemClickListener itemListener, OnButtonClickListener btnListener,OnLongClickListener longListener) {
+    public PurchaseAdapter(List<Purchase> purchases, int layout, OnItemClickListener itemListener ,OnLongClickListener longListener) {
         this.purchases = purchases;
         this.layout = layout;
         this.itemListener = itemListener;
-        this.btnListener = btnListener;
+
         this.longListener = longListener;
     }
 
@@ -49,15 +50,15 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.ViewHo
     @Override
     public  PurchaseAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(layout,parent,false);
-        context = parent.getContext();
+        Context  context = parent.getContext();
         prefs = Util.getSP(context);
-        ViewHolder vh = new ViewHolder(v);
-        return vh;
+
+        return new ViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(@NonNull PurchaseAdapter.ViewHolder holder, int position) {
-        holder.bind(purchases.get(position),itemListener,btnListener,longListener);
+        holder.bind(purchases.get(position),itemListener ,longListener);
     }
 
     @Override
@@ -65,14 +66,14 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.ViewHo
         return purchases.size();
     }
     public class ViewHolder extends RecyclerView.ViewHolder{
-        public TextView name;
-        public TextView limit;
-        public TextView actual;
-        public TextView count;
-        public LinearLayout linearLayout;
-        public CardView cardView;
-        public IconView iconView;
-        public Button btnSelect;
+       TextView name;
+        TextView limit;
+      TextView actual;
+         TextView count;
+       LinearLayout linearLayout;
+       CardView cardView;
+         IconView iconView;
+          Button btnSelect;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             name = (TextView) itemView.findViewById(R.id.textViewName);
@@ -82,13 +83,13 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.ViewHo
             iconView = (IconView) itemView.findViewById(R.id.imgIcon);
             actual = (TextView) itemView.findViewById(R.id.textViewActual);
             count = (TextView) itemView.findViewById(R.id.textViewCount);
-            //btnSelect = (Button) itemView.findViewById(R.id.btnSelector);
+
         }
-        public void bind(final Purchase purchase, final OnItemClickListener itemListener, final OnButtonClickListener btnListener,final OnLongClickListener longListener)
+        public void bind(final Purchase purchase, final OnItemClickListener itemListener ,final OnLongClickListener longListener)
         {
             name.setText( purchase.getName().toUpperCase());
             limit.setText("S/. "+purchase.getLimit()+"");
-            List<Cart> list = new ArrayList<Cart>();
+            List<Cart> list = new ArrayList< >();
             RealmList<Cart> carts=purchase.getCarts() ;
             list.addAll(carts);
             float totalCart=0.0f;
@@ -99,9 +100,10 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.ViewHo
                 totalCart+= parsesubtotal;
             }
 
+            DecimalFormat df = new DecimalFormat("#.##");
 
 
-            actual.setText("S/. "+totalCart);
+            actual.setText("S/. "+df.format(totalCart));
              iconView.setIcon(purchase.getIcon());
              if(iconView.isSelected()){
                  iconView.setColorFilter(Color.GREEN);
@@ -113,24 +115,18 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.ViewHo
 
             cardView.setCardBackgroundColor(purchase.getColor());
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    SharedPreferences.Editor editor = prefs.edit();
-                    editor.putString("idp",String.valueOf( purchase.getId()));
-                    editor.putString("np",purchase.getName());
-                    editor.putString("cp",String.valueOf(purchase.getColor()));
-                    editor.commit();
-                    itemListener.onItemClick(purchase,getBindingAdapterPosition());
+            itemView.setOnClickListener(v -> {
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putString("idp",String.valueOf( purchase.getId()));
+                editor.putString("np",purchase.getName());
+                editor.putString("cp",String.valueOf(purchase.getColor()));
+                editor.commit();
+                itemListener.onItemClick(purchase,getBindingAdapterPosition());
 
-                }
             });
-            itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    longListener.onLongClick(purchase,getBindingAdapterPosition());
-                    return false;
-                }
+            itemView.setOnLongClickListener(v -> {
+                longListener.onLongClick(purchase,getBindingAdapterPosition());
+                return false;
             });
 
         }

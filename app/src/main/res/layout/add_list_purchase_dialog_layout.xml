@@ -33,7 +33,7 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginBottom="20dp"
-        android:hint="S/. Establecer un limite de compra (Opcional)"
+        android:hint="S/. limite de compra (Opcional)"
 
         android:inputType="number"
         android:selectAllOnFocus="false"

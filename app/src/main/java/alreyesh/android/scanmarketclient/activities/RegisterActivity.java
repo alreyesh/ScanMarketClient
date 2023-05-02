@@ -30,15 +30,16 @@ import java.util.regex.Pattern;
 import alreyesh.android.scanmarketclient.R;
 
 public class RegisterActivity extends AppCompatActivity {
-    private SharedPreferences prefs;
+
     private EditText editTextEmail;
     private EditText editTextPassword;
     private EditText editTextConfirmPassword;
     private TextView textReset;
+    private ProgressDialog mDialog;
     private Switch switchShow;
     private Button btnLogin;
     private FirebaseAuth mAuth;
-    private ProgressDialog mDialog;
+
     private static final String TAG = "EmailPassword";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,44 +48,34 @@ public class RegisterActivity extends AppCompatActivity {
         bindUI();
         mAuth = FirebaseAuth.getInstance();
         mDialog = new ProgressDialog(this);
-        btnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String email = editTextEmail.getText().toString();
-                String password = editTextPassword.getText().toString();
-                String confirm = editTextConfirmPassword.getText().toString();
+        btnLogin.setOnClickListener(v -> {
+            String email = editTextEmail.getText().toString();
+            String password = editTextPassword.getText().toString();
+            String confirm = editTextConfirmPassword.getText().toString();
 
-               // Toast.makeText(RegisterActivity.this,"1: "+password,Toast.LENGTH_SHORT).show();
-               // Toast.makeText(RegisterActivity.this,"2: "+confirm,Toast.LENGTH_SHORT).show();
-                if(verify(email,password,confirm)){
-                    mDialog.setMessage("Registrando cuenta...");
-                    mDialog.setCanceledOnTouchOutside(false);
-                    mDialog.show();
-                    crearCuenta(email,password);
 
-                }
+            if(verify(email,password,confirm)){
+                mDialog.setMessage("Registrando cuenta...");
+                mDialog.setCanceledOnTouchOutside(false);
+                mDialog.show();
+                crearCuenta(email,password);
+
             }
         });
-        textReset.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(RegisterActivity.this, ResetActivity.class);
-                //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-            }
+        textReset.setOnClickListener(v -> {
+            Intent intent = new Intent(RegisterActivity.this, ResetActivity.class);
+            //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
         });
-        switchShow.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
-                    editTextPassword.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-                    editTextConfirmPassword.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-                    //Toast.makeText(RegisterActivity.this,"Chekeado",Toast.LENGTH_SHORT).show();
-                }else{
-                    editTextPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                    editTextConfirmPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                    //Toast.makeText(RegisterActivity.this,"No Chekeado",Toast.LENGTH_SHORT).show();
-                }
+        switchShow.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(isChecked){
+                editTextPassword.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                editTextConfirmPassword.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+
+            }else{
+                editTextPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                editTextConfirmPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+
             }
         });
 
@@ -96,7 +87,7 @@ public class RegisterActivity extends AppCompatActivity {
         super.onStart();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null){
-            //reload();
+
             Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
@@ -112,24 +103,21 @@ public class RegisterActivity extends AppCompatActivity {
     }
     private void crearCuenta(String email,String password){
         mAuth.createUserWithEmailAndPassword(email,password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "createUserWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            goToMain();
-                           // updateUI(user);
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(RegisterActivity.this, "El correo electronico ya existe en nuestra base de datos",
-                                    Toast.LENGTH_SHORT).show();
-                            //updateUI(null);
-                        }
-                       mDialog.dismiss();
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        // Sign in success, update UI with the signed-in user's information
+                        Log.d(TAG, "createUserWithEmail:success");
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        goToMain();
+
+                    } else {
+                        // If sign in fails, display a message to the user.
+                        Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                        Toast.makeText(RegisterActivity.this, "El correo electronico ya existe en nuestra base de datos",
+                                Toast.LENGTH_SHORT).show();
+
                     }
+                   mDialog.dismiss();
                 });
     }
 

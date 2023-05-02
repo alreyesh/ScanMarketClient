@@ -6,22 +6,19 @@ import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.AttributeSet;
-import android.widget.TextView;
+
 
 
 public class JustifyTextView extends androidx.appcompat.widget.AppCompatTextView {
 
     private int mLineY;
     private int mViewWidth;
-
+    private  static  float width;
+    private static float cw;
     public JustifyTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    @Override
-    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        super.onLayout(changed, left, top, right, bottom);
-    }
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -38,9 +35,9 @@ public class JustifyTextView extends androidx.appcompat.widget.AppCompatTextView
             int lineEnd = layout.getLineEnd(i);
             String line = text.substring(lineStart, lineEnd);
 
-            float width = StaticLayout.getDesiredWidth(text, lineStart, lineEnd, getPaint());
+             width = StaticLayout.getDesiredWidth(text, lineStart, lineEnd, getPaint());
             if (needScale(line)) {
-                drawScaledText(canvas, lineStart, line, width);
+                drawScaledText(canvas , line, width);
             } else {
                 canvas.drawText(line, 0, mLineY, paint);
             }
@@ -49,9 +46,9 @@ public class JustifyTextView extends androidx.appcompat.widget.AppCompatTextView
         }
     }
 
-    private void drawScaledText(Canvas canvas, int lineStart, String line, float lineWidth) {
+    private void drawScaledText(Canvas canvas , String line, float lineWidth) {
         float x = 0;
-        if (isFirstLineOfParagraph(lineStart, line)) {
+        if (isFirstLineOfParagraph(line)) {
             String blanks = "  ";
             canvas.drawText(blanks, x, mLineY, getPaint());
             float bw = StaticLayout.getDesiredWidth(blanks, getPaint());
@@ -63,13 +60,13 @@ public class JustifyTextView extends androidx.appcompat.widget.AppCompatTextView
         float d = (mViewWidth - lineWidth) / line.length() - 1;
         for (int i = 0; i < line.length(); i++) {
             String c = String.valueOf(line.charAt(i));
-            float cw = StaticLayout.getDesiredWidth(c, getPaint());
+              cw = StaticLayout.getDesiredWidth(c, getPaint());
             canvas.drawText(c, x, mLineY, getPaint());
             x += cw + d;
         }
     }
 
-    private boolean isFirstLineOfParagraph(int lineStart, String line) {
+    private boolean isFirstLineOfParagraph(  String line) {
         return line.length() > 3 && line.charAt(0) == ' ' && line.charAt(1) == ' ';
     }
 

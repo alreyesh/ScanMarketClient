@@ -14,7 +14,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 
-import androidx.core.app.NotificationCompat;
+
 
 import alreyesh.android.scanmarketclient.activities.MainActivity;
 import alreyesh.android.scanmarketclient.R;
@@ -22,7 +22,7 @@ import alreyesh.android.scanmarketclient.utils.Util;
 
 public class NotificationHandler  extends ContextWrapper {
     private NotificationManager manager;
-    private SharedPreferences prefs;
+
     public static final String CHANNEL_HIGH_ID ="1";
     private static final String CHANNELHIGHNAME ="HIGH CHANNEL";
     public static final String CHANNEL_LOW_ID ="2";
@@ -69,7 +69,7 @@ public class NotificationHandler  extends ContextWrapper {
     }
 
     public Notification.Builder createNotification(String title,String message, boolean isHighImportant,String type){
-        prefs = Util.getSP(getApplicationContext());
+        SharedPreferences prefs = Util.getSP(getApplicationContext());
         Integer colorparse = Util.getPurchaseColor(prefs);
         colorpick = colorparse;
         if(colorpick ==null){

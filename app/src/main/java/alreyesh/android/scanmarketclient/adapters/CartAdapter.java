@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 import alreyesh.android.scanmarketclient.models.Cart;
@@ -73,7 +74,9 @@ public class CartAdapter  extends RecyclerView.Adapter<CartAdapter.ViewHolder>{
         }
         public void bind(final Cart cart, final CartAdapter.OnItemClickListener itemListener ){
             textViewName.setText(cart.getProductName());
-            textViewSubPrice.setText("S/. "+cart.getSubPrice());
+            float f = Float.parseFloat(cart.getSubPrice());
+            DecimalFormat df = new DecimalFormat("#.##");
+            textViewSubPrice.setText("S/. "+df.format(f));
             textViewCount.setText(cart.getCountProduct() +" und");
             Picasso.get().load(cart.getImagenProduct()).fit().into(imgProductView);
             itemView.setOnClickListener(v -> itemListener.onItemClick(cart,getBindingAdapterPosition()));

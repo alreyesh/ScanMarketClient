@@ -1,11 +1,9 @@
 package alreyesh.android.scanmarketclient.models;
 
 
-import com.google.firebase.Timestamp;
-
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+
 
 public class Order {
     private String codorder;

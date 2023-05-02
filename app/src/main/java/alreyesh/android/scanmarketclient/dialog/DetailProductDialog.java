@@ -2,7 +2,7 @@ package alreyesh.android.scanmarketclient.dialog;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
+
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -51,7 +51,7 @@ public class DetailProductDialog  extends DialogFragment{
      int purchaseId;
     FirebaseFirestore db;
      Realm realm;
-    private static final String ProductName = "productName";
+    private static final String PRODUCTNAME = "productName";
     String finalCountDefault;
     Product  products;
     @NonNull
@@ -75,7 +75,7 @@ public class DetailProductDialog  extends DialogFragment{
                         String nombre = products.getNombre();
 
                         RealmList<Cart> carts = purchase.getCarts();
-                        cartin = carts.where().equalTo(ProductName, nombre).findFirst();
+                        cartin = carts.where().equalTo(PRODUCTNAME, nombre).findFirst();
                         if (cartin == null || cartin.getRealm().isEmpty()) {
 
                             Float d = Float.parseFloat(products.getDescuento());
@@ -136,7 +136,7 @@ public class DetailProductDialog  extends DialogFragment{
                                 float precio = Float.parseFloat(realprice);
                                 float subprice = precio * cant;
                                 String subpricestring = String.valueOf(subprice);
-                                cartin = carts.where().equalTo(ProductName, nombre).findFirst();
+                                cartin = carts.where().equalTo(PRODUCTNAME, nombre).findFirst();
 
                                 if (!carts.isEmpty()) {
 
@@ -151,11 +151,12 @@ public class DetailProductDialog  extends DialogFragment{
                                         SharedPreferences.Editor editor = prefs.edit();
                                         editor.putBoolean("qrstate",false);
                                         editor.commit();
-                                        Toast.makeText(getActivity(), "Producto Actualizado: " + lista, Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getActivity(), "Producto Actualizado en : " + lista, Toast.LENGTH_SHORT).show();
                                         dismiss();
 
                                     } else {
-                                        Toast.makeText(getActivity(), "resultado " + cartin.getProductName(), Toast.LENGTH_SHORT).show();
+                                        //Toast.makeText(getActivity(), "resultado " + cartin.getProductName(), Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getActivity(), "Producto actualizado en : "+ lista , Toast.LENGTH_SHORT).show();
                                         realm.beginTransaction();
                                         cartin.setCountProduct(cantidad);
                                         cartin.setSubPrice(subpricestring);
@@ -250,12 +251,12 @@ public class DetailProductDialog  extends DialogFragment{
         editCountProduct.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
         editCountProduct.setSingleLine(true);
         if(Util.getPurchaseId(prefs) !=null){
-            int purchaseId = Util.getPurchaseId(prefs);
+           purchaseId = Util.getPurchaseId(prefs);
             purchase = realm.where(Purchase.class).equalTo("id",purchaseId).findFirst();
             if(purchase !=null) {
                 String nombre = products.getNombre();
                 carts = purchase.getCarts();
-                Cart verCart = carts.where().equalTo(ProductName, nombre).findFirst();
+                Cart verCart = carts.where().equalTo(PRODUCTNAME, nombre).findFirst();
                 if (verCart != null) {
                     editCountProduct.setHint(verCart.getCountProduct());
                     countDefault = verCart.getCountProduct();

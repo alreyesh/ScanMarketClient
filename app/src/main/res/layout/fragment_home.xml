@@ -12,10 +12,12 @@
         android:id="@+id/btnScan"
         android:layout_width="193dp"
         android:layout_height="35dp"
-        android:layout_marginTop="132dp"
+        android:layout_marginStart="108dp"
+        android:layout_marginTop="50dp"
+
         android:text="Escanear Producto"
+
         android:textSize="12sp"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -37,9 +39,13 @@
         android:layout_marginTop="16dp"
         android:text="Historial de Compras"
         android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@+id/txtResultado"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnList" />
+        app:layout_constraintTop_toBottomOf="@+id/btnList"
+        app:layout_constraintVertical_bias="0.0" />
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

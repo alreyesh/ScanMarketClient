@@ -2,7 +2,7 @@ package alreyesh.android.scanmarketclient.fragments;
 
 
 import android.app.ProgressDialog;
-import android.content.Context;
+
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -11,6 +11,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -32,10 +35,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import alreyesh.android.scanmarketclient.adapters.ProductAdapter;
-import alreyesh.android.scanmarketclient.dialog.AddListPurchaseDialog;
+import alreyesh.android.scanmarketclient.adapters.ProductRecyclerViewAdapter;
+
 import alreyesh.android.scanmarketclient.model.Product;
 import alreyesh.android.scanmarketclient.R;
-import alreyesh.android.scanmarketclient.notifications.NotificacionPush;
+
 import alreyesh.android.scanmarketclient.utils.Util;
 
 
@@ -45,6 +49,11 @@ public class ListProductFragment extends Fragment {
     ArrayList<Product> productsSearchTest;
     private FirebaseFirestore db;
     private GridView gView;
+    RecyclerView recycler;
+    RecyclerView.LayoutManager mLayoutManager;
+    private ProductRecyclerViewAdapter adapter;
+
+
     private static final String PRODUCTOS = "productos";
     private static final String MESSAGE = "No se encontro el Producto";
     private static final String ERROR = "Error al cargar los datos";
@@ -69,6 +78,15 @@ public class ListProductFragment extends Fragment {
         }else{
           ((AppCompatActivity)getActivity()).getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary,null)));
         }
+        db = FirebaseFirestore.getInstance();
+
+        productsList = new ArrayList<>();
+        productsTestList = new ArrayList<>();
+
+
+
+
+
 
     }
 
@@ -83,39 +101,47 @@ public class ListProductFragment extends Fragment {
                              Bundle savedInstanceState) {
        View view = inflater.inflate(R.layout.fragment_list_product, container, false);
 
-        db = FirebaseFirestore.getInstance();
-        gView =(GridView) view.findViewById(R.id.am_gv_gridview);
-        productsList = new ArrayList<>();
-        productsTestList = new ArrayList<>();
 
+
+        recycler=(RecyclerView) view.findViewById(R.id.recyclerView);
+        recycler.setHasFixedSize(true);
+        recycler.setItemAnimator(new DefaultItemAnimator());
+        mLayoutManager = new GridLayoutManager(getContext(), 3);
+        recycler.setLayoutManager(mLayoutManager);
         loadDatainGridView();
+
+
         Integer purchase = Util.getPurchaseId(prefs);
-        if( purchase.equals(0)){
-            new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
+
+        if( purchase.equals(-1)){
+           new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
                     .setTitleText("Registrar")
-                    .setContentText("Registre y seleccione un listado de compras antes de añadir los productos")
+                    .setContentText("Registre y/o seleccione un listado de compras antes de añadir los productos")
                     .setConfirmText("Ir")
-                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                        @Override
-                        public void onClick(SweetAlertDialog sDialog) {
-                            sDialog.dismissWithAnimation();
-                            SharedPreferences.Editor editor = prefs.edit();
-                            editor.putBoolean("cep",false);
-                            editor.putBoolean("newp",true);
-                            editor.commit();
+                    .setConfirmClickListener(sDialog -> {
+                        sDialog.dismissWithAnimation();
+                        SharedPreferences.Editor editor = prefs.edit();
+                        editor.putBoolean("cep",false);
+                        editor.putBoolean("newp",true);
+                        editor.commit();
 
-                            AddListPurchaseDialog addListPurchaseDialog = new AddListPurchaseDialog();
-                            addListPurchaseDialog.show(getActivity().getSupportFragmentManager(),"addListPurchase");
-
-                        }
+                        getActivity().getSupportFragmentManager()
+                                .beginTransaction().replace(R.id.content_frame,new ListPurchaseFragment())
+                                .commit();
                     })
                     .show();
+
+
+
+
+
+
 
 
         }
 
 
-        registerForContextMenu(gView);
+
         getActivity().invalidateOptionsMenu();
         return view;
     }
@@ -143,9 +169,17 @@ public class ListProductFragment extends Fragment {
 
                 }
 
-                ProductAdapter adapter = new ProductAdapter(getActivity(),productsList);
-                gView.setAdapter(adapter);
-                adapter.notifyDataSetChanged();
+
+                adapter = new ProductRecyclerViewAdapter(productsList, R.layout.list_product, new ProductRecyclerViewAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(Product products, int position) {
+
+                    }
+                });
+
+                recycler.setAdapter(adapter);
+
+
           pd.dismiss();
 
             }else {
@@ -165,43 +199,7 @@ public class ListProductFragment extends Fragment {
 
     }
 
-    private void loadDatainGridViewRep() {
 
-        db.collection(PRODUCTOS).get().addOnSuccessListener(queryDocumentSnapshots -> {
-            if (!queryDocumentSnapshots.isEmpty()){
-                List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
-                for (DocumentSnapshot d : list) {
-
-                    // after getting this list we are passing
-                    // that list to our object class.
-                    Product products = d.toObject(Product.class);
-                    products.setId(d.getReference().getId());
-                    products.setNombre(products.getNombre().toUpperCase());
-                    // after getting data from Firebase
-                    // we are storing that data in our array list
-                    productsList.add(products);
-
-                }
-                ProductAdapter adapter = new ProductAdapter(getActivity(),productsList);
-                gView.setAdapter(adapter);
-                adapter.notifyDataSetChanged();
-
-
-            }else {
-                // if the snapshot is empty we are displaying a toast message.
-
-                Toast.makeText(getActivity(), MESSAGE, Toast.LENGTH_SHORT).show();
-            }
-
-
-        }).addOnFailureListener(e -> {
-            pd.dismiss();
-            Toast.makeText(getActivity(), ERROR, Toast.LENGTH_SHORT).show();
-        });
-
-
-
-    }
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
@@ -223,7 +221,8 @@ public class ListProductFragment extends Fragment {
             public boolean onQueryTextChange(String newText) {
 
                 if (newText.equals(" ") ||newText.isEmpty() ) {
-                      loadDatainGridView();
+
+                      loadDatainGridViewinData();
                 }else{
                      searchspeed(newText);
                 }
@@ -235,115 +234,66 @@ public class ListProductFragment extends Fragment {
 
        super.onCreateOptionsMenu(menu, inflater);
     }
-/*
-    private void searchTest(String s){
-        if (s.length() > 0){
 
-            productsSearchTest = new ArrayList<>();
-            for(Product p: productsTestList){
-                String title = p.getNombre().toLowerCase();
-                if(title.contains(s.toLowerCase())){
-                    productsSearchTest.add(p);
+    private void loadDatainGridViewinData() {
 
-                }
-            }
-            ProductAdapter adapter = new ProductAdapter(getActivity(),productsSearchTest);
-            gView.setAdapter(adapter);
-            adapter.notifyDataSetChanged();
-        }else{
-            productsSearchTest = new ArrayList<>();
-            for(Product p: productsTestList){
-
-                    productsSearchTest.add(p);
+        adapter = new ProductRecyclerViewAdapter(productsList, R.layout.list_product, new ProductRecyclerViewAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(Product products, int position) {
 
             }
-            ProductAdapter adapter = new ProductAdapter(getActivity(),productsSearchTest);
-            gView.setAdapter(adapter);
-            adapter.notifyDataSetChanged();
+        });
 
+        recycler.setAdapter(adapter);
 
-        }
 
     }
-*/
+
+
     private void searchData(String s){
         pd.setTitle("Buscando...");
         pd.show();
-          db.collection(PRODUCTOS).orderBy("nombre").startAt(s).endAt(s + "\uf8ff").get().addOnSuccessListener(queryDocumentSnapshots -> {
-              if (!queryDocumentSnapshots.isEmpty()){
-                  productsList.clear();
-                  List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
-                  for (DocumentSnapshot d : list) {
 
-                      // after getting this list we are passing
-                      // that list to our object class.
-                      Product products = d.toObject(Product.class);
-                      products.setId(d.getReference().getId());
-                      products.setNombre(products.getNombre().toUpperCase());
+     ArrayList<Product> milista = new ArrayList<>();
+     for(Product obj: productsList){
+         if(obj.getNombre().toLowerCase().contains(s.toLowerCase())){
+             milista.add(obj);
+         }
+     }
 
-                      // after getting data from Firebase
-                      // we are storing that data in our array list
-                      productsList.add(products);
+        adapter = new ProductRecyclerViewAdapter(milista, R.layout.list_product, new ProductRecyclerViewAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(Product products, int position) {
 
-                  }
-                  ProductAdapter adapter = new ProductAdapter(getActivity(),productsList);
-                  gView.setAdapter(adapter);
-                  adapter.notifyDataSetChanged();
-                  pd.dismiss();
-
-              }else {
-                  // if the snapshot is empty we are displaying a toast message.
-                  productsList.clear();
-                  loadDatainGridViewRep();
-                  pd.dismiss();
-                  Toast.makeText(getActivity(), MESSAGE, Toast.LENGTH_SHORT).show();
-              }
-
-
-          }).addOnFailureListener(e -> {
-              pd.dismiss();
-              Toast.makeText(getActivity(), ERROR, Toast.LENGTH_SHORT).show();
-          });
+            }
+        });
+        adapter.notifyDataSetChanged();
+        recycler.setAdapter(adapter);
 
 
 
+        pd.dismiss();
     }
 
     private void searchspeed(String s){
-        db.collection(PRODUCTOS).orderBy("nombre").startAt(s).endAt(s + "\uf8ff").get().addOnSuccessListener(queryDocumentSnapshots -> {
-            if (!queryDocumentSnapshots.isEmpty()){
-                productsList.clear();
-                List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
-                for (DocumentSnapshot d : list) {
 
-                    // after getting this list we are passing
-                    // that list to our object class.
-                    Product products = d.toObject(Product.class);
-                    products.setId(d.getReference().getId());
-                    products.setNombre(products.getNombre().toUpperCase());
-
-                    // after getting data from Firebase
-                    // we are storing that data in our array list
-                    productsList.add(products);
-
-                }
-                ProductAdapter adapter = new ProductAdapter(getActivity(),productsList);
-                gView.setAdapter(adapter);
-                adapter.notifyDataSetChanged();
-                pd.dismiss();
-
-            }else {
-                // if the snapshot is empty we are displaying a toast message.
-                productsList.clear();
-                loadDatainGridViewRep();
-                pd.dismiss();
-                Toast.makeText(getActivity(), MESSAGE, Toast.LENGTH_SHORT).show();
+        ArrayList<Product> milista = new ArrayList<>();
+        for(Product obj: productsList){
+            if(obj.getNombre().toLowerCase().contains(s.toLowerCase())){
+                milista.add(obj);
             }
+        }
 
+        adapter = new ProductRecyclerViewAdapter(milista, R.layout.list_product, new ProductRecyclerViewAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(Product products, int position) {
 
-        }).addOnFailureListener(e -> {
-            pd.dismiss();
-            Toast.makeText(getActivity(), ERROR, Toast.LENGTH_SHORT).show();
+            }
         });
+
+        recycler.setAdapter(adapter);
+
+        adapter.notifyDataSetChanged();
+
     }
 }

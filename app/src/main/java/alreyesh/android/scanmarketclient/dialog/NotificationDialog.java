@@ -2,7 +2,7 @@ package alreyesh.android.scanmarketclient.dialog;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
+
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
@@ -22,16 +22,16 @@ public class NotificationDialog extends DialogFragment {
     TextView txtTitleNoti;
     TextView textDescription;
     Button btnOk;
-    private SharedPreferences prefs;
+
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        prefs = Util.getSP(getContext());
+        SharedPreferences  prefs = Util.getSP(getContext());
         String titulo = Util.getTitle(prefs);
-        String shortitle = Util.getTitleShort(prefs);
+
         String descrip = Util.getDescrip(prefs);
 
         View v = inflater.inflate(R.layout.notification_dialog_layout,null);
@@ -44,15 +44,12 @@ public class NotificationDialog extends DialogFragment {
 
 
 
-        btnOk.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putBoolean("turnnoti",true);
-                editor.commit();
+        btnOk.setOnClickListener(v1 -> {
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("turnnoti",true);
+            editor.commit();
 
-                dismiss();
-            }
+            dismiss();
         });
 
 

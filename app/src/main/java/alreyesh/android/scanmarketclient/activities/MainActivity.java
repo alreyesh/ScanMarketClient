@@ -1,27 +1,26 @@
 package alreyesh.android.scanmarketclient.activities;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
+
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import android.app.Notification;
-import android.content.Context;
+import android.app.NotificationManager;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
+
 import android.os.Bundle;
 
-import android.os.PersistableBundle;
 import android.text.SpannableString;
 import android.util.TypedValue;
 import android.view.Menu;
@@ -36,21 +35,20 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
+
 import com.rowland.cartcounter.view.CartCounterActionView;
 import com.squareup.picasso.Picasso;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import alreyesh.android.scanmarketclient.camara.CamaraActivity;
+
+import alreyesh.android.scanmarketclient.camarascan.DetectorActivity;
 import alreyesh.android.scanmarketclient.dialog.AddListPurchaseDialog;
 import alreyesh.android.scanmarketclient.dialog.NotificationDialog;
 import alreyesh.android.scanmarketclient.fragments.AccountInfoFragment;
@@ -72,6 +70,7 @@ import io.realm.Realm;
 import io.realm.RealmList;
 
 public class MainActivity extends AppCompatActivity {
+    public static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.5f;
      SharedPreferences prefs;
      FirebaseAuth mAuth;
     private FirebaseFirestore db;
@@ -94,9 +93,11 @@ public class MainActivity extends AppCompatActivity {
     Toolbar totalToolId;
      int cantCart;
      Realm realm;
+     private static final String notifcacionview = "notificacionview";
 //notificacion
      boolean isHighImportance = false;
      NotificationHandler notificacionHandler;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if(user !=null){
             account(user);
-           // checkRegister(user);
+
         }else{
             goToLogin();
         }
@@ -198,8 +199,8 @@ public class MainActivity extends AppCompatActivity {
                     fragmentTransaction = true;
                     break;
                 case R.id.menu_logout:
-                    Util.removeSharedPreferences(prefs);
                     logOut();
+                    Util.removeSharedPreferences(prefs);
                     break;
                 case R.id.my_info:
                     fragment = new AccountInfoFragment();
@@ -220,6 +221,7 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
         Bundle bundle =  getIntent().getExtras();
+        String noti = "off";
         if(bundle !=null){
             String register  = getIntent().getExtras().getString("register","off");
             if(register.equals("on")){
@@ -234,17 +236,20 @@ public class MainActivity extends AppCompatActivity {
                 getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new RecommentFragment()).commit();
 
             }
-            String noti = getIntent().getExtras().getString("notfy","off");
+           noti = getIntent().getExtras().getString("notfy","off");
             if(noti.equals("on")){
 
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putBoolean("turnnoti",true);
                 editor.commit();
+                String titulo = Util.getTitle(prefs);
+                if(!titulo.isEmpty()){
+                    NotificationDialog notificacion = new NotificationDialog();
+                    FragmentManager fragmentManager =  getSupportFragmentManager();
+                    notificacion.show(fragmentManager, notifcacionview);
+                }
 
 
-                NotificationDialog notificacion = new NotificationDialog();
-                FragmentManager fragmentManager =  getSupportFragmentManager();
-                notificacion.show(fragmentManager, "notificacionview");
 
 
             }
@@ -262,10 +267,16 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if(turnNoti !=null) {
-            if (Boolean.FALSE.equals(turnNoti)) {
-                NotificationDialog notificacion = new NotificationDialog();
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                notificacion.show(fragmentManager, "notificacionview");
+            Boolean turn = Util.getNotiTurn(prefs);
+            if (Boolean.FALSE.equals(turn) && noti.equals("off") ) {
+                NotificationManager mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                mNotificationManager.cancelAll();
+                String titulo = Util.getTitle(prefs);
+                if(!titulo.isEmpty()){
+                    NotificationDialog notificacion = new NotificationDialog();
+                    FragmentManager fragmentManager =  getSupportFragmentManager();
+                    notificacion.show(fragmentManager, notifcacionview);
+                }
             }
         }
 
@@ -282,8 +293,8 @@ public class MainActivity extends AppCompatActivity {
            startService(intent);
        }
 */
-       NotificacionPush noti = new NotificacionPush();
-       noti.onNotiPause(getApplicationContext());
+       NotificacionPush notif = new NotificacionPush();
+       notif.onNotiPause(getApplicationContext());
 
         }else{
       // stopService(intent);
@@ -292,60 +303,37 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-
-
-
-
-
     }
 
-    private void checkRegister(FirebaseUser user) {
-
-        db.collection("usuarios").whereEqualTo("uid", user.getEmail())
-                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if(task.isSuccessful()){
-                            if(task.getResult().isEmpty()){
-
-                            }
-                        }
-                    }
-                });
-
-
-    }
     private void goToLogin(){
         Intent intent = new Intent( this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.putExtra("register", "on");
         startActivity(intent);
     }
-    @Override
-    protected void onPause() {
-        super.onPause();
 
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-    }
 
     @Override
     protected void onRestart() {
         super.onRestart();
-
+        Boolean turn = Util.getNotiTurn(prefs);
+        if (Boolean.FALSE.equals(turn)  ) {
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("turnnoti",true);
+            editor.commit();
+            NotificationManager mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            mNotificationManager.cancelAll();
+            String titulo = Util.getTitle(prefs);
+            if(!titulo.isEmpty()){
+                NotificationDialog notificacion = new NotificationDialog();
+                FragmentManager fragmentManager =  getSupportFragmentManager();
+                notificacion.show(fragmentManager, notifcacionview);
+            }
+        }
 
 
     }
 
-    @Override
-    public void onRestoreInstanceState(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
-        super.onRestoreInstanceState(savedInstanceState, persistentState);
-
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -388,8 +376,12 @@ public class MainActivity extends AppCompatActivity {
                         .commit();
                 return true;
             case R.id.action_camera:
-                Intent intent = new Intent(this, CamaraActivity.class);
-                startActivity(intent);
+             //   Intent intent = new Intent(this, CamaraActivity.class);
+             //   startActivity(intent);
+                startActivity(new Intent(MainActivity.this, DetectorActivity.class));
+
+
+
                 return true;
             case R.id.my_info:
                 AccountInfoFragment accountInfoFragment = new AccountInfoFragment();
@@ -425,27 +417,30 @@ public class MainActivity extends AppCompatActivity {
          FirebaseUser user = mAuth.getCurrentUser();
          if(user !=null) {
              String userEmail = user.getEmail();
-             purchase = realm.where(Purchase.class).equalTo("id", purchaseId).equalTo("emailID", userEmail).findFirst();
-             menuId = menu.findItem(R.id.action_addcart);
-             totalId = menu.findItem(R.id.shopping_total);
-             menu.findItem(R.id.action_camera).setVisible(true);
-             actionviewCart = (CartCounterActionView) menuId.getActionView();
-             if (purchase != null) {
-                 cantCart = purchase.getCarts().size();
+             if(purchaseId != -1){
+                 purchase = realm.where(Purchase.class).equalTo("id", purchaseId).equalTo("emailID", userEmail).findFirst();
+                 menuId = menu.findItem(R.id.action_addcart);
+                 totalId = menu.findItem(R.id.shopping_total);
+                 menu.findItem(R.id.action_camera).setVisible(true);
+                 actionviewCart = (CartCounterActionView) menuId.getActionView();
+                 if (purchase != null) {
+                     cantCart = purchase.getCarts().size();
 
-                 actionviewCart.setItemData(menu, menuId);
-                 if (cantCart > 0) {
-                     menu.findItem(R.id.action_addcart).setVisible(true);
-                     menu.findItem(R.id.shopping_total).setVisible(true);
-                     cartexist();
+                     actionviewCart.setItemData(menu, menuId);
+                     if (cantCart > 0) {
+                         menu.findItem(R.id.action_addcart).setVisible(true);
+                         menu.findItem(R.id.shopping_total).setVisible(true);
+                         cartexist();
+                     } else {
+                         menu.findItem(R.id.action_addcart).setVisible(false);
+                         actionviewCart.setCount(0);
+                     }
                  } else {
                      menu.findItem(R.id.action_addcart).setVisible(false);
                      actionviewCart.setCount(0);
                  }
-             } else {
-                 menu.findItem(R.id.action_addcart).setVisible(false);
-                 actionviewCart.setCount(0);
              }
+
          }
      }
  }
@@ -462,7 +457,10 @@ public class MainActivity extends AppCompatActivity {
             float parsesubtotal = Float.parseFloat(subtotal);
             totalCart+= parsesubtotal;
         }
-        SpannableString s = new SpannableString("S/. "+totalCart);
+
+        DecimalFormat df = new DecimalFormat("#.##");
+
+        SpannableString s = new SpannableString("S/. "+df.format(totalCart));
 
         float limit = Util.getPurchaseLimit(prefs);
 
@@ -576,10 +574,12 @@ public class MainActivity extends AppCompatActivity {
     private void drawableColorselected(){
         try{
             Integer colorparse = Util.getPurchaseColor(prefs);
-            if(colorparse !=0){
-                getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colorparse));
+            if(colorparse !=-1){
+               getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colorparse));
+
             }else{
-                getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary,null)));
+              getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary,null)));
+
             }
         }catch(NullPointerException e){
             System.out.print("NullPointerException caught");

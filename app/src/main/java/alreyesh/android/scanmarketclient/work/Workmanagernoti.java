@@ -1,7 +1,6 @@
 package alreyesh.android.scanmarketclient.work;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
-import static androidx.test.InstrumentationRegistry.getContext;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -24,10 +23,10 @@ import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.work.Data;
 import androidx.work.ForegroundInfo;
-import androidx.work.NetworkType;
+
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
-import androidx.work.WorkRequest;
+
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
@@ -45,18 +44,17 @@ public class Workmanagernoti extends Worker {
     NotificationHandler notificacionHandler;
     Context context;
     private NotificationManager manager;
-    public static final String CHANNEL_HIGH_Program_ID ="3";
-    private static final String CHANNEL_PROGRAM_PUSH ="sevice_program_push";
-    private NotificationManager notificationManager;
+    public static final String CHANNELHIGHProgramID ="3";
+    private static final String CHANNELPROGRAMPUSH ="sevice_program_push";
+
     private SharedPreferences prefs;
-    private Integer colorpick;
+
     Handler mainThreadHandler = new Handler(Looper.getMainLooper());
     public Workmanagernoti(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
         this.context = context;
         prefs = Util.getSP(context);
-        notificationManager = (NotificationManager)
-                context.getSystemService(NOTIFICATION_SERVICE);
+
     }
     public static void GuardarNoti(Long duracion, Data data,String tag,Context context ){
         Toast.makeText(context,"Duracion: "+duracion,Toast.LENGTH_SHORT).show();
@@ -113,11 +111,10 @@ public class Workmanagernoti extends Worker {
     }
 
     private ForegroundInfo createForegroundInfo(  String titulo,String titulocorto ){
-         Context context = getApplicationContext();
-         PendingIntent intent = WorkManager.getInstance(context)
-                 .createCancelPendingIntent(getId());
+
+
          Integer colorparse = Util.getPurchaseColor(prefs);
-         colorpick = colorparse;
+        Integer    colorpick = colorparse;
          Notification notification;
          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
              createChannel();
@@ -125,7 +122,7 @@ public class Workmanagernoti extends Worker {
              notificationIntent.putExtra("notfy", "on");
              notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
              PendingIntent pendingNotificationIntent = PendingIntent.getActivity(getApplicationContext(),0,notificationIntent,PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
-             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_PROGRAM_PUSH);
+             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getApplicationContext(), CHANNELPROGRAMPUSH);
             notification = notificationBuilder.setOngoing(true)
                      .setContentTitle(titulo)
                      .setContentText(titulocorto)
@@ -165,7 +162,7 @@ public class Workmanagernoti extends Worker {
         if(Build.VERSION.SDK_INT >= 26){
             //Creatting  High channel
             NotificationChannel highChannel = new NotificationChannel(
-                    CHANNEL_HIGH_Program_ID, CHANNEL_PROGRAM_PUSH,NotificationManager.IMPORTANCE_HIGH);
+                    CHANNELHIGHProgramID, CHANNELPROGRAMPUSH,NotificationManager.IMPORTANCE_HIGH);
             //Extra Config
             highChannel.enableLights(true);
             highChannel.setLightColor(Color.RED);

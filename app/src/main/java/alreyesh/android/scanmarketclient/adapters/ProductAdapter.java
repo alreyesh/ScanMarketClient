@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,7 +21,8 @@ import androidx.fragment.app.FragmentManager;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
-import java.io.Serializable;
+
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import alreyesh.android.scanmarketclient.dialog.DetailProductDialog;
@@ -30,7 +32,7 @@ import alreyesh.android.scanmarketclient.utils.Util;
 
 public class ProductAdapter extends ArrayAdapter<Product>  {
     private Context context;
-    private int layout;
+
     private ArrayList<Product> products;
     private SharedPreferences prefs;
 
@@ -55,30 +57,34 @@ public class ProductAdapter extends ArrayAdapter<Product>  {
         if(listitemView == null){
             listitemView = LayoutInflater.from(getContext()).inflate(R.layout.list_product,parent,false);
         }
-        Product products = getItem(position);
+        Product productss = getItem(position);
         ImageView imgProductView = listitemView.findViewById(R.id.imgProductView);
-        TextView   textViewName = listitemView.findViewById(R.id.textViewName);
+
         TextView textViewPrice = listitemView.findViewById(R.id.textViewPrice);
         TextView textViewDescuento = listitemView.findViewById(R.id.textViewDescuento);
-        float descuento = Float.parseFloat(products.getDescuento());
+        float descuento = Float.parseFloat(productss.getDescuento());
+        float  precio = Float.parseFloat(productss.getPrecio());
+        DecimalFormat df = new DecimalFormat("#.##");
         if(descuento >0.0) {
-            textViewPrice.setText("S/. "+products.getDescuento());
-            textViewPrice.setTextSize(16);
-            textViewDescuento.setText("S/. "+products.getPrecio());
-            textViewDescuento.setTextSize(12);
+            textViewPrice.setText("S/. "+df.format(descuento));
+
+            textViewDescuento.setText("S/. "+df.format(precio));
+
             textViewDescuento.setTextColor(Color.RED);
             textViewDescuento.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+            textViewDescuento.setVisibility(View.VISIBLE);
         }else{
-            textViewPrice.setText("S/. "+products.getPrecio());
+            textViewPrice.setText("S/. "+df.format(precio));
+            textViewDescuento.setVisibility(View.GONE);
         }
 
 
-        Picasso.get().load(products.getImagen()).fit().into(imgProductView);
-        textViewName.setText(products.getNombre());
+        Picasso.get().load(productss.getImagen()).fit() .into(imgProductView);
+
 
 
        listitemView.setOnClickListener(v -> {
-           String json = gson.toJson(products);
+           String json = gson.toJson(productss);
            editor.putString("productos",json);
            editor.commit();
            FragmentManager manager = ((AppCompatActivity)context).getSupportFragmentManager();
@@ -87,7 +93,7 @@ public class ProductAdapter extends ArrayAdapter<Product>  {
            detailProductDialog.show(manager, "Detalle del Producto");
 
         });
-
+        listitemView.setLayoutParams(new GridView.LayoutParams(GridView.AUTO_FIT, 300));
 
         return listitemView;
 

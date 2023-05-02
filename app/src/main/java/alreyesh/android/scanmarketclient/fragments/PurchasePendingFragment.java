@@ -1,6 +1,6 @@
 package alreyesh.android.scanmarketclient.fragments;
 
-import android.content.SharedPreferences;
+
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,21 +16,17 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.cazaea.sweetalert.SweetAlertDialog;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+
 
 import alreyesh.android.scanmarketclient.R;
 import alreyesh.android.scanmarketclient.adapters.PendingAdapter;
-import alreyesh.android.scanmarketclient.dialog.AddListPurchaseDialog;
+
 import alreyesh.android.scanmarketclient.models.Pending;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
@@ -51,11 +47,6 @@ public class PurchasePendingFragment extends Fragment implements RealmChangeList
     }
 
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -73,11 +64,8 @@ public class PurchasePendingFragment extends Fragment implements RealmChangeList
         mLayoutManager = new LinearLayoutManager(getActivity());
         recycler.setLayoutManager(mLayoutManager);
         pendings =  realm.where(Pending.class) .equalTo("user",userEmail).findAll().sort("id", Sort.DESCENDING);
-        adapter = new PendingAdapter(pendings, R.layout.recycler_view_list_pending, new PendingAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(Pending pending, int position) {
-
-            }
+        adapter = new PendingAdapter(pendings, R.layout.recycler_view_list_pending, (pending, position) -> {
+            // Do nothing
         });
         recycler.setAdapter(adapter);
 
@@ -93,13 +81,10 @@ public class PurchasePendingFragment extends Fragment implements RealmChangeList
                         .setTitleText("Eliminar")
                         .setContentText("¿Desea eliminar la canasta pendiente?")
                         .setConfirmText("Si")
-                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sDialog) {
-                                deletePending(viewHolder.getLayoutPosition());
-                                sDialog.dismissWithAnimation();
+                        .setConfirmClickListener(sDialog -> {
+                            deletePending(viewHolder.getLayoutPosition());
+                            sDialog.dismissWithAnimation();
 
-                            }
                         }).setCancelText("No")
                         .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
                             @Override
@@ -114,7 +99,7 @@ public class PurchasePendingFragment extends Fragment implements RealmChangeList
 
 
             }
-        }).attachToRecyclerView(recycler); ;
+        }).attachToRecyclerView(recycler);
 
 
 
@@ -138,23 +123,19 @@ public class PurchasePendingFragment extends Fragment implements RealmChangeList
           String cod=pendings.get(i).getCodorder();
             Toast.makeText(getContext(),"codigo: "+ cod,Toast.LENGTH_SHORT).show();
           db.collection("order").whereEqualTo("codorder", cod).limit(1).get()
-                  .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                      @Override
-                      public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        Boolean isEmpty = task.getResult().isEmpty();
-                          Toast.makeText(getContext(),"estado: "+ isEmpty,Toast.LENGTH_SHORT).show();
-                          if(!isEmpty){
-                              Toast.makeText(getContext(),"llegue aqui ps",Toast.LENGTH_SHORT).show();
-                              realm.beginTransaction();
-                              pendings.get(position).deleteFromRealm();
-                              realm.commitTransaction();
-
-
-                          }
-
+                  .addOnCompleteListener(task -> {
+                    Boolean isEmpty = task.getResult().isEmpty();
+                      Toast.makeText(getContext(),"estado: "+ isEmpty,Toast.LENGTH_SHORT).show();
+                      if(Boolean.FALSE.equals(isEmpty)){
+                          realm.beginTransaction();
+                          pendings.get(position).deleteFromRealm();
+                          realm.commitTransaction();
 
 
                       }
+
+
+
                   });
             pendings.addChangeListener(this);
         }

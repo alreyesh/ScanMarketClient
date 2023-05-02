@@ -1,35 +1,15 @@
 package alreyesh.android.scanmarketclient.utils;
 
-import android.app.Application;
+
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 
-import androidx.security.crypto.EncryptedSharedPreferences;
-import androidx.security.crypto.MasterKeys;
 
-import alreyesh.android.scanmarketclient.notifications.NotificacionPush;
 
 public class Util {
     public static SharedPreferences getSP(Context context){
         return context.getSharedPreferences("Preferences", Context.MODE_PRIVATE);
-      /*  String masterKeyAlias = null;
-        try {
-            masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC);
-          return EncryptedSharedPreferences.create(
-                    "Preferences",
-                    masterKeyAlias,
-                    context,
-                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-            );
-        } catch ( Exception e) {
 
-        }
-
-        return null;
-
-       */
     }
 
 
@@ -48,13 +28,13 @@ public class Util {
     }
 
     public static Integer getPurchaseId(SharedPreferences preferences){
-        return preferences.getInt("idp" ,0);
+        return preferences.getInt("idp" ,-1);
     }
     public static String getPurchaseName(SharedPreferences preferences){
         return preferences.getString("np","");
     }
     public static Integer getPurchaseColor(SharedPreferences preferences){
-        return preferences.getInt("cp",0);
+        return preferences.getInt("cp",-1);
     }
     public static Float getPurchaseLimit(SharedPreferences preferences){
         return preferences.getFloat("limitp",0.0f);
@@ -77,6 +57,12 @@ public class Util {
     }
     public static String getProductFromCamera(SharedPreferences preferences){
         return preferences.getString("productcamera","");
+    }
+    public static String getPredictFromCamera(SharedPreferences preferences){
+        return preferences.getString("predictcamera","");
+    }
+    public static String getCategoryFromCamera(SharedPreferences preferences){
+        return preferences.getString("categorycamera","");
     }
     public static String getCodigoFromCamera(SharedPreferences preferences){
         return preferences.getString("codigocamera","");
@@ -127,8 +113,7 @@ public class Util {
 
     public static void removeSharedPreferences(SharedPreferences preferences){
         SharedPreferences.Editor editor = preferences.edit();
-        editor.remove("email");
-        editor.remove("pass");
+        editor.clear();
         editor.apply();
     }
 

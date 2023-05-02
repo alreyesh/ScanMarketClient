@@ -32,19 +32,18 @@ public class RelatedProductAdapter  extends RecyclerView.Adapter<RelatedProductA
     private Context context;
     private List<Product> products;
     private int layout;
-    private OnItemClickListener itemListener;
-    private OnButtonClickListener btnListener;
+
+
     private Realm realm;
     private Purchase purchase;
     private SharedPreferences prefs;
     private  String cantidad;
     private static final String MESSAGE = "Se Ingreso Correctamente a la Cesta";  // Compliant
-
-    public RelatedProductAdapter(List<Product> products, int layout, OnItemClickListener itemListener, OnButtonClickListener btnListener) {
+    private static final String productName = "productName";
+    public RelatedProductAdapter(List<Product> products, int layout  ) {
         this.products = products;
         this.layout = layout;
-        this.itemListener = itemListener;
-        this.btnListener = btnListener;
+
     }
 
     @NonNull
@@ -52,13 +51,13 @@ public class RelatedProductAdapter  extends RecyclerView.Adapter<RelatedProductA
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(layout,parent,false);
         context = parent.getContext();
-        ViewHolder vh = new ViewHolder(v);
-        return vh;
+
+        return new ViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.bind(products.get(position),btnListener);
+        holder.bind(products.get(position) );
     }
 
     @Override
@@ -85,7 +84,7 @@ public class RelatedProductAdapter  extends RecyclerView.Adapter<RelatedProductA
             btnAgregar=(Button) itemView.findViewById(R.id.btnAgregar);
 
         }
-        public void bind(final Product product, final RelatedProductAdapter.OnButtonClickListener btnListener ) {
+        public void bind(final Product product  ) {
             realm = Realm.getDefaultInstance();
             prefs = Util.getSP(context);
             if(Util.getPurchaseId(prefs) !=null){
@@ -94,7 +93,7 @@ public class RelatedProductAdapter  extends RecyclerView.Adapter<RelatedProductA
                 if(purchase !=null) {
                     String nombre = product.getNombre();
                     RealmList<Cart> carts = purchase.getCarts();
-                    Cart verCart = carts.where().equalTo("productName", nombre).findFirst();
+                    Cart verCart = carts.where().equalTo(productName, nombre).findFirst();
                     if (verCart != null) {
                         count.setHint(verCart.getCountProduct());
                         defaultcount =verCart.getCountProduct();
@@ -103,7 +102,7 @@ public class RelatedProductAdapter  extends RecyclerView.Adapter<RelatedProductA
                     name.setText(product.getNombre());
                     price.setText(product.getPrecio());
                     Picasso.get().load(product.getImagen()).fit().into(img);
-                    String lista = Util.getPurchaseName(prefs);
+
 
                     btnAgregar.setOnClickListener(v -> {
                          cantidad = count.getText().toString().trim();
@@ -125,14 +124,14 @@ public class RelatedProductAdapter  extends RecyclerView.Adapter<RelatedProductA
                                     float precio = Float.parseFloat(product.getPrecio());
                                     float subprice = precio * cant;
                                     String subpricestring = String.valueOf(subprice);
-                                    cartin = carts1.where().equalTo("productName", nombre1).findFirst();
+                                    cartin = carts1.where().equalTo(productName, nombre1).findFirst();
                                     if (!carts1.isEmpty()){
                                       cartsexist(product,cartin,subpricestring);
 
                                     }else{
                                         cartin = new Cart(product.getCodigo(), product.getNombre(), product.getImagen(), product.getPrecio(), cantidad, subpricestring);
 
-                                        cartsnoexist(product,cartin);
+                                        cartsnoexist( cartin);
 
 
                                     }
@@ -176,7 +175,68 @@ public class RelatedProductAdapter  extends RecyclerView.Adapter<RelatedProductA
 
         }
 
+        private void cantempty(Product product, String defaultcount){
+            cantidad = defaultcount;
+            Cart cartin;
+            String nombre = product.getNombre();
+            RealmList<Cart> carts = purchase.getCarts();
+            cartin = carts.where().equalTo(productName, nombre).findFirst();
+            if (cartin == null || cartin.getRealm().isEmpty()){
+                cartin = new Cart(product.getCodigo(), product.getNombre(), product.getImagen(), product.getPrecio(), cantidad, product.getPrecio());
+                realm.beginTransaction();
+                realm.copyToRealm(cartin);
+                purchase.getCarts().add(cartin);
+                realm.commitTransaction();
 
+                Toast.makeText(context, MESSAGE, Toast.LENGTH_SHORT).show();
+                ((MainActivity)context).invalidateOptionsMenu();
+            }else{
+                realm.beginTransaction();
+                cartin.setCountProduct(cantidad);
+                cartin.setSubPrice(product.getPrecio());
+                realm.copyToRealmOrUpdate(cartin);
+                realm.commitTransaction();
+
+
+                Toast.makeText(context ,"Se Actualizo el Producto en la Cesta", Toast.LENGTH_SHORT).show();
+                ((MainActivity)context).invalidateOptionsMenu();
+
+            }
+            Toast.makeText(context, MESSAGE, Toast.LENGTH_SHORT).show();
+            ((MainActivity)context).invalidateOptionsMenu();
+
+
+
+        }
+        private void cartsexist(Product product, Cart cartin, String subpricestring ){
+            if (cartin == null || cartin.getRealm().isEmpty()){
+                realm.beginTransaction();
+                cartin = new Cart(product.getCodigo(), product.getNombre(), product.getImagen(), product.getPrecio(), cantidad, subpricestring);
+                realm.copyToRealm(cartin);
+                purchase.getCarts().add(cartin);
+                realm.commitTransaction();
+                Toast.makeText(context, MESSAGE, Toast.LENGTH_SHORT).show();
+                ((MainActivity)context).invalidateOptionsMenu();
+            }else{
+                realm.beginTransaction();
+                cartin.setCountProduct(cantidad);
+                cartin.setSubPrice(subpricestring);
+                realm.copyToRealmOrUpdate(cartin);
+                realm.commitTransaction();
+                Toast.makeText(context ,"Se Actualizo el Producto en la Cesta", Toast.LENGTH_SHORT).show();
+                ((MainActivity)context).invalidateOptionsMenu();
+            }
+
+
+        }
+        private void   cartsnoexist(  Cart cartin ){
+            realm.beginTransaction();
+            realm.copyToRealm(cartin);
+            purchase.getCarts().add(cartin);
+            realm.commitTransaction();
+            Toast.makeText(context, MESSAGE, Toast.LENGTH_SHORT).show();
+            ((MainActivity)context).invalidateOptionsMenu();
+        }
 
     }
     public interface OnItemClickListener {
@@ -196,66 +256,5 @@ public class RelatedProductAdapter  extends RecyclerView.Adapter<RelatedProductA
 
 
     }
-    private void cantempty(Product product, String defaultcount){
-        cantidad = defaultcount;
-        Cart cartin;
-        String nombre = product.getNombre();
-        RealmList<Cart> carts = purchase.getCarts();
-        cartin = carts.where().equalTo("productName", nombre).findFirst();
-        if (cartin == null || cartin.getRealm().isEmpty()){
-            cartin = new Cart(product.getCodigo(), product.getNombre(), product.getImagen(), product.getPrecio(), cantidad, product.getPrecio());
-            realm.beginTransaction();
-            realm.copyToRealm(cartin);
-            purchase.getCarts().add(cartin);
-            realm.commitTransaction();
 
-            Toast.makeText(context, MESSAGE, Toast.LENGTH_SHORT).show();
-            ((MainActivity)context).invalidateOptionsMenu();
-        }else{
-            realm.beginTransaction();
-            cartin.setCountProduct(cantidad);
-            cartin.setSubPrice(product.getPrecio());
-            realm.copyToRealmOrUpdate(cartin);
-            realm.commitTransaction();
-
-
-            Toast.makeText(context ,"Se Actualizo el Producto en la Cesta", Toast.LENGTH_SHORT).show();
-            ((MainActivity)context).invalidateOptionsMenu();
-
-        }
-        Toast.makeText(context, MESSAGE, Toast.LENGTH_SHORT).show();
-        ((MainActivity)context).invalidateOptionsMenu();
-
-
-
-    }
-    private void cartsexist(Product product, Cart cartin, String subpricestring ){
-        if (cartin == null || cartin.getRealm().isEmpty()){
-            realm.beginTransaction();
-            cartin = new Cart(product.getCodigo(), product.getNombre(), product.getImagen(), product.getPrecio(), cantidad, subpricestring);
-            realm.copyToRealm(cartin);
-            purchase.getCarts().add(cartin);
-            realm.commitTransaction();
-            Toast.makeText(context, MESSAGE, Toast.LENGTH_SHORT).show();
-            ((MainActivity)context).invalidateOptionsMenu();
-        }else{
-            realm.beginTransaction();
-            cartin.setCountProduct(cantidad);
-            cartin.setSubPrice(subpricestring);
-            realm.copyToRealmOrUpdate(cartin);
-            realm.commitTransaction();
-            Toast.makeText(context ,"Se Actualizo el Producto en la Cesta", Toast.LENGTH_SHORT).show();
-            ((MainActivity)context).invalidateOptionsMenu();
-        }
-
-
-    }
-    private void   cartsnoexist(Product product, Cart cartin ){
-        realm.beginTransaction();
-        realm.copyToRealm(cartin);
-        purchase.getCarts().add(cartin);
-        realm.commitTransaction();
-        Toast.makeText(context, MESSAGE, Toast.LENGTH_SHORT).show();
-        ((MainActivity)context).invalidateOptionsMenu();
-    }
 }

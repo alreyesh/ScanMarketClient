@@ -9,12 +9,12 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
+
 import android.widget.Switch;
 import android.widget.Toast;
 
 import alreyesh.android.scanmarketclient.R;
-import alreyesh.android.scanmarketclient.notifications.NotificacionPush;
+
 import alreyesh.android.scanmarketclient.services.Notifyservice;
 import alreyesh.android.scanmarketclient.utils.Util;
 
@@ -29,11 +29,6 @@ Switch turnswitch ;
     }
 
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -44,35 +39,28 @@ Switch turnswitch ;
         prefs = Util.getSP(getActivity());
         Boolean turn = Util.getTurnNotify(prefs);
         Toast.makeText(getActivity(),"turn: "+turn, Toast.LENGTH_SHORT).show();
-        if(Boolean.TRUE.equals(turn)){
-            turnswitch.setChecked(true);
-        }else{
-            turnswitch.setChecked(false);
-        }
 
+        turnswitch.setChecked(turn);
         Intent intent = new Intent(getActivity(), Notifyservice.class);
 
-        turnswitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Boolean turn;
-                if(isChecked){
-                    turn = true;
-                    getActivity().startService(intent);
-                    Toast.makeText(getActivity(),"On", Toast.LENGTH_SHORT).show();
+        turnswitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            Boolean turn1;
+            if(isChecked){
+                turn1 = true;
+                getActivity().startService(intent);
+                Toast.makeText(getActivity(),"On", Toast.LENGTH_SHORT).show();
 
-                }else{
-                    turn = false;
+            }else{
+                turn1 = false;
 
-                    getActivity().  stopService(intent);
+                getActivity().  stopService(intent);
 
-                    Toast.makeText(getActivity(),"Off", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(),"Off", Toast.LENGTH_SHORT).show();
 
-                }
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putBoolean("turnm",turn);
-                editor.commit();
             }
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("turnm", turn1);
+            editor.commit();
         });
 
         return v;

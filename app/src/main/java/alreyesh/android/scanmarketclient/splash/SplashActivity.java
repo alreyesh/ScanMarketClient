@@ -1,6 +1,6 @@
 package alreyesh.android.scanmarketclient.splash;
 
-import android.content.Context;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -14,12 +14,11 @@ import alreyesh.android.scanmarketclient.activities.MainActivity;
 import alreyesh.android.scanmarketclient.utils.Util;
 
 public class SplashActivity extends AppCompatActivity {
-    private SharedPreferences prefs;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        prefs= Util.getSP(getApplication());
+        SharedPreferences  prefs= Util.getSP(getApplication());
         Intent intentLogin = new Intent(this, LoginActivity.class);
         Intent intentMain = new Intent(this, MainActivity.class);
 

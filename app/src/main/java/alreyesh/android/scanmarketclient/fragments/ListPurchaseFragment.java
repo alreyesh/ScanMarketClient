@@ -1,12 +1,13 @@
 package alreyesh.android.scanmarketclient.fragments;
 
-import android.content.Context;
+
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,6 +26,7 @@ import com.rowland.cartcounter.view.CartCounterActionView;
 
 import alreyesh.android.scanmarketclient.adapters.PurchaseAdapter;
 import alreyesh.android.scanmarketclient.dialog.AddListPurchaseDialog;
+import alreyesh.android.scanmarketclient.dialog.UpdateListPurchaseDialog;
 import alreyesh.android.scanmarketclient.models.Purchase;
 import alreyesh.android.scanmarketclient.R;
 import alreyesh.android.scanmarketclient.notifications.NotificacionPush;
@@ -107,7 +109,9 @@ public class ListPurchaseFragment extends Fragment implements RealmChangeListene
        recycler=(RecyclerView) view.findViewById(R.id.recyclerView);
        recycler.setHasFixedSize(true);
        recycler.setItemAnimator(new DefaultItemAnimator());
-       mLayoutManager = new LinearLayoutManager(getActivity());
+     //  mLayoutManager = new LinearLayoutManager(getActivity());
+       mLayoutManager = new GridLayoutManager(getContext(), 1);
+
         recycler.setLayoutManager(mLayoutManager);
         adapter = new PurchaseAdapter(purchases, R.layout.recycler_view_list_purchase_item,
                 (purchase, position) -> {
@@ -127,15 +131,13 @@ public class ListPurchaseFragment extends Fragment implements RealmChangeListene
                             .commit();
 
 
-                }, (purchase, position) -> {
-
-                }, (purchase, position) -> {
+                } , (purchase, position) -> {
                     SharedPreferences.Editor editor = prefs.edit();
                     editor.putBoolean("cep",true);
                     editor.putInt("sp",purchase.getId());
                     editor.commit();
 
-                    AddListPurchaseDialog addListPurchaseDialog = new AddListPurchaseDialog();
+                    UpdateListPurchaseDialog addListPurchaseDialog = new UpdateListPurchaseDialog();
                     addListPurchaseDialog.show(getActivity().getSupportFragmentManager(),"addListPurchase");
 
                 }
@@ -148,6 +150,7 @@ public class ListPurchaseFragment extends Fragment implements RealmChangeListene
 
 
         recycler.setAdapter(adapter);
+
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.LEFT|ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
@@ -160,7 +163,7 @@ public class ListPurchaseFragment extends Fragment implements RealmChangeListene
             }
         }).attachToRecyclerView(recycler);
 
-
+            adapter.notifyDataSetChanged();
         getActivity().invalidateOptionsMenu();
 
 

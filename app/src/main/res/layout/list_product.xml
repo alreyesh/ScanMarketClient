@@ -3,50 +3,63 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/ListProduct"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_margin="16dp"
-    card_view:cardBackgroundColor="#E2E2E2"
-    card_view:cardCornerRadius="4dp"
     android:clickable="true"
     android:focusable="true"
-    android:foreground="?android:attr/selectableItemBackground">
+    android:foreground="?android:attr/selectableItemBackground"
+    card_view:cardBackgroundColor="#E2E2E2"
+    card_view:cardCornerRadius="4dp">
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
         android:orientation="vertical">
+
         <ImageView
             android:id="@+id/imgProductView"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_gravity="center"
-            android:src="@drawable/ic_image"
-            />
+            android:layout_marginTop="10dp"
+            android:src="@drawable/ic_image" />
 
         <TextView
             android:id="@+id/textViewName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:gravity="center"
             android:textSize="10sp"
             tools:text="Nombre" />
 
-        <TextView
-            android:id="@+id/textViewPrice"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textSize="12sp"
-            tools:text="Precio" />
+            android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/textViewDescuento"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            android:textSize="10sp"
-            tools:text="Descuento" />
+            <TextView
+                android:id="@+id/textViewPrice"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textSize="12sp"
+                tools:text="Precio" />
+
+            <TextView
+                android:id="@+id/textViewDescuento"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textSize="10sp"
+                tools:text="Descuento" />
+        </LinearLayout>
+
 
 
     </LinearLayout>

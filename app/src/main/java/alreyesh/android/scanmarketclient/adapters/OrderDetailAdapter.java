@@ -1,10 +1,10 @@
 package alreyesh.android.scanmarketclient.adapters;
 
-import android.content.Context;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView.OnItemClickListener;
+
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,35 +17,34 @@ import java.util.List;
 
 import alreyesh.android.scanmarketclient.R;
 import alreyesh.android.scanmarketclient.models.DetailProduct;
-import alreyesh.android.scanmarketclient.models.Order;
-import alreyesh.android.scanmarketclient.utils.Util;
+
 
 public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.ViewHolder> {
-    private Context context;
+
     private List<DetailProduct> products;
     ImageView imgProductView;
     TextView textViewName;
     TextView textViewCantidad;
     TextView textViewPrice;
-    private  OnItemClickListener itemListener;
 
-    public OrderDetailAdapter(List<DetailProduct> products,  OnItemClickListener itemListener) {
+
+    public OrderDetailAdapter(List<DetailProduct> products ) {
         this.products = products;
-        this.itemListener = itemListener;
+
     }
 
     @NonNull
     @Override
     public OrderDetailAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_order_detail_item,parent,false);
-        context = parent.getContext();
-        ViewHolder vh = new  ViewHolder(v);
-        return vh;
+
+
+        return  new  ViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(@NonNull  ViewHolder holder, int position) {
-        holder.bind(products.get(position),itemListener);
+        holder.bind(products.get(position) );
     }
 
     @Override
@@ -62,7 +61,7 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
             textViewPrice= itemView.findViewById(R.id.textViewPrice);
 
         }
-        public void bind (final DetailProduct detailProduct, final OnItemClickListener itemListener){
+        public void bind (final DetailProduct detailProduct ){
             Picasso.get().load(detailProduct.getLink()).fit().into(imgProductView);
             textViewName.setText(detailProduct.getName());
             textViewCantidad.setText(detailProduct.getCantidad());

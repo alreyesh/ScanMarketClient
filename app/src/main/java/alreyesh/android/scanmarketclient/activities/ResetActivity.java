@@ -19,7 +19,7 @@ import alreyesh.android.scanmarketclient.R;
 public class ResetActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private EditText  editTextEmail;
-    private Button mButtonResetPassword;
+
     private String email = "";
     private ProgressDialog mDialog;
     @Override
@@ -29,22 +29,19 @@ public class ResetActivity extends AppCompatActivity {
         mAuth =FirebaseAuth.getInstance();
         mDialog = new ProgressDialog(this);
         editTextEmail = (EditText) findViewById(R.id.editTextRecuperarEmail);
-        mButtonResetPassword = (Button) findViewById(R.id.buttonReset);
+        Button  mButtonResetPassword = (Button) findViewById(R.id.buttonReset);
 
-        mButtonResetPassword.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v){
-                email = editTextEmail.getText().toString();
-                if(!email.isEmpty()){
-                    mDialog.setMessage("Espere un momento");
-                    mDialog.setCanceledOnTouchOutside(false);
-                    mDialog.show();
-                    resetPassword();
-                }else{
-                    Toast.makeText(ResetActivity.this,"Debe ingresar Correo Electronico",Toast.LENGTH_SHORT).show();
-                }
-
+        mButtonResetPassword.setOnClickListener(v -> {
+            email = editTextEmail.getText().toString();
+            if(!email.isEmpty()){
+                mDialog.setMessage("Espere un momento");
+                mDialog.setCanceledOnTouchOutside(false);
+                mDialog.show();
+                resetPassword();
+            }else{
+                Toast.makeText(ResetActivity.this,"Debe ingresar Correo Electronico",Toast.LENGTH_SHORT).show();
             }
+
         });
 
 

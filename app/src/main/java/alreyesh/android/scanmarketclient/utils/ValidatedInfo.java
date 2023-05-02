@@ -6,23 +6,13 @@ import android.widget.Toast;
 public class ValidatedInfo {
 
     public static Boolean validaty(Context context, String txtNombre, String txtApellidos, String txtCelular, String textSpinner, String numDocumento){
-       if( validate(context, txtNombre, txtApellidos, txtCelular, textSpinner, numDocumento)){
-           return true;
-       }
-       return false;
+
+       return ( validate(context, txtNombre, txtApellidos, txtCelular, textSpinner, numDocumento))?true:false;
+
     }
     private static Boolean validate(Context context, String txtNombre, String txtApellidos, String txtCelular, String textSpinner, String numDocumento) {
-         if(!isValidName(context,txtNombre)){
-            return false;
-        }else if(!isValidLastName(context,txtApellidos)){
-            return false;
-        }else if(!isValidCellPhone(context,txtCelular)){
-            return false;
-        }
-        else if(!isValidDocument(context,textSpinner,numDocumento)){
-            return false;
-        }
-        return true;
+
+         return (!isValidName(context,txtNombre)||!isValidLastName(context,txtApellidos)||!isValidDocument(context,textSpinner,numDocumento))?false:true;
     }
 
     public static boolean isValidCellPhone(Context context, String txtCelular) {
@@ -120,7 +110,8 @@ public class ValidatedInfo {
 
 
     public static int contarCaracteres(String cadena, char caracter) {
-        int posicion, contador = 0;
+        int posicion;
+        int contador = 0;
         //se busca la primera vez que aparece
         posicion = cadena.indexOf(caracter);
         while (posicion != -1) { //mientras se encuentre el caracter

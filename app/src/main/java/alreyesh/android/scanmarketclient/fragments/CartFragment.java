@@ -1,6 +1,5 @@
 package alreyesh.android.scanmarketclient.fragments;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -61,7 +60,7 @@ public class CartFragment extends Fragment  implements RealmChangeListener<Realm
       RecyclerView mRecycler;
     private Realm realm;
     private Purchase purchase;
-    public int purchaseId;
+     int purchaseId;
     FirebaseAuth mAuth;
     Button  btnPagar;
     MenuItem menuId;
@@ -117,22 +116,19 @@ View v =  inflater.inflate(R.layout.fragment_cart, container, false);
             purchase = realm.where(Purchase.class).equalTo("id",purchaseId).equalTo("emailID",userEmail).findFirst();
            // purchase.getCarts().size() >0
             //purchase != null
-            if(purchase.getCarts().size() >0){
+            if(!purchase.getCarts().isEmpty()){
                 carts = purchase.getCarts();
                 Integer color = Util.getPurchaseColor(prefs);
                 btnPagar.setVisibility(View.VISIBLE);
                 btnPagar.setBackgroundColor(color);
-                btnPagar.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                btnPagar.setOnClickListener(v1 -> {
 
 
 
 
-                        FragmentManager manager = getActivity().getSupportFragmentManager();
-                        QrDialog qrdialog = new QrDialog();
-                        qrdialog.show(manager,"QR");
-                    }
+                    FragmentManager manager = getActivity().getSupportFragmentManager();
+                    QrDialog qrdialog = new QrDialog();
+                    qrdialog.show(manager,"QR");
                 });
 
 
@@ -187,7 +183,7 @@ View v =  inflater.inflate(R.layout.fragment_cart, container, false);
     }
     @Override
     public void onChange(RealmResults<Cart> carts) {
-        //adapter.notifyDataSetChanged();
+
         Toast.makeText(getActivity(), "Cambio:"+carts.size(), Toast.LENGTH_SHORT).show();
     }
 
@@ -203,7 +199,7 @@ View v =  inflater.inflate(R.layout.fragment_cart, container, false);
         editor.commit();
         getActivity().invalidateOptionsMenu();
 
-        if(carts.size()==0)
+        if(carts.isEmpty())
             btnPagar.setVisibility(View.GONE);
 
 
@@ -277,7 +273,7 @@ View v =  inflater.inflate(R.layout.fragment_cart, container, false);
                     }
 
               }else{
-                  Toast.makeText(getActivity(), "Ingresar un numero entero", Toast.LENGTH_SHORT).show();
+                  Toast.makeText(getActivity(), "Ingresar un numero entero mayor o igual 1", Toast.LENGTH_SHORT).show();
 
               }
 
